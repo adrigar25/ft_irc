@@ -3,9 +3,16 @@
 #include "User.hpp"
 #include <iostream>
 
-int main()
+int main(int argc, char *argv[])
 {
-    Server server(6667, "password");
+    if(argc != 3)
+    {
+        std::cerr << "Usage: " << argv[0] << " <port> <password>" << std::endl;
+        return 1;
+    }
+    unsigned int port = std::stoi(argv[1]);
+    std::string password = argv[2];
+    Server server(port, password);
     User *user1 = new User("Alice");
     User *user2 = new User("Bob");  
     server.addUser(user1);
