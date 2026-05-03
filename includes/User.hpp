@@ -8,10 +8,11 @@ class Channel;
 class User
 {
     private:
-        std::string name;
+        int socket;
+        std::string nickname;
         Channel *currentChannel;
     public:
-        User(std::string name);
+        User(int socket, const std::string &name);
         ~User();
         void joinChannel(Channel *channel);
         std::string getNickname() const;

@@ -1,31 +1,25 @@
-#include "Server.hpp"
-#include "Channel.hpp"
-#include "User.hpp"
 #include <iostream>
+#include <cstring>
+#include <cerrno>
+#include <unistd.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include "Server.hpp"
 
-int main(int argc, char *argv[])
-{
-    if(argc != 3)
-    {
-        std::cerr << "Usage: " << argv[0] << " <port> <password>" << std::endl;
+int main(int argc, char* argv[]) {
+    
+    if(argc != 3) {
+        std::cerr << "Usage: " << argv[0] << " <port> <password>" <<std::endl;
         return 1;
     }
-    unsigned int port = std::stoi(argv[1]);
-    std::string password = argv[2];
-    Server server(port, password);
-    User *user1 = new User("Alice");
-    User *user2 = new User("Bob");  
-    server.addUser(user1);
-    server.addUser(user2);
-    server.createChannel("#general", user1);
-    Channel *channel = server.getChannel("#general");
-    if (channel)
-    {
-        user2->joinChannel(channel);
-        channel->addUser(user2);
-        channel->changeRole(user2, "voice");
+    if(std::atoi(argv[1]) <= 0 || std::atoi(argv[1]) > 65535) {
+        std::cerr << "Invalid port number. Please provide a port number between 1 and 65535." << std::endl;
+        return 1;
     }
-    delete user1;
-    delete user2;
+    Server server(std::atoi(argv[1]), argv[2]);
+
+    server.startServer();
+
     return 0;
 }

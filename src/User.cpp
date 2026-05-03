@@ -1,9 +1,9 @@
 
 #include "User.hpp"
 
-User::User(std::string name): name(name){};
+User::User(int socket, const std::string &name): socket(socket), nickname(name), currentChannel(NULL) {}
 
-User::~User(){};
+User::~User() {}
 
 void User::joinChannel(Channel *channel)
 {
@@ -12,5 +12,5 @@ void User::joinChannel(Channel *channel)
 
 std::string User::getNickname() const
 {
-    return this->name;
+    return this->nickname;
 }
