@@ -6,6 +6,7 @@
     #include <map>
     #include <string>
     #include <exception>
+    #include <poll.h>
 
     class Server
     {
@@ -13,8 +14,18 @@
             int serverSocket;
             unsigned int port;
             std::string password;
-            std::map<std::string, User*> users;
+            std::map<int, User*> users;
+            std::map<int, std::string> buffers;
             std::map<std::string, Channel*> channels;
+            int userNum;
+            struct pollfd fds[1000];
+            void handleEvents();
+            void handleDisconnection(int idx);
+            void handleNewConnection();
+            void handleClientMessage(int fd, const std::string &message);
+            void handleClientCommand(User *user, const std::string &command);
+            void executeCommand(User *user, const std::string &command, const std::string &args);
+            void sendToUser(User *user, const std::string &message);
             void addUser(User *user);
             void removeUser(User *user);
             void createChannel(std::string name, User *creator);
@@ -70,6 +81,16 @@
             }
             int getCode() const { return code; }
             virtual ~errorStartingServerException() _NOEXCEPT {}
+        };
+
+        class errorAcceptingConnectionException : public std::exception
+        {
+        public:
+            virtual const char* what() const _NOEXCEPT
+            {
+                return "Error accepting connection";
+            }
+            virtual ~errorAcceptingConnectionException() _NOEXCEPT {}
         };
     };
 

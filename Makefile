@@ -11,10 +11,12 @@ SRCDIR = src
 INCDIR = includes
 
 SRCS := $(wildcard $(SRCDIR)/*.cpp)
-OBJS := $(SRCS:.cpp=.o)
+OBJDIR = objs
+SRCS := $(wildcard $(SRCDIR)/*.cpp)
+OBJS := $(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.o,$(SRCS))
 
 CSRCS := $(wildcard $(SRCDIR)/*.c)
-COBJS := $(CSRCS:.c=.o)
+COBJS := $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(CSRCS))
 
 HEADERS := $(wildcard $(INCDIR)/*.hpp)
 
@@ -24,17 +26,21 @@ $(NAME): $(OBJS) $(COBJS)
 	$(CXX) $(CXXFLAGS) $(OBJS) $(COBJS) -o $(NAME) $(LDFLAGS)
 
 # Rules
-$(SRCDIR)/%.o: $(SRCDIR)/%.cpp $(HEADERS)
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp $(HEADERS) | $(OBJDIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(SRCDIR)/%.o: $(SRCDIR)/%.c
+$(OBJDIR)/%.o: $(SRCDIR)/%.c | $(OBJDIR)
 	$(CC) -Wall -Wextra -Werror -c $< -o $@
+
+$(OBJDIR):
+	@mkdir -p $(OBJDIR)
 
 clean:
 	rm -f $(OBJS) $(COBJS)
 
 fclean: clean
 	rm -f $(NAME)
+	rm -rf $(OBJDIR)
 
 re: fclean all
 
