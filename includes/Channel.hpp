@@ -10,24 +10,23 @@ class Channel
 {
     private:
         std::string name;
-        std::map<std::string, User*> users;
-        std::map<std::string, User*> voiceUsers;
-        std::map<std::string, User*> operators;
-        std::map<std::string, User*> invitedUsers;
-        std::map<std::string, User*> bannedUsers;
-        std::map<std::string, User*> exceptedUsers;
-    int userCount;
-    bool isPrivate;
-    //bool isModerated;
-    int userLimit;
+        std::map<int, User*> users;
+        std::map<int, User*> voiceUsers;
+        std::map<int, User*> operators;
+        std::map<int, User*> invitedUsers;
+        std::map<int, User*> bannedUsers;
+        std::map<int, User*> exceptedUsers;
+        int userCount;
+        bool isPrivate;
+        int userLimit;
     public:
         Channel(std::string name, User *creator);
         ~Channel();
         void addUser(User *user);
         void removeUser(User *user);
         void changeRole(User *user, std::string role);
-        void addUserToMap(std::map<std::string, User*> &userMap, User *user);
-        void removeUserFromMap(std::map<std::string, User*> &userMap, User *user);
+        void addUserToMap(std::map<int, User*> &userMap, User *user);
+        void removeUserFromMap(std::map<int, User*> &userMap, User *user);
     class userAlreadyExistsException : public std::exception
     {
         virtual const char* what() const throw()

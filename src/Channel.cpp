@@ -3,7 +3,7 @@
 #include <map>
 #include <iostream>
 
-Channel::Channel(std::string name, User *creator): name(name), userCount(0),isPrivate(false), userLimit(-1)
+Channel::Channel(std::string name, User *creator): name(name), userCount(0), isPrivate(false), userLimit(-1)
 {
     std::cout << "Channel " << this->name << " created by " << creator->getNickname() << std::endl;
     this->addUser(creator);
@@ -17,45 +17,52 @@ Channel::~Channel()
 
 void Channel::addUser(User *user)
 {
-    if(this->isPrivate && this->invitedUsers.find(user->getNickname()) == this->invitedUsers.end())
+    int fd = user->getSocket();
+    if (this->isPrivate && this->invitedUsers.find(fd) == this->invitedUsers.end())
         throw privateChannelException();
-    if(this->users.find(user->getNickname()) != this->users.end())
+    if (this->users.find(fd) != this->users.end())
         throw userAlreadyExistsException();
-    if(this->userCount >= this->userLimit && this->userLimit != -1)
+    if (this->userCount >= this->userLimit && this->userLimit != -1)
         throw channelFullException();
-    this->users.insert(std::make_pair(user->getNickname(), user));
+    this->users.insert(std::make_pair(fd, user));
     this->userCount++;
+    user->setCurrentChannel(this);
     std::cout << "User " << user->getNickname() << " added to channel " << this->name << std::endl;
 }
 
 void Channel::removeUser(User *user)
 {
-    if(this->users.find(user->getNickname()) == this->users.end())
+    int fd = user->getSocket();
+    if (this->users.find(fd) == this->users.end())
         throw userNotFoundException();
-    this->users.erase(user->getNickname());
+    this->users.erase(fd);
     this->userCount--;
+    user->setCurrentChannel(NULL);
     std::cout << "User " << user->getNickname() << " removed from channel " << this->name << std::endl;
 }
 
-void Channel::addUserToMap(std::map<std::string, User*> &userMap, User *user)
+void Channel::addUserToMap(std::map<int, User*> &userMap, User *user)
 {
-    if(userMap.find(user->getNickname()) != userMap.end())
+    int fd = user->getSocket();
+    if(userMap.find(fd) != userMap.end())
         return; // User already has this role, do nothing
-    userMap.insert(std::make_pair(user->getNickname(), user));
+    userMap.insert(std::make_pair(fd, user));
 }
 
-void Channel::removeUserFromMap(std::map<std::string, User*> &userMap, User *user)
+void Channel::removeUserFromMap(std::map<int, User*> &userMap, User *user)
 {
-    if(userMap.find(user->getNickname()) == userMap.end())
+    int fd = user->getSocket();
+    if(userMap.find(fd) == userMap.end())
         return; // User doesn't have this role, do nothing
-    userMap.erase(user->getNickname());
+    userMap.erase(fd);
 }
 
 void Channel::changeRole(User *user, std::string role)
 {
-    if(this->users.find(user->getNickname()) == this->users.end())
+    int fd = user->getSocket();
+    if(this->users.find(fd) == this->users.end())
         throw userNotFoundException();
-    std::map<std::string, std::map<std::string, User*>*> roles;
+    std::map<std::string, std::map<int, User*>*> roles;
     roles.insert(std::make_pair(std::string("operator"), &this->operators));
     roles.insert(std::make_pair(std::string("voice"), &this->voiceUsers));
     roles.insert(std::make_pair(std::string("invited"), &this->invitedUsers));
@@ -64,6 +71,6 @@ void Channel::changeRole(User *user, std::string role)
 
     if(roles.find(role) == roles.end())
         throw roleNotFoundException();
-    roles[role]->insert(std::make_pair(user->getNickname(), user));
+    roles[role]->insert(std::make_pair(fd, user));
 }
 

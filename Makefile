@@ -4,7 +4,7 @@ NAME = ft_irc
 CXX = g++
 CC = gcc
 
-CXXFLAGS = -Wall -Wextra -std=c++98 -I includes
+CXXFLAGS = -Wall -Wextra -std=c++11 -I includes
 LDFLAGS =
 
 SRCDIR = src

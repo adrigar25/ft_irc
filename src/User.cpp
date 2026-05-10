@@ -1,13 +1,12 @@
 
 #include "User.hpp"
+#include "Channel.hpp"
 
 User::User(int socket, const std::string &name)
     : socket(socket), nickname(name), username(""), currentChannel(NULL),
       nickSet(false), userSet(false), passGiven(false), authenticated(false) {}
 
 User::~User() {}
-
-
 
 std::string User::getNickname() const
 {
@@ -64,4 +63,20 @@ void User::setAuthenticated(bool val)
 bool User::isAuthenticated() const
 {
     return this->authenticated;
+}
+
+void User::joinChannel(Channel *channel)
+{
+    if (channel)
+        channel->addUser(this);
+}
+
+void User::setCurrentChannel(Channel *channel)
+{
+    this->currentChannel = channel;
+}
+
+Channel* User::getCurrentChannel() const
+{
+    return this->currentChannel;
 }

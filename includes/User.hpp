@@ -20,6 +20,8 @@ class User
         User(int socket, const std::string &name);
         ~User();
         void joinChannel(Channel *channel);
+        void setCurrentChannel(Channel *channel);
+        Channel* getCurrentChannel() const;
         std::string getNickname() const;
         int getSocket() const;
         
