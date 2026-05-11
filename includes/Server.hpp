@@ -26,7 +26,19 @@ class Server
         void handleNewConnection();
         void handleClientMessage(int fd, const std::string &message);
         void handleClientCommand(User *user, const std::string &command);
+        bool handleUnknownCommand(User *user, const std::string &command);
         void executeCommand(User *user, const std::string &command, const std::string &args);
+        bool handlePASS(User* user, const std::string& params);
+        bool handleNICK(User* user, const std::string& nick);
+        bool handleUSER(User* user, const std::string& params);
+        bool handleJOIN(User* user, const std::string& params);
+        bool handlePART(User* user, const std::string& params);
+        bool handlePRIVMSG(User* user, const std::string& params);
+        bool handleQUIT(User* user, const std::string& params);
+        bool handleLIST(User* user, const std::string& params);
+        bool handleINVITE(User* user, const std::string& params);
+        bool handleKICK(User* user, const std::string& params);
+        bool handleMODE(User* user, const std::string& params);
         void sendToUser(User *user, const std::string &message);
         void addUser(std::unique_ptr<User> user);
         void removeUser(int fd);
@@ -39,6 +51,7 @@ class Server
         void stopServer();
         int getPort() const;
         int getServerSocket() const;
+        User *getUserByNickname(const std::string &nickname);
 
     class userAlreadyExistsException : public std::exception
     {

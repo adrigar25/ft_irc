@@ -34,3 +34,12 @@ Channel* Server::getChannel(const std::string &name)
         return it->second.get();
     return NULL;
 }
+
+User* Server::getUserByNickname(const std::string &nickname)
+{
+    for (std::map<int, std::unique_ptr<User> >::iterator it = this->users.begin(); it != this->users.end(); ++it) {
+        if (it->second->getNickname() == nickname)
+            return it->second.get();
+    }
+    return NULL;
+}

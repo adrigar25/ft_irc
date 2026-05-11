@@ -67,8 +67,11 @@ bool User::isAuthenticated() const
 
 void User::joinChannel(Channel *channel)
 {
-    if (channel)
-        channel->addUser(this);
+    if(!channel->canUserJoin(this))
+        return;
+    channel->addUser(this);
+    this->currentChannel = channel;
+    
 }
 
 void User::setCurrentChannel(Channel *channel)

@@ -1,5 +1,5 @@
 # Simple Makefile for ft_irc
-NAME = ft_irc
+NAME = ircserv
 
 CXX = g++
 CC = gcc

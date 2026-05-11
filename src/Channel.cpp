@@ -74,3 +74,74 @@ void Channel::changeRole(User *user, std::string role)
     roles[role]->insert(std::make_pair(fd, user));
 }
 
+int Channel::getUserCount() const
+{
+    return this->userCount;
+}
+
+int Channel::getUserLimit() const
+{
+    return this->userLimit;
+}
+
+bool Channel::getIsPrivate() const
+{
+    return this->isPrivate;
+}
+
+std::string Channel::getName() const
+{
+    return this->name;
+}
+
+bool Channel::hasUser(User *user) const
+{
+    int fd = user->getSocket();
+    return this->users.find(fd) != this->users.end();
+}
+
+bool Channel::isUserOperator(User *user) const
+{
+    int fd = user->getSocket();
+    return this->operators.find(fd) != this->operators.end();
+}
+
+bool Channel::isUserVoice(User *user) const
+{
+    int fd = user->getSocket();
+    return this->voiceUsers.find(fd) != this->voiceUsers.end();
+}
+
+bool Channel::isUserInvited(User *user) const
+{
+    int fd = user->getSocket();
+    return this->invitedUsers.find(fd) != this->invitedUsers.end();
+}
+
+bool Channel::isUserBanned(User *user) const
+{
+    int fd = user->getSocket();
+    return this->bannedUsers.find(fd) != this->bannedUsers.end();
+}
+
+bool Channel::isUserExcepted(User *user) const
+{
+    int fd = user->getSocket();
+    return this->exceptedUsers.find(fd) != this->exceptedUsers.end();
+}
+
+bool Channel::canUserJoin(User *user) const
+{
+    if (this->getUserLimit() != -1 && this->getUserCount() >= this->getUserLimit())
+        return false;
+    if(this->getIsPrivate() && !this->isUserInvited(user))
+        return false;
+    if(this->isUserBanned(user))
+        return false;
+    return true;
+}
+
+const std::map<int, User*>& Channel::getUsers() const
+{
+    return this->users;
+}

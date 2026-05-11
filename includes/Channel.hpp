@@ -27,6 +27,18 @@ class Channel
         void changeRole(User *user, std::string role);
         void addUserToMap(std::map<int, User*> &userMap, User *user);
         void removeUserFromMap(std::map<int, User*> &userMap, User *user);
+        bool canUserJoin(User *user) const;
+        bool hasUser(User *user) const;
+        bool isUserOperator(User *user) const;
+        bool isUserVoice(User *user) const;
+        bool isUserInvited(User *user) const;
+        bool isUserBanned(User *user) const;
+        bool isUserExcepted(User *user) const;
+        int getUserCount() const;
+        int getUserLimit() const;
+        bool getIsPrivate() const;
+        const std::map<int, User*>& getUsers() const;
+        std::string getName() const;
     class userAlreadyExistsException : public std::exception
     {
         virtual const char* what() const throw()
