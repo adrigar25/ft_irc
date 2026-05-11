@@ -153,7 +153,6 @@ bool Server::handleJOIN(User *user, const std::string &params)
     {
         if (!value.empty() && value[0] == ' ')
             value.erase(0, 1);
-        // Keep channel prefix (#,&,+,!) so map keys match incoming targets
         if (!value.empty() && (value[0] == '#' || value[0] == '&' || value[0] == '+' || value[0] == '!'))
             channelNames.push_back(value);
         else if (!value.empty())

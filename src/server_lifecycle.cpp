@@ -22,16 +22,10 @@ Server::~Server()
     }
     if (this->serverSocket >= 0)
         close(this->serverSocket);
-    this->users.clear();
-    this->channels.clear();
-    this->fds.clear();
-    this->buffers.clear();
+    std::cout << "Server destroyed" << std::endl;
 }
-
-void Server::startServer()
+void Server::createServerSocket()
 {
-    std::cout.setf(std::ios::unitbuf);
-
     this->serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (this->serverSocket < 0) {
         std::string msg = std::string("socket failed: ") + strerror(errno);
@@ -39,14 +33,19 @@ void Server::startServer()
         throw errorStartingServerException();
     }
     std::cout << "Socket created" << std::endl;
+}
 
+void Server::setSocketOptions()
+{
     int opt = 1;
     if (setsockopt(this->serverSocket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) {
         std::cerr << "setsockopt failed: " << strerror(errno) << std::endl;
     }
-
     std::cout << "Socket options set" << std::endl;
+}
 
+void Server::bindServerSocket()
+{
     struct sockaddr_in address;
     memset(&address, 0, sizeof(address));
 
@@ -59,16 +58,38 @@ void Server::startServer()
         std::cerr << msg << std::endl;
         throw errorStartingServerException();
     }
-
     std::cout << "Bind successful" << std::endl;
+}
 
+void Server::listenServerSocket()
+{
     if (listen(this->serverSocket, 64) < 0) {
         std::string msg = std::string("listen failed: ") + strerror(errno);
         std::cerr << msg << std::endl;
         throw errorStartingServerException();
     }
-
     std::cout << "Server is listening on port " << this->port << "..." << std::endl;
+}
+
+void Server::setupPollFds()
+{
+    this->fds.clear();
+    struct pollfd pfd;
+    pfd.fd = this->serverSocket;
+    pfd.events = POLLIN;
+    pfd.revents = 0;
+    this->fds.push_back(pfd);
+}
+
+void Server::startServer()
+{
+    createServerSocket();
+    setSocketOptions();
+    bindServerSocket();
+    listenServerSocket();
+    setupPollFds();
+
+    handleEvents();
 
     this->fds.clear();
     struct pollfd pfd;

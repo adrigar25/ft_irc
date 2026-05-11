@@ -24,6 +24,11 @@ class Server
         void handleEvents();
         void handleDisconnection(int idx);
         void handleNewConnection();
+        void createServerSocket();
+        void setSocketOptions();
+        void bindServerSocket();
+        void listenServerSocket();
+        void setupPollFds();
         void handleClientMessage(int fd, const std::string &message);
         void handleClientCommand(User *user, const std::string &command);
         bool handleUnknownCommand(User *user, const std::string &command);
