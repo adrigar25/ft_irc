@@ -22,35 +22,33 @@ Server::~Server()
     }
     if (this->serverSocket >= 0)
         close(this->serverSocket);
+    // delete remaining users
+    for (std::map<int, User*>::iterator it = this->users.begin(); it != this->users.end(); ++it) {
+        delete it->second;
+    }
+    this->users.clear();
+    // delete remaining channels
+    for (std::map<std::string, Channel*>::iterator it = this->channels.begin(); it != this->channels.end(); ++it) {
+        delete it->second;
+    }
+    this->channels.clear();
     std::cout << "Server destroyed" << std::endl;
 }
 void Server::createServerSocket()
 {
+    // Create socket
+    // AF_INET: IPv4, SOCK_STREAM: TCP
     this->serverSocket = socket(AF_INET, SOCK_STREAM, 0);
-    if (this->serverSocket < 0) {
-        std::string msg = std::string("socket failed: ") + strerror(errno);
-        std::cerr << msg << std::endl;
-        throw errorStartingServerException();
-    }
-    if (!setSocketNonBlocking(this->serverSocket)) {
-        close(this->serverSocket);
-        this->serverSocket = -1;
-        throw errorSettingNonblockingException();
-    }
-    if (!setSocketCloexec(this->serverSocket)) {
-        close(this->serverSocket);
-        this->serverSocket = -1;
-        throw errorSettingCloexecException();
-    }
-    std::cout << "Socket created" << std::endl;
+    if (this->serverSocket < 0)
+        throw errorStartingServerException(0, std::string("socket failed: ") + strerror(errno));
+    setSocketNonBlocking(this->serverSocket);
+    setSocketCloexec(this->serverSocket);
 }
-
 void Server::setSocketOptions()
 {
     int opt = 1;
-    if (setsockopt(this->serverSocket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) {
-        std::cerr << "setsockopt failed: " << strerror(errno) << std::endl;
-    }
+    if (setsockopt(this->serverSocket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
+        throw errorStartingServerException(0, std::string("setsockopt failed: ") + strerror(errno));
     std::cout << "Socket options set" << std::endl;
 }
 
@@ -63,51 +61,51 @@ void Server::bindServerSocket()
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(this->port);
 
-    if (bind(this->serverSocket, (struct sockaddr*)&address, sizeof(address)) < 0) {
-        std::string msg = std::string("bind failed: ") + strerror(errno);
-        std::cerr << msg << std::endl;
-        throw errorStartingServerException();
-    }
+    if (bind(this->serverSocket, (struct sockaddr*)&address, sizeof(address)) < 0)
+        throw errorStartingServerException(0, std::string("bind failed: ") + strerror(errno));
     std::cout << "Bind successful" << std::endl;
 }
 
 void Server::listenServerSocket()
 {
-    if (listen(this->serverSocket, 64) < 0) {
-        std::string msg = std::string("listen failed: ") + strerror(errno);
-        std::cerr << msg << std::endl;
-        throw errorStartingServerException();
-    }
+    if (listen(this->serverSocket, 64) < 0)
+        throw errorStartingServerException(0, std::string("listen failed: ") + strerror(errno));
     std::cout << "Server is listening on port " << this->port << "..." << std::endl;
 }
 
 void Server::setupPollFds()
 {
     this->fds.clear();
+    pushPollFd(this->serverSocket, POLLIN);
+}
+
+void Server::pushPollFd(int fd, short events)
+{
     struct pollfd pfd;
-    pfd.fd = this->serverSocket;
-    pfd.events = POLLIN;
+    pfd.fd = fd;
+    pfd.events = events;
     pfd.revents = 0;
     this->fds.push_back(pfd);
 }
 
 void Server::startServer()
 {
-    createServerSocket();
-    setSocketOptions();
-    bindServerSocket();
-    listenServerSocket();
-    setupPollFds();
-
-    handleEvents();
-
-    this->fds.clear();
-    struct pollfd pfd;
-    pfd.fd = this->serverSocket;
-    pfd.events = POLLIN;
-    pfd.revents = 0;
-    this->fds.push_back(pfd);
-
+    try {
+        createServerSocket();
+        setSocketOptions();
+        bindServerSocket();
+        listenServerSocket();
+        setupPollFds();
+    }
+    catch (const std::exception &e)
+    {
+        if(this->serverSocket >= 0) {
+            close(this->serverSocket);
+            this->serverSocket = -1;
+        }
+        std::cerr << "ERROR: " << e.what() << std::endl;
+        return;
+    }
     handleEvents();
 }
 

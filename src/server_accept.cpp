@@ -1,30 +1,34 @@
 #include "Server.hpp"
 #include <iostream>
 #include <arpa/inet.h>
-#include <sstream>  
+#include <sstream>
 #include <cerrno>
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
 
-bool Server::setSocketNonBlocking(int fd)
+void Server::setSocketNonBlocking(int fd)
 {
     int flags = fcntl(fd, F_GETFL, 0);
-    if (flags == -1) { perror("fcntl F_GETFL"); return false; }
-    if (fcntl(fd, F_SETFL, flags | O_NONBLOCK) == -1) {
-        perror("fcntl F_SETFL"); return false;
+    if (flags == -1) {
+        std::string msg = std::string("fcntl F_GETFL: ") + strerror(errno);
+        perror("fcntl F_GETFL");
+        throw errorSettingNonblockingException(msg);
     }
-    return true;
+    if (fcntl(fd, F_SETFL, flags | O_NONBLOCK) == -1) {
+        std::string msg = std::string("fcntl F_SETFL: ") + strerror(errno);
+        perror("fcntl F_SETFL");
+        throw errorSettingNonblockingException(msg);
+    }
 }
 
-bool Server::setSocketCloexec(int fd)
+void Server::setSocketCloexec(int fd)
 {
     int flags = fcntl(fd, F_GETFD);
-    if (flags == -1) { perror("fcntl F_GETFD"); return false; }
-    if (fcntl(fd, F_SETFD, flags | FD_CLOEXEC) == -1) {
-        perror("fcntl F_SETFD"); return false;
-    }
-    return true;
+    if (flags == -1)
+        throw errorSettingCloexecException(std::string("fcntl F_GETFD: ") + strerror(errno));
+    if (fcntl(fd, F_SETFD, flags | FD_CLOEXEC) == -1)
+        throw errorSettingCloexecException(std::string("fcntl F_SETFD: ") + strerror(errno));
 }
 
 void Server::handleNewConnection()
@@ -33,27 +37,18 @@ void Server::handleNewConnection()
     socklen_t clientAddressLen = sizeof(clientAddress);
     int newSocket = accept(this->serverSocket, (struct sockaddr*)&clientAddress, &clientAddressLen);
     if (newSocket < 0)
-        throw errorAcceptingConnectionException();
+        throw errorAcceptingConnectionException(std::string("accept failed: ") + strerror(errno));
 
-    if (!setSocketNonBlocking(newSocket))
-        throw errorSettingNonblockingException();
-
-    if (!setSocketCloexec(newSocket))
-        throw errorSettingCloexecException();
-
-    struct pollfd pfd;
-    pfd.fd = newSocket;
-    pfd.events = POLLIN;
-    pfd.revents = 0;
-    this->fds.push_back(pfd);
+    setSocketNonBlocking(newSocket);
+    setSocketCloexec(newSocket);
+    pushPollFd(newSocket, POLLIN);
 
     std::stringstream ss;
     ss << "Guest" << newSocket;
-    std::unique_ptr<User> newUser(new User(newSocket, ss.str()));
-    addUser(std::move(newUser));
+    User* newUser = new User(newSocket, ss.str());
+    addUser(newUser);
 
-    User *raw = this->users[newSocket].get();
-    std::cout << "New connection accepted | socket: " << raw->getSocket() << " | nickname: " << raw->getNickname() << std::endl;
+    std::cout << "New connection accepted | socket: " << newUser->getSocket() << " | nickname: " << newUser->getNickname() << std::endl;
 }
 
 void Server::handleDisconnection(int idx)
@@ -69,9 +64,7 @@ void Server::handleDisconnection(int idx)
     std::cout << "Client disconnected | fd: " << fd << std::endl;
 
     close(fd);
-
     this->removeUser(fd);
-
     this->fds.erase(this->fds.begin() + idx);
 
     std::map<int, std::string>::iterator bit = this->buffers.find(fd);

@@ -1,13 +1,12 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
-
 #include "User.hpp"
 #include "Channel.hpp"
 #include <map>
 #include <string>
 #include <exception>
+#include <stdexcept>
 #include <poll.h>
-#include <memory>
 #include <vector>
 
 class Server
@@ -16,9 +15,9 @@ class Server
         int serverSocket;
         unsigned int port;
         std::string password;
-        std::map<int, std::unique_ptr<User> > users;
+        std::map<int, User*> users;
         std::map<int, std::string> buffers;
-        std::map<std::string, std::unique_ptr<Channel> > channels;
+        std::map<std::string, Channel*> channels;
         std::vector<struct pollfd> fds;
 
         void handleEvents();
@@ -35,8 +34,9 @@ class Server
         void bindServerSocket();
         void listenServerSocket();
         void setupPollFds();
-        bool setSocketNonBlocking(int fd);
-        bool setSocketCloexec(int fd);
+        void pushPollFd(int fd, short events = POLLIN);
+        void setSocketNonBlocking(int fd);
+        void setSocketCloexec(int fd);
         void handleClientMessage(int fd, const std::string &message);
         void handleClientCommand(User *user, const std::string &command);
         bool handleUnknownCommand(User *user, const std::string &command);
@@ -54,7 +54,7 @@ class Server
         bool handleMODE(User* user, const std::string& params);
         void sendToUser(User *user, const std::string &message);
         void sendToChannel(Channel *channel, const std::string &message);
-        void addUser(std::unique_ptr<User> user);
+        void addUser(User* user);
         void removeUser(int fd);
         void createChannel(std::string name, User *creator);
         Channel* getChannel(const std::string &name);
@@ -67,57 +67,61 @@ class Server
         int getServerSocket() const;
         User *getUserByNickname(const std::string &nickname);
 
-    class userAlreadyExistsException : public std::exception
+    class userAlreadyExistsException : public std::runtime_error
     {
         public:
-            virtual const char* what() const noexcept { return "User already exists"; }
+            explicit userAlreadyExistsException(const std::string &msg = "User already exists")
+                : std::runtime_error(msg) {}
             virtual ~userAlreadyExistsException() noexcept {}
     };
 
-    class channelAlreadyExistsException : public std::exception
+    class channelAlreadyExistsException : public std::runtime_error
     {
         public:
-            virtual const char* what() const noexcept { return "Channel already exists"; }
+            explicit channelAlreadyExistsException(const std::string &msg = "Channel already exists")
+                : std::runtime_error(msg) {}
             virtual ~channelAlreadyExistsException() noexcept {}
     };
 
-    class userNotFoundException : public std::exception
+    class userNotFoundException : public std::runtime_error
     {
         public:
-            virtual const char* what() const noexcept { return "User not found"; }
+            explicit userNotFoundException(const std::string &msg = "User not found")
+                : std::runtime_error(msg) {}
             virtual ~userNotFoundException() noexcept {}
     };
 
-    class errorStartingServerException : public std::exception
+    class errorStartingServerException : public std::runtime_error
     {
         public:
             int code;
-            std::string message;
-            errorStartingServerException(int code = 0, const std::string& msg = "Error starting server")
-                : code(code), message(msg) {}
-            virtual const char* what() const noexcept { return message.c_str(); }
+            explicit errorStartingServerException(int code = 0, const std::string& msg = "Error starting server")
+                : std::runtime_error(msg), code(code) {}
             int getCode() const { return code; }
             virtual ~errorStartingServerException() noexcept {}
     };
 
-    class errorAcceptingConnectionException : public std::exception
+    class errorAcceptingConnectionException : public std::runtime_error
     {
         public:
-            virtual const char* what() const noexcept { return "Error accepting connection"; }
+            explicit errorAcceptingConnectionException(const std::string &msg = "Error accepting connection")
+                : std::runtime_error(msg) {}
             virtual ~errorAcceptingConnectionException() noexcept {}
     };
 
-    class errorSettingNonblockingException : public std::exception
+    class errorSettingNonblockingException : public std::runtime_error
     {
-        public:        
-            virtual const char* what() const noexcept { return "Error setting non-blocking mode"; }
+        public:
+            explicit errorSettingNonblockingException(const std::string &msg = "Error setting non-blocking mode")
+                : std::runtime_error(msg) {}
             virtual ~errorSettingNonblockingException() noexcept {}
-    };  
+    };
 
-    class errorSettingCloexecException : public std::exception
+    class errorSettingCloexecException : public std::runtime_error
     {
-        public:        
-            virtual const char* what() const noexcept { return "Error setting close-on-exec flag"; }
+        public:
+            explicit errorSettingCloexecException(const std::string &msg = "Error setting close-on-exec flag")
+                : std::runtime_error(msg) {}
             virtual ~errorSettingCloexecException() noexcept {}
     };
 };
