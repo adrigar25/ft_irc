@@ -32,3 +32,10 @@ void Server::sendToUser(User *user, const std::string &message)
         total += static_cast<size_t>(n);
     }
 }
+
+void Server::sendToChannel(Channel *channel, const std::string &message)
+{
+    const std::map<int, User*>& usersMap = channel->getUsers();
+    for (std::map<int, User*>::const_iterator it = usersMap.begin(); it != usersMap.end(); ++it)
+        sendToUser(it->second, message);
+}

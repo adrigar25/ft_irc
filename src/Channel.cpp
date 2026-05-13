@@ -24,9 +24,10 @@ void Channel::addUser(User *user)
         throw userAlreadyExistsException();
     if (this->userCount >= this->userLimit && this->userLimit != -1)
         throw channelFullException();
+    if (this->bannedUsers.find(fd) != this->bannedUsers.end())
+        throw userBannedException();
     this->users.insert(std::make_pair(fd, user));
     this->userCount++;
-    user->setCurrentChannel(this);
     std::cout << "User " << user->getNickname() << " added to channel " << this->name << std::endl;
 }
 
@@ -37,7 +38,6 @@ void Channel::removeUser(User *user)
         throw userNotFoundException();
     this->users.erase(fd);
     this->userCount--;
-    user->setCurrentChannel(NULL);
     std::cout << "User " << user->getNickname() << " removed from channel " << this->name << std::endl;
 }
 

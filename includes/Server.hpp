@@ -22,6 +22,12 @@ class Server
         std::vector<struct pollfd> fds;
 
         void handleEvents();
+        int performPoll();
+        void processNewConnections();
+        void processClientEvents();
+        bool handleClientRead(int idx);
+        void processClientBuffer(int fd);
+        bool handleClientErrorEvents(int idx);
         void handleDisconnection(int idx);
         void handleNewConnection();
         void createServerSocket();
@@ -29,6 +35,8 @@ class Server
         void bindServerSocket();
         void listenServerSocket();
         void setupPollFds();
+        bool setSocketNonBlocking(int fd);
+        bool setSocketCloexec(int fd);
         void handleClientMessage(int fd, const std::string &message);
         void handleClientCommand(User *user, const std::string &command);
         bool handleUnknownCommand(User *user, const std::string &command);
@@ -45,6 +53,7 @@ class Server
         bool handleKICK(User* user, const std::string& params);
         bool handleMODE(User* user, const std::string& params);
         void sendToUser(User *user, const std::string &message);
+        void sendToChannel(Channel *channel, const std::string &message);
         void addUser(std::unique_ptr<User> user);
         void removeUser(int fd);
         void createChannel(std::string name, User *creator);
@@ -60,42 +69,56 @@ class Server
 
     class userAlreadyExistsException : public std::exception
     {
-    public:
-        virtual const char* what() const noexcept { return "User already exists"; }
-        virtual ~userAlreadyExistsException() noexcept {}
+        public:
+            virtual const char* what() const noexcept { return "User already exists"; }
+            virtual ~userAlreadyExistsException() noexcept {}
     };
 
     class channelAlreadyExistsException : public std::exception
     {
-    public:
-        virtual const char* what() const noexcept { return "Channel already exists"; }
-        virtual ~channelAlreadyExistsException() noexcept {}
+        public:
+            virtual const char* what() const noexcept { return "Channel already exists"; }
+            virtual ~channelAlreadyExistsException() noexcept {}
     };
 
     class userNotFoundException : public std::exception
     {
-    public:
-        virtual const char* what() const noexcept { return "User not found"; }
-        virtual ~userNotFoundException() noexcept {}
+        public:
+            virtual const char* what() const noexcept { return "User not found"; }
+            virtual ~userNotFoundException() noexcept {}
     };
 
     class errorStartingServerException : public std::exception
     {
-    public:
-        int code;
-        std::string message;
-        errorStartingServerException(int code = 0, const std::string& msg = "Error starting server")
-            : code(code), message(msg) {}
-        virtual const char* what() const noexcept { return message.c_str(); }
-        int getCode() const { return code; }
-        virtual ~errorStartingServerException() noexcept {}
+        public:
+            int code;
+            std::string message;
+            errorStartingServerException(int code = 0, const std::string& msg = "Error starting server")
+                : code(code), message(msg) {}
+            virtual const char* what() const noexcept { return message.c_str(); }
+            int getCode() const { return code; }
+            virtual ~errorStartingServerException() noexcept {}
     };
 
     class errorAcceptingConnectionException : public std::exception
     {
-    public:
-        virtual const char* what() const noexcept { return "Error accepting connection"; }
-        virtual ~errorAcceptingConnectionException() noexcept {}
+        public:
+            virtual const char* what() const noexcept { return "Error accepting connection"; }
+            virtual ~errorAcceptingConnectionException() noexcept {}
+    };
+
+    class errorSettingNonblockingException : public std::exception
+    {
+        public:        
+            virtual const char* what() const noexcept { return "Error setting non-blocking mode"; }
+            virtual ~errorSettingNonblockingException() noexcept {}
+    };  
+
+    class errorSettingCloexecException : public std::exception
+    {
+        public:        
+            virtual const char* what() const noexcept { return "Error setting close-on-exec flag"; }
+            virtual ~errorSettingCloexecException() noexcept {}
     };
 };
 

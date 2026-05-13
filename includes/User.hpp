@@ -2,6 +2,7 @@
 #define USER_HPP
 
 #include <string>
+#include <map>
 
 class Channel;
 
@@ -11,19 +12,19 @@ class User
         int socket;
         std::string nickname;
         std::string username;
-        Channel *currentChannel;
         bool nickSet;
         bool userSet;
         bool passGiven;
         bool authenticated;
+        std::map<std::string, Channel*> channels;
     public:
         User(int socket, const std::string &name);
         ~User();
         void joinChannel(Channel *channel);
-        void setCurrentChannel(Channel *channel);
-        Channel* getCurrentChannel() const;
+        void leaveChannel(Channel *channel);
         std::string getNickname() const;
         int getSocket() const;
+        const std::map<std::string, Channel*>& getChannels() const;
         
         // Authentication / identity helpers
         void setNickname(const std::string &name);
@@ -35,6 +36,14 @@ class User
         bool isNickSet() const;
         bool isUserSet() const;
         bool isAuthenticated() const;
+
+        class userAlreadyInChannelException : public std::exception
+        {
+            virtual const char* what() const throw()
+            {
+                return "User already in channel";
+            }
+        };
 };
 
 #endif

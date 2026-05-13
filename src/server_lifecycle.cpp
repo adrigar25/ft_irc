@@ -32,6 +32,16 @@ void Server::createServerSocket()
         std::cerr << msg << std::endl;
         throw errorStartingServerException();
     }
+    if (!setSocketNonBlocking(this->serverSocket)) {
+        close(this->serverSocket);
+        this->serverSocket = -1;
+        throw errorSettingNonblockingException();
+    }
+    if (!setSocketCloexec(this->serverSocket)) {
+        close(this->serverSocket);
+        this->serverSocket = -1;
+        throw errorSettingCloexecException();
+    }
     std::cout << "Socket created" << std::endl;
 }
 

@@ -4,6 +4,28 @@
 #include <sstream>  
 #include <cerrno>
 #include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
+
+bool Server::setSocketNonBlocking(int fd)
+{
+    int flags = fcntl(fd, F_GETFL, 0);
+    if (flags == -1) { perror("fcntl F_GETFL"); return false; }
+    if (fcntl(fd, F_SETFL, flags | O_NONBLOCK) == -1) {
+        perror("fcntl F_SETFL"); return false;
+    }
+    return true;
+}
+
+bool Server::setSocketCloexec(int fd)
+{
+    int flags = fcntl(fd, F_GETFD);
+    if (flags == -1) { perror("fcntl F_GETFD"); return false; }
+    if (fcntl(fd, F_SETFD, flags | FD_CLOEXEC) == -1) {
+        perror("fcntl F_SETFD"); return false;
+    }
+    return true;
+}
 
 void Server::handleNewConnection()
 {
@@ -12,6 +34,12 @@ void Server::handleNewConnection()
     int newSocket = accept(this->serverSocket, (struct sockaddr*)&clientAddress, &clientAddressLen);
     if (newSocket < 0)
         throw errorAcceptingConnectionException();
+
+    if (!setSocketNonBlocking(newSocket))
+        throw errorSettingNonblockingException();
+
+    if (!setSocketCloexec(newSocket))
+        throw errorSettingCloexecException();
 
     struct pollfd pfd;
     pfd.fd = newSocket;

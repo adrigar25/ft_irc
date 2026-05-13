@@ -15,6 +15,7 @@ void Server::handleClientCommand(User *user, const std::string &command)
     std::getline(iss, args);
     if (!args.empty() && args[0] == ' ')
         args.erase(0, 1);
+    std::cout << "[" << cmd << "] " << "fd:" << user->getSocket() << " args:" << args << std::endl;
     executeCommand(user, cmd, args);
 }
 
@@ -90,7 +91,7 @@ bool Server::handleQUIT(User *user, const std::string &params)
 {
     (void)params; // Unused parameter
     sendToUser(user, std::string("Goodbye!"));
-    handleDisconnection(-1);
+    // The client will close the connection after receiving this message, so we don't need to do anything else here
     return true;
 }
 
@@ -181,14 +182,41 @@ bool Server::handleJOIN(User *user, const std::string &params)
 
 bool Server::handlePART(User *user, const std::string &params)
 {
-    (void)params; // Unused parameter
-    sendToUser(user, std::string("PART command not implemented yet"));
+    std::vector<std::string> channelNames;
+    std::vector<std::string> keys;
+
+    std::string channelsPart = params;
+    std::string msgPart;
+    size_t sp = params.find(' ');
+    if (sp != std::string::npos) {
+        channelsPart = params.substr(0, sp);
+        msgPart = params.substr(sp + 1);
+    }
+
+    std::istringstream ciss(channelsPart);
+    std::string value;
+    while (std::getline(ciss, value, ','))
+    {
+        if (!value.empty() && value[0] == ' ')
+            value.erase(0, 1);
+        if (!value.empty() && (value[0] == '#' || value[0] == '&' || value[0] == '+' || value[0] == '!'))
+            channelNames.push_back(value);
+        else if (!value.empty())
+            sendToUser(user, std::string("Invalid channel name: ") + value);
+    }
+
+    for (const auto &channelName : channelNames)
+    {
+        if(this->channels.find(channelName) != this->channels.end())
+        {
+            user->leaveChannel(this->channels[channelName].get());
+        }
+    }
     return true;
 }
 
 bool Server::handlePRIVMSG(User *user, const std::string &params)
 {
-    std::list<User *> users;
     size_t sp = params.find(' ');
     std::string target = (sp == std::string::npos) ? params : params.substr(0, sp);
 
@@ -207,26 +235,19 @@ bool Server::handlePRIVMSG(User *user, const std::string &params)
         sendToUser(user, std::string("461 PRIVMSG :Not enough parameters"));
         return true;
     }                   
-    if(target[0] == '#' || target[0] == '&' || target[0] == '+' || target[0] == '!') {
-        Channel *ch = getChannel(target);
-        if(!ch) {
-            sendToUser(user, std::string("403 ") + target + " :No such channel");
-            return true;
-        }
-        const std::map<int, User*>& usersMap = ch->getUsers();
-        for (std::map<int, User*>::const_iterator it = usersMap.begin(); it != usersMap.end(); ++it)
-            users.push_back(it->second);
-    } else {
-        User *targetUser = getUserByNickname(target);
-        if (!targetUser) {
-            sendToUser(user, std::string("401 ") + target + " :No such nick");
-            return true;
-        }
-        users.push_back(targetUser);
-    }
+
     std::string out = ":" + user->getNickname() + " PRIVMSG " + target + " :" + msg + "\r\n";
-    for (const auto &recipient : users) {
-        sendToUser(recipient, out);
+    Channel *channel = nullptr;
+    
+    if(target[0] == '#' || target[0] == '&' || target[0] == '+' || target[0] == '!') {
+        channel = getChannel(target);
+        if(channel->hasUser(user)) {
+            sendToChannel(channel, out);
+        } else {
+            sendToUser(user, std::string("404 ") + target + " :Cannot send to channel");
+        }
+    } else {
+        sendToUser(this->getUserByNickname(target), out);
     }
     return true;
 }
@@ -239,7 +260,6 @@ bool Server::handleUnknownCommand(User *user, const std::string &command)
 
 void Server::executeCommand(User *user, const std::string &command, const std::string &args)
 {
-    std::cout << "Executing command: " << command << " with args: " << args << " for user: " << user->getNickname() << std::endl;
     if (!user->isAuthenticated())
     {
         if (command == "PASS") { handlePASS(user, args); return; }

@@ -1,9 +1,11 @@
 
 #include "User.hpp"
 #include "Channel.hpp"
+#include <iostream>
+#include <exception>
 
 User::User(int socket, const std::string &name)
-    : socket(socket), nickname(name), username(""), currentChannel(NULL),
+    : socket(socket), nickname(name), username(""),
       nickSet(false), userSet(false), passGiven(false), authenticated(false) {}
 
 User::~User() {}
@@ -16,6 +18,11 @@ std::string User::getNickname() const
 int User::getSocket() const
 {
     return this->socket;
+}
+
+const std::map<std::string, Channel*>& User::getChannels() const
+{
+    return this->channels;
 }
 
 void User::setNickname(const std::string &name)
@@ -67,19 +74,14 @@ bool User::isAuthenticated() const
 
 void User::joinChannel(Channel *channel)
 {
-    if(!channel->canUserJoin(this))
-        return;
+    if(this->channels.find(channel->getName()) != this->channels.end())
+        throw userAlreadyInChannelException();
+
+    this->channels.insert(std::make_pair(channel->getName(), channel));
     channel->addUser(this);
-    this->currentChannel = channel;
-    
 }
 
-void User::setCurrentChannel(Channel *channel)
+void User::leaveChannel(Channel *channel)
 {
-    this->currentChannel = channel;
-}
-
-Channel* User::getCurrentChannel() const
-{
-    return this->currentChannel;
+    channel->removeUser(this);
 }

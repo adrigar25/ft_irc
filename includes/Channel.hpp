@@ -74,6 +74,13 @@ class Channel
             return "Channel is private, user must be invited to join";
         }
     };
+    class userBannedException : public std::exception
+    {
+        virtual const char* what() const throw()
+        {
+            return "User is banned from this channel";
+        }
+    };
 };
 
 #endif
