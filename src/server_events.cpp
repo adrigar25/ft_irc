@@ -52,7 +52,19 @@ void Server::processClientBuffer(int fd)
         if (!line.empty() && line.back() == '\r')
             line.erase(line.size() - 1);
         std::cout << "Received line from fd " << fd << ": " << line << std::endl;
-        handleClientMessage(fd, line);
+        try {
+            handleClientMessage(fd, line);
+        } catch (const std::exception &e) {
+            std::cerr << "Client error fd " << fd << ": " << e.what() << std::endl;
+            for (int i = 1; i < (int)this->fds.size(); ++i) {
+                if (this->fds[i].fd == fd) { handleDisconnection(i); break; }
+            }
+        } catch (...) {
+            std::cerr << "Unknown client error fd " << fd << std::endl;
+            for (int i = 1; i < (int)this->fds.size(); ++i) {
+                if (this->fds[i].fd == fd) { handleDisconnection(i); break; }
+            }
+        }
         acc.erase(0, pos + 1);
     }
 }
@@ -80,22 +92,33 @@ void Server::processClientEvents()
 
 void Server::handleEvents()
 {
+    int ready = 0;
     while (true)
     {
-        int nfds = this->fds.size();
-        if (nfds == 0)
+        if (this->fds.size() == 0)
             continue;
-
-        int ready = performPoll();
+        ready = performPoll();
         if (ready == 0)
             continue;
         if (ready < 0)
             break;
-
-        
         if (!this->fds.empty() && (this->fds[0].revents & POLLIN))
-            handleNewConnection();
+        {
+            try {
+                handleNewConnection();
+            } catch (const std::exception &e) {
+                std::cerr << "Accept error: " << e.what() << std::endl;
+            } catch (...) {
+                std::cerr << "Unknown accept error" << std::endl;
+            }
+        }
 
-        processClientEvents();
+        try {
+            processClientEvents();
+        } catch (const std::exception &e) {
+            std::cerr << "Error processing client events: " << e.what() << std::endl;
+        } catch (...) {
+            std::cerr << "Unknown error processing client events" << std::endl;
+        }
     }
 }
