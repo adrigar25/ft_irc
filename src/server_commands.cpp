@@ -21,9 +21,9 @@ void Server::handleClientCommand(User *user, const std::string &command)
 
 void Server::handleClientMessage(int fd, const std::string &message)
 {
-    std::map<int, std::unique_ptr<User> >::iterator it = this->users.find(fd);
+    std::map<int, User*>::iterator it = this->users.find(fd);
     if (it != this->users.end()) {
-        User *user = it->second.get();
+        User *user = it->second;
         handleClientCommand(user, message);
     } else {
         std::cerr << "handleClientMessage: user not found for fd " << fd << std::endl;
@@ -51,9 +51,9 @@ bool Server::handleNICK(User *user, const std::string &nick)
         sendToUser(user, std::string("431 NICK :No nickname given"));
         return true;
     }
-    for (std::map<int, std::unique_ptr<User> >::iterator it = this->users.begin(); it != this->users.end(); ++it)
+    for (std::map<int, User*>::iterator it = this->users.begin(); it != this->users.end(); ++it)
     {
-        if (it->second.get() != user && it->second->getNickname() == nick)
+        if (it->second != user && it->second->getNickname() == nick)
         {
             sendToUser(user, std::string("433 NICK :Nickname is already in use"));
             return true;
@@ -99,7 +99,7 @@ bool Server::handleLIST(User *user, const std::string &params)
 {
     (void)params; // Unused parameter
     std::string response = "Channels:\n";
-    for (std::map<std::string, std::unique_ptr<Channel> >::iterator it = this->channels.begin(); it != this->channels.end(); ++it)
+    for (std::map<std::string, Channel*>::iterator it = this->channels.begin(); it != this->channels.end(); ++it)
         response += it->first + " (" + std::to_string(it->second->getUserCount()) + " users)\n";
     sendToUser(user, response);
     return true;
@@ -126,14 +126,7 @@ bool Server::handleMODE(User *user, const std::string &params)
     return true;
 }
 
-void Server::createChannel(std::string name, User *creator)
-{
-    if (this->channels.find(name) != this->channels.end())
-        throw channelAlreadyExistsException();
-
-    std::unique_ptr<Channel> ch(new Channel(name, creator));
-    this->channels.insert(std::make_pair(name, std::move(ch)));
-}
+/* createChannel moved to src/server_channels.cpp */
 
 bool Server::handleJOIN(User *user, const std::string &params)
 {
@@ -175,7 +168,7 @@ bool Server::handleJOIN(User *user, const std::string &params)
         if(this->channels.find(channelName) == this->channels.end())
             createChannel(channelName, user);
         else
-            user->joinChannel(this->channels[channelName].get());
+            user->joinChannel(this->channels[channelName]);
     }
     return true;
 }
@@ -209,7 +202,7 @@ bool Server::handlePART(User *user, const std::string &params)
     {
         if(this->channels.find(channelName) != this->channels.end())
         {
-            user->leaveChannel(this->channels[channelName].get());
+            user->leaveChannel(this->channels[channelName]);
         }
     }
     return true;

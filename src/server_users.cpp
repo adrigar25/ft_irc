@@ -3,43 +3,39 @@
 #include "User.hpp"
 #include <iostream>
 
-void Server::addUser(std::unique_ptr<User> user)
+void Server::addUser(User* user)
 {
     int fd = user->getSocket();
     if(this->users.find(fd) != this->users.end())
-       throw userAlreadyExistsException();
-    this->users.insert(std::make_pair(fd, std::move(user)));
+       throw userAlreadyExistsException(std::string("User already exists: fd ") + std::to_string(fd));
+    this->users.insert(std::make_pair(fd, user));
 }
 
 void Server::removeUser(int fd)
 {
-    std::map<int, std::unique_ptr<User> >::iterator it = this->users.find(fd);
+    std::map<int, User*>::iterator it = this->users.find(fd);
 
     if (it != this->users.end()) {
-        User *user = it->second.get();
-        for (std::map<std::string, std::unique_ptr<Channel> >::iterator cit = this->channels.begin(); cit != this->channels.end(); ++cit) {
+        User *user = it->second;
+        for (std::map<std::string, Channel*>::iterator cit = this->channels.begin(); cit != this->channels.end(); ++cit) {
             try {
-                cit->second->removeUser(user);
-            } catch (...) {
+                if (cit->second) cit->second->removeUser(user);
+            } catch (const std::exception &e) {
+                std::cerr << "ERROR: error removing user from channel " << cit->first << ": " << e.what() << std::endl;
             }
         }
         this->users.erase(it);
+        delete user;
     }
 }
 
-Channel* Server::getChannel(const std::string &name)
-{
-    std::map<std::string, std::unique_ptr<Channel> >::iterator it = this->channels.find(name);
-    if (it != this->channels.end())
-        return it->second.get();
-    return NULL;
-}
+/* getChannel moved to src/server_channels.cpp */
 
 User* Server::getUserByNickname(const std::string &nickname)
 {
-    for (std::map<int, std::unique_ptr<User> >::iterator it = this->users.begin(); it != this->users.end(); ++it) {
+    for (std::map<int, User*>::iterator it = this->users.begin(); it != this->users.end(); ++it) {
         if (it->second->getNickname() == nickname)
-            return it->second.get();
+            return it->second;
     }
     return NULL;
 }

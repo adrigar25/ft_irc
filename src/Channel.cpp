@@ -45,7 +45,7 @@ void Channel::addUserToMap(std::map<int, User*> &userMap, User *user)
 {
     int fd = user->getSocket();
     if(userMap.find(fd) != userMap.end())
-        return; // User already has this role, do nothing
+        return;
     userMap.insert(std::make_pair(fd, user));
 }
 
