@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/05/15 00:08:17 by agarcia           #+#    #+#             */
+/*   Updated: 2026/05/15 00:53:28 by agarcia          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <iostream>
 #include <cstring>
 #include <cerrno>
@@ -7,6 +19,14 @@
 #include <netinet/in.h>
 #include "Server.hpp"
 
+/**
+ * @brief Convierte una `exception_ptr` en un mensaje legible.
+ *
+ * Intenta re-lanzar la excepción y capturar diversos tipos para obtener
+ * un mensaje descriptivo.
+ * @param ep `std::exception_ptr` apuntando a la excepción.
+ * @return Cadena con el mensaje de la excepción.
+ */
 static std::string exception_message(std::exception_ptr ep) {
         try {
                 if (ep) std::rethrow_exception(ep);
@@ -17,6 +37,14 @@ static std::string exception_message(std::exception_ptr ep) {
         return {};
 }
 
+
+/**
+ * @brief Valida los argumentos de línea de comandos esperados.
+ *
+ * Comprueba que se pasen exactamente 2 argumentos (puerto y contraseña)
+ * y que el puerto esté en el rango válido.
+ * @return `true` si los argumentos son válidos.
+ */
 static bool checkArgs(int argc, char* argv[]) {
     if(argc != 3) {
         std::cerr << "Usage: " << argv[0] << " <port> <password>" <<std::endl;
@@ -29,6 +57,13 @@ static bool checkArgs(int argc, char* argv[]) {
     return true;
 }
 
+
+/**
+ * @brief Punto de entrada de la aplicación.
+ *
+ * Valida argumentos, crea el `Server` y arranca el loop principal. Captura
+ * excepciones fatales y muestra un mensaje antes de terminar.
+ */
 int main(int argc, char* argv[]) {
     
     if (!checkArgs(argc, argv))

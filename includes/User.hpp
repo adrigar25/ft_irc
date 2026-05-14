@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   User.hpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/05/15 00:08:12 by agarcia           #+#    #+#             */
+/*   Updated: 2026/05/15 00:52:39 by agarcia          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef USER_HPP
 #define USER_HPP
 
@@ -9,21 +21,21 @@ class Channel;
 class User
 {
     private:
-        int socket;
-        std::string nickname;
-        std::string username;
-        bool nickSet;
-        bool userSet;
-        bool passGiven;
-        bool authenticated;
-        std::map<std::string, Channel*> channels;
+        int                                 socket;
+        std::string                         nickname;
+        std::string                         username;
+        bool                                nickSet;
+        bool                                userSet;
+        bool                                passGiven;
+        bool                                authenticated;
+        std::map<std::string, Channel*>     channels;
     public:
-        User(int socket, const std::string &name);
-        ~User();
-        void joinChannel(Channel *channel);
-        void leaveChannel(Channel *channel);
+                    User(int socket, const std::string &name);
+                    ~User();
+        void        joinChannel(Channel *channel);
+        void        leaveChannel(Channel *channel);
         std::string getNickname() const;
-        int getSocket() const;
+        int         getSocket() const;
         const std::map<std::string, Channel*>& getChannels() const;
         
         // Authentication / identity helpers
