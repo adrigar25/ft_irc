@@ -13,3 +13,9 @@
 
 -   Poder banear usuarios
 
+//BONUS
+
+- Chatbot
+
+- File transfer
+
