@@ -1,0 +1,15 @@
+-   Terminar todas las funciones de los commandos 
+    en server_commands.cpp
+
+-   Añadir operadores para los canales (canales moderados)
+
+-   Poder dar voz a usuarios en canales moderados
+    (si un canal esta moderado, solo pueden hablar
+    los operadores y los jugadores a los que se le
+    de voz +v por un operador)
+
+-   Añadir la posibilidad de 
+    invitar jugadores a canales
+
+-   Poder banear usuarios
+
