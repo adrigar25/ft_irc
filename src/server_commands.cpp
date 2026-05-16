@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 00:08:23 by agarcia           #+#    #+#             */
-/*   Updated: 2026/05/15 00:22:48 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/05/17 01:00:40 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,23 @@
  */
 void Server::handleClientCommand(User *user, const std::string &commandLine)
 {
-    std::string cmd = commandLine.substr(0, commandLine.find(' '));
-    std::string args = "";
-    if(commandLine[cmd.size() + 1])
-        args = commandLine.substr(cmd.size() + 1);
+    if (!user) {
+        std::cerr << "handleClientCommand: null user for command: " << commandLine << std::endl;
+        return;
+    }
+    size_t sp = commandLine.find(' ');
+    std::string cmd;
+    std::string args;
+    if (sp == std::string::npos) {
+        cmd = commandLine;
+        args = "";
+    } else {
+        cmd = commandLine.substr(0, sp);
+        if (sp + 1 < commandLine.size())
+            args = commandLine.substr(sp + 1);
+        else
+            args = "";
+    }
     std::cout << "[" << cmd << "] " << "fd:" << user->getSocket() << " args:" << (args.empty() ? "<EMPTY>" : args) << std::endl;
     executeCommand(user, cmd, args);
 }
@@ -350,16 +363,30 @@ bool Server::handlePRIVMSG(User *user, const std::string &params)
 
     std::string out = ":" + user->getNickname() + " PRIVMSG " + target + " :" + msg + "\r\n";
     Channel *channel = nullptr;
-    
+
+    if(target.empty()) {
+        sendToUser(user, std::string("411 PRIVMSG :No recipient given"));
+        return true;
+    }
+
     if(target[0] == '#' || target[0] == '&' || target[0] == '+' || target[0] == '!') {
         channel = getChannel(target);
+        if (!channel) {
+            sendToUser(user, std::string("403 ") + target + " :No such channel");
+            return true;
+        }
         if(channel->hasUser(user)) {
             sendToChannel(channel, out);
         } else {
             sendToUser(user, std::string("404 ") + target + " :Cannot send to channel");
         }
     } else {
-        sendToUser(this->getUserByNickname(target), out);
+        User *dest = this->getUserByNickname(target);
+        if (!dest) {
+            sendToUser(user, std::string("401 ") + target + " :No such nick/channel");
+            return true;
+        }
+        sendToUser(dest, out);
     }
     return true;
 }

@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 00:08:25 by agarcia           #+#    #+#             */
-/*   Updated: 2026/05/15 00:54:24 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/05/17 00:55:51 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,9 +88,10 @@ bool Server::handleClientRead(int idx)
 void Server::processClientBuffer(int fd)
 {
     std::string &buffer = this->buffers[fd];
-    std::string line = buffer.substr(0, buffer.find('\n'));
-    while (!line.empty())
+    size_t pos;
+    while ((pos = buffer.find('\n')) != std::string::npos)
     {
+        std::string line = buffer.substr(0, pos);
         if (!line.empty() && line.back() == '\r')
             line.erase(line.size() - 1);
         try {
@@ -106,8 +107,7 @@ void Server::processClientBuffer(int fd)
                 if (this->fds[i].fd == fd) { handleDisconnection(i); break; }
             }
         }
-        buffer.erase(0, line.size() + 1);
-        line = buffer.substr(0, buffer.find('\n'));
+        buffer.erase(0, pos + 1);
     }
 }
 
@@ -145,8 +145,50 @@ void Server::handleClientEvents()
 {
     for (int i = 1; i < (int)this->fds.size(); ++i)
     {
+        if (handleClientWrite(i)) { i--; continue; }
         if (handleClientRead(i)) { i--; continue; }
         if (handleClientErrorEvents(i)) { i--; continue; }
+    }
+}
+
+
+bool Server::handleClientWrite(int idx)
+{
+    if (idx < 0 || idx >= (int)this->fds.size())
+        return false;
+    if (!(this->fds[idx].revents & POLLOUT))
+        return false;
+    int fd = this->fds[idx].fd;
+    std::map<int, std::string>::iterator it = this->outBuffers.find(fd);
+    if (it == this->outBuffers.end() || it->second.empty()) {
+        setPollOut(fd, false);
+        return false;
+    }
+    std::string &buf = it->second;
+    while (!buf.empty()) {
+        ssize_t n = send(fd, buf.c_str(), buf.size(), 0);
+        if (n < 0) {
+            if (errno == EINTR) continue;
+            if (errno == EAGAIN || errno == EWOULDBLOCK) { setPollOut(fd, true); break; }
+            std::cerr << "send failed on fd " << fd << ": " << strerror(errno) << std::endl;
+            handleDisconnection(idx);
+            return true;
+        }
+        buf.erase(0, static_cast<size_t>(n));
+    }
+    if (buf.empty()) setPollOut(fd, false);
+    return false;
+}
+
+
+void Server::setPollOut(int fd, bool enable)
+{
+    for (size_t i = 0; i < this->fds.size(); ++i) {
+        if (this->fds[i].fd == fd) {
+            if (enable) this->fds[i].events |= POLLOUT;
+            else this->fds[i].events &= ~POLLOUT;
+            break;
+        }
     }
 }
 
