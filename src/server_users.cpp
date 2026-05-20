@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 00:08:30 by agarcia           #+#    #+#             */
-/*   Updated: 2026/05/19 17:05:49 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/05/20 17:53:46 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "Channel.hpp"
 #include "User.hpp"
 #include <iostream>
+#include <sstream>
 
 /**
  * @brief Añade un `User` al mapa `users` indexado por su descriptor.
@@ -24,8 +25,11 @@
 void Server::addUser(User* user)
 {
     int fd = user->getSocket();
-    if(this->users.find(fd) != this->users.end())
-       throw userAlreadyExistsException(std::string("User already exists: fd ") + std::to_string(fd));
+     if(this->users.find(fd) != this->users.end()) {
+         std::ostringstream oss;
+         oss << fd;
+         throw userAlreadyExistsException(std::string("User already exists: fd ") + oss.str());
+     }
     this->users.insert(std::make_pair(fd, user));
 }
 
