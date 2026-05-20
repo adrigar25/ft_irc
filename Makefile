@@ -4,39 +4,37 @@ NAME = ircserv
 CXX = g++
 CC = gcc
 
-CXXFLAGS = -Wall -Wextra -std=c++11 -I includes
+CXXFLAGS = -Wall -Wextra -std=c++98 -I includes
 LDFLAGS =
 
 SRCDIR = src
 INCDIR = includes
 
-SRCS := $(wildcard $(SRCDIR)/*.cpp)
+SRCS := $(wildcard $(SRCDIR)/*.cpp) $(wildcard $(SRCDIR)/*/*.cpp)
 OBJDIR = objs
-SRCS := $(wildcard $(SRCDIR)/*.cpp)
 OBJS := $(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.o,$(SRCS))
-
-CSRCS := $(wildcard $(SRCDIR)/*.c)
-COBJS := $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(CSRCS))
 
 HEADERS := $(wildcard $(INCDIR)/*.hpp)
 
 all: $(NAME)
 
-$(NAME): $(OBJS) $(COBJS)
-	$(CXX) $(CXXFLAGS) $(OBJS) $(COBJS) -o $(NAME) $(LDFLAGS)
+$(NAME): $(OBJS)
+	$(CXX) $(CXXFLAGS) $(OBJS) -o $(NAME) $(LDFLAGS)
 
 # Rules
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp $(HEADERS) | $(OBJDIR)
+	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c | $(OBJDIR)
+	@mkdir -p $(dir $@)
 	$(CC) -Wall -Wextra -Werror -c $< -o $@
 
 $(OBJDIR):
 	@mkdir -p $(OBJDIR)
 
 clean:
-	rm -f $(OBJS) $(COBJS)
+	rm -f $(OBJS)
 
 fclean: clean
 	rm -f $(NAME)
