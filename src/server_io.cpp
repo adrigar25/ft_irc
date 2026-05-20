@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 00:08:27 by agarcia           #+#    #+#             */
-/*   Updated: 2026/05/19 18:08:19 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/05/20 19:11:13 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,9 @@
 #include <sys/socket.h>
 #include <cerrno>
 #include <unistd.h>
+#include <cctype>
+#include <cstring>
+#include <cstdio>
 
 /*
  * @brief Habilita la vigilancia de POLLOUT para un fd concreto en el vector
@@ -60,8 +63,51 @@ void Server::enqueuePending(User *user, const char *buf, size_t len)
  */
 void Server::sendToUser(User *user, const std::string &message)
 {
-    std::string msg = formatMessage(message);
+    std::string msg = message;
+
+    /* If the message is not already a valid IRC message (starts with ':' or
+     * a three-digit numeric or a known command), wrap it into a NOTICE to
+     * the user's nick so clients like WeeChat parse it correctly. */
+    bool needsWrap = true;
+    if (!msg.empty()) {
+        if (msg[0] == ':')
+            needsWrap = false;
+        else if (msg.size() >= 3 && std::isdigit((unsigned char)msg[0]) && std::isdigit((unsigned char)msg[1]) && std::isdigit((unsigned char)msg[2]) && (msg.size() == 3 || msg[3] == ' '))
+            needsWrap = false;
+        else {
+            const char *cmds[] = {"PRIVMSG","NOTICE","JOIN","PART","MODE","KICK","INVITE","QUIT","NICK","USER","PASS","PING","PONG","ERROR","CAP"};
+            for (size_t i = 0; i < sizeof(cmds)/sizeof(cmds[0]); ++i) {
+                size_t len = std::strlen(cmds[i]);
+                if (msg.size() >= len && msg.compare(0, len, cmds[i]) == 0 && (msg.size() == len || msg[len] == ' ')) {
+                    needsWrap = false;
+                    break;
+                }
+            }
+        }
+    }
+    if (needsWrap) {
+        std::string notice = std::string("NOTICE ") + user->getNickname() + " :" + msg;
+        msg.swap(notice);
+    }
+
+    msg = formatMessage(msg);
     int fd = user->getSocket();
+
+    /* Debug: print escaped message content so we can inspect exact bytes sent */
+    std::string escaped;
+    escaped.reserve(msg.size() * 3 + 10);
+    for (size_t i = 0; i < msg.size(); ++i) {
+        unsigned char c = static_cast<unsigned char>(msg[i]);
+        if (c == '\r') escaped += "\\r";
+        else if (c == '\n') escaped += "\\n";
+        else if (c >= 32 && c < 127) escaped += msg[i];
+        else {
+            char buf[8];
+            std::snprintf(buf, sizeof(buf), "\\x%02x", c);
+            escaped += buf;
+        }
+    }
+    std::cerr << "[DEBUG] sendToUser: preparing to send to fd " << fd << " content='" << escaped << "'" << std::endl;
 
     std::string &pending = user->getOutBuffer();
     size_t &offset = user->getOutOffset();
@@ -87,13 +133,18 @@ void Server::sendToUser(User *user, const std::string &message)
                 continue;
             if (errno == EAGAIN || errno == EWOULDBLOCK)
             {
+                std::cerr << "[DEBUG] send would block, enqueuing " << (len - total) << " bytes for fd " << fd << std::endl;
                 enqueuePending(user, buf + total, len - total);
                 break;
             }
-            std::cerr << "send failed: " << strerror(errno) << std::endl;
+            std::cerr << "send failed: " << strerror(errno) << " fd=" << fd << std::endl;
             break;
         }
         total += n;
+        std::cerr << "[DEBUG] sendToUser: wrote " << n << " bytes to fd " << fd << " (total_sent=" << total << "/" << len << ")" << std::endl;
+    }
+    if (total == len) {
+        std::cerr << "[DEBUG] sendToUser: full message delivered to fd " << fd << " (" << len << " bytes)" << std::endl;
     }
 }
 
