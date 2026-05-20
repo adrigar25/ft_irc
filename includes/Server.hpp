@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 00:08:09 by agarcia           #+#    #+#             */
-/*   Updated: 2026/05/15 00:54:49 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/05/19 18:08:19 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,16 +28,20 @@ class Server
         unsigned int                    port;
         std::string                     password;
         std::map<int, User*>            users;
-        std::map<int, std::string>      buffers;
+        /* per-user buffers moved into User class */
         std::map<std::string, Channel*> channels;
         std::vector<struct pollfd>      fds;
     void        handleEvents();
     int         performPoll();
     void        handleClientEvents();
+    void        processClientBuffer(User *user);
     bool        handleClientRead(int idx);
-    void        processClientBuffer(int fd);
-    bool        handleClientErrorEvents(int idx);
-    void        handleDisconnection(int idx);
+    User*       getUserByFd(int fd);
+    void        appendToUserInBuffer(User *user, const char *buffer, ssize_t n);
+    bool        handleClientError(int idx);
+    bool        handleClientWrite(int idx);
+    void        handleDisconnectionByIndex(int idx);
+    void        handleDisconnectionByFd(int fd);
     void        handleNewConnection();
     void        createServerSocket();
     void        setSocketOptions();
@@ -45,8 +49,9 @@ class Server
     void        listenServerSocket();
     void        setupPollFds();
     void        pushPollFd(int fd, short events = POLLIN);
-    void        setSocketNonBlocking(int fd);
-    void        setSocketCloexec(int fd);
+    void        enablePollOutForFd(int fd);
+    ssize_t     sendNonBlockingOnce(int fd, const char *buf, size_t len);
+    void        enqueuePending(User *user, const char *buf, size_t len);
     void        handleClientCommand(User *user, const std::string &commandLine);
     bool        handleUnknownCommand(User *user, const std::string &command);
     void        executeCommand(User *user, const std::string &command, const std::string &args);
@@ -62,7 +67,7 @@ class Server
     bool        handleKICK(User* user, const std::string& params);
     bool        handleMODE(User* user, const std::string& params);
     void        sendToUser(User *user, const std::string &message);
-    void        sendToChannel(Channel *channel, const std::string &message);
+    void        sendToChannel(Channel *channel, const std::string &message, User *exclude);
     void        addUser(User* user);
     void        deleteUser(int fd);
     void        createChannel(std::string name, User *creator);

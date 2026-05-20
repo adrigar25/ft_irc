@@ -6,11 +6,12 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 00:08:19 by agarcia           #+#    #+#             */
-/*   Updated: 2026/05/15 00:12:57 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/05/19 18:09:00 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
+#include "socket_utils.h"
 #include <iostream>
 #include <arpa/inet.h>
 #include <sstream>
@@ -19,56 +20,6 @@
 #include <fcntl.h>
 #include <errno.h>
 
-/**
- * @brief Establece el descriptor `fd` en modo no bloqueante.
- *
- * Obtiene las banderas actuales con `fcntl(F_GETFL)` y añade `O_NONBLOCK`
- * usando `fcntl(F_SETFL)`. Esto permite que operaciones de lectura/escritura
- * sobre sockets no queden bloqueadas esperando datos.
- *
- * @param fd Descriptor de archivo (socket) al que aplicar la modificación.
- *
- * @throws errorSettingNonblockingException Si falla `fcntl` al leer o escribir
- *         las banderas; el mensaje incluye la descripción de `errno`.
- *
- * @note No cierra el descriptor en caso de error; el llamador debe manejar
- *       la limpieza si es necesario. No es intrínsecamente seguro para
- *       concurrencia; sincronizar externamente si varios hilos usan el mismo fd.
- */
-void Server::setSocketNonBlocking(int fd)
-{
-    int flags = fcntl(fd, F_GETFL, 0);
-    if (flags == -1) {
-        std::string msg = std::string("fcntl F_GETFL: ") + strerror(errno);
-        perror("fcntl F_GETFL");
-        throw errorSettingNonblockingException(msg);
-    }
-    if (fcntl(fd, F_SETFL, flags | O_NONBLOCK) == -1) {
-        std::string msg = std::string("fcntl F_SETFL: ") + strerror(errno);
-        perror("fcntl F_SETFL");
-        throw errorSettingNonblockingException(msg);
-    }
-}
-
-/**
- * @brief Activa la bandera `FD_CLOEXEC` para el descriptor `fd`.
- *
- * Evita que el descriptor sea heredado por procesos hijos tras una llamada a
- * `exec`. Usa `fcntl(F_GETFD)` y `fcntl(F_SETFD)` para leer y modificar
- * las banderas de descriptor.
- *
- * @param fd Descriptor de archivo a modificar.
- * @throws errorSettingCloexecException Si `fcntl` falla al obtener o establecer
- *         las banderas (el mensaje incluirá la descripción de `errno`).
- */
-void Server::setSocketCloexec(int fd)
-{
-    int flags = fcntl(fd, F_GETFD);
-    if (flags == -1)
-        throw errorSettingCloexecException(std::string("fcntl F_GETFD: ") + strerror(errno));
-    if (fcntl(fd, F_SETFD, flags | FD_CLOEXEC) == -1)
-        throw errorSettingCloexecException(std::string("fcntl F_SETFD: ") + strerror(errno));
-}
 
 /**
  * @brief Acepta una nueva conexión entrante en `serverSocket` y la registra.
@@ -118,11 +69,10 @@ void Server::handleNewConnection()
  * @note No lanza excepciones en condiciones normales; ante un `idx` inválido
  *       simplemente registra el error y retorna.
  */
-void Server::handleDisconnection(int idx)
+void Server::handleDisconnectionByIndex(int idx)
 {
-    int nfds = this->fds.size();
-    if (idx <= 0 || idx >= nfds) {
-        std::cerr << "handleDisconnection: invalid idx " << idx << std::endl;
+    if (idx <= 0 || idx >= (int)this->fds.size()) {
+        std::cerr << "handleDisconnectionByIndex: invalid idx " << idx << std::endl;
         return;
     }
 
@@ -133,8 +83,15 @@ void Server::handleDisconnection(int idx)
     close(fd);
     this->deleteUser(fd);
     this->fds.erase(this->fds.begin() + idx);
+}
 
-    std::map<int, std::string>::iterator bit = this->buffers.find(fd);
-    if (bit != this->buffers.end())
-        this->buffers.erase(bit);
+void Server::handleDisconnectionByFd(int fd)
+{
+    for (size_t i = 1; i < this->fds.size(); ++i) {
+        if (this->fds[i].fd == fd) {
+            handleDisconnectionByIndex(static_cast<int>(i));
+            return;
+        }
+    }
+    std::cerr << "handleDisconnectionByFd: fd not found " << fd << std::endl;
 }
