@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 00:08:09 by agarcia           #+#    #+#             */
-/*   Updated: 2026/05/19 18:08:19 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/05/20 17:53:46 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ class Server
         public:
             explicit userAlreadyExistsException(const std::string &msg = "User already exists")
                 : std::runtime_error(msg) {}
-            virtual ~userAlreadyExistsException() noexcept {}
+            virtual ~userAlreadyExistsException() throw() {}
     };
 
     class channelAlreadyExistsException : public std::runtime_error
@@ -94,7 +94,7 @@ class Server
         public:
             explicit channelAlreadyExistsException(const std::string &msg = "Channel already exists")
                 : std::runtime_error(msg) {}
-            virtual ~channelAlreadyExistsException() noexcept {}
+            virtual ~channelAlreadyExistsException() throw() {}
     };
 
     class userNotFoundException : public std::runtime_error
@@ -102,7 +102,7 @@ class Server
         public:
             explicit userNotFoundException(const std::string &msg = "User not found")
                 : std::runtime_error(msg) {}
-            virtual ~userNotFoundException() noexcept {}
+            virtual ~userNotFoundException() throw() {}
     };
 
     class errorStartingServerException : public std::runtime_error
@@ -112,7 +112,7 @@ class Server
             explicit errorStartingServerException(int code = 0, const std::string& msg = "Error starting server")
                 : std::runtime_error(msg), code(code) {}
             int getCode() const { return code; }
-            virtual ~errorStartingServerException() noexcept {}
+            virtual ~errorStartingServerException() throw() {}
     };
 
     class errorAcceptingConnectionException : public std::runtime_error
@@ -120,7 +120,7 @@ class Server
         public:
             explicit errorAcceptingConnectionException(const std::string &msg = "Error accepting connection")
                 : std::runtime_error(msg) {}
-            virtual ~errorAcceptingConnectionException() noexcept {}
+            virtual ~errorAcceptingConnectionException() throw() {}
     };
 
     class errorSettingNonblockingException : public std::runtime_error
@@ -128,7 +128,7 @@ class Server
         public:
             explicit errorSettingNonblockingException(const std::string &msg = "Error setting non-blocking mode")
                 : std::runtime_error(msg) {}
-            virtual ~errorSettingNonblockingException() noexcept {}
+            virtual ~errorSettingNonblockingException() throw() {}
     };
 
     class errorSettingCloexecException : public std::runtime_error
@@ -136,7 +136,7 @@ class Server
         public:
             explicit errorSettingCloexecException(const std::string &msg = "Error setting close-on-exec flag")
                 : std::runtime_error(msg) {}
-            virtual ~errorSettingCloexecException() noexcept {}
+            virtual ~errorSettingCloexecException() throw() {}
     };
 };
 
