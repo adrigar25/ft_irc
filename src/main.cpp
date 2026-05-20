@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 00:08:17 by agarcia           #+#    #+#             */
-/*   Updated: 2026/05/15 00:53:28 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/05/20 17:53:45 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,15 +27,8 @@
  * @param ep `std::exception_ptr` apuntando a la excepción.
  * @return Cadena con el mensaje de la excepción.
  */
-static std::string exception_message(std::exception_ptr ep) {
-        try {
-                if (ep) std::rethrow_exception(ep);
-        } catch (const std::exception &e) { return e.what(); }
-            catch (const std::string &s) { return s; }
-            catch (const char *s) { return std::string(s); }
-            catch (...) { return "Unknown exception"; }
-        return {};
-}
+// `std::exception_ptr` and `std::current_exception` are C++11 features.
+// For C++98 compatibility we catch `std::exception` directly in `main()`.
 
 
 /**
@@ -71,8 +64,11 @@ int main(int argc, char* argv[]) {
     try {
         Server server(std::atoi(argv[1]), argv[2]);
         server.startServer();
+    } catch (const std::exception &e) {
+        std::cerr << "Fatal: " << e.what() << std::endl;
+        return 1;
     } catch (...) {
-        std::cerr << "Fatal: " << exception_message(std::current_exception()) << std::endl;
+        std::cerr << "Fatal: Unknown exception" << std::endl;
         return 1;
     }
     return 0;
