@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 00:08:23 by agarcia           #+#    #+#             */
-/*   Updated: 2026/05/17 01:00:40 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/05/19 17:53:21 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -375,11 +375,12 @@ bool Server::handlePRIVMSG(User *user, const std::string &params)
             sendToUser(user, std::string("403 ") + target + " :No such channel");
             return true;
         }
-        if(channel->hasUser(user)) {
-            sendToChannel(channel, out);
-        } else {
+        if(!channel->hasUser(user))
+        {
             sendToUser(user, std::string("404 ") + target + " :Cannot send to channel");
+            return true;
         }
+            sendToChannel(channel, out, user);
     } else {
         User *dest = this->getUserByNickname(target);
         if (!dest) {
