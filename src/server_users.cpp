@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 00:08:30 by agarcia           #+#    #+#             */
-/*   Updated: 2026/05/15 00:35:54 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/05/19 17:05:49 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,4 +76,21 @@ User* Server::getUserByNickname(const std::string &nickname)
             return it->second;
     }
     return NULL;
+}
+
+/**
+ * @brief Busca y devuelve un `User*` por su descriptor de socket `fd`.
+ *
+ * Recorre el mapa `users` buscando la entrada con clave `fd`. Retorna
+ * el puntero a `User` si se encuentra, o `NULL` si no existe.
+ *
+ * @param fd Descriptor de socket del usuario buscado.
+ * @return Puntero a `User` o `NULL` si no existe.
+ */
+User* Server::getUserByFd(int fd)
+{
+    std::map<int, User*>::iterator it = this->users.find(fd);
+    if (it == this->users.end())
+        return NULL;
+    return it->second;
 }

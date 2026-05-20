@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 00:08:32 by agarcia           #+#    #+#             */
-/*   Updated: 2026/05/15 00:53:28 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/05/19 00:18:11 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,9 @@
  * @param name Nickname inicial del usuario.
  */
 User::User(int socket, const std::string &name)
-    : socket(socket), nickname(name), username(""),
-      nickSet(false), userSet(false), passGiven(false), authenticated(false) {}
+        : socket(socket), nickname(name), username(""),
+            inBuffer(), outBuffer(), outOffset(0),
+            nickSet(false), userSet(false), passGiven(false), authenticated(false) {}
 
 
 /**
@@ -182,4 +183,26 @@ void User::joinChannel(Channel *channel)
 void User::leaveChannel(Channel *channel)
 {
     channel->deleteUser(this);
+}
+
+
+/* Buffer accessors */
+std::string& User::getInBuffer()
+{
+    return this->inBuffer;
+}
+
+std::string& User::getOutBuffer()
+{
+    return this->outBuffer;
+}
+
+size_t& User::getOutOffset()
+{
+    return this->outOffset;
+}
+
+void User::appendToOutBuffer(const std::string &data)
+{
+    this->outBuffer.append(data);
 }

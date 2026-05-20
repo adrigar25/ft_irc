@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 00:08:12 by agarcia           #+#    #+#             */
-/*   Updated: 2026/05/15 00:52:39 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/05/19 00:18:11 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,9 @@ class User
         int                                 socket;
         std::string                         nickname;
         std::string                         username;
+        std::string                         inBuffer;
+        std::string                         outBuffer;
+        size_t                              outOffset;
         bool                                nickSet;
         bool                                userSet;
         bool                                passGiven;
@@ -48,6 +51,12 @@ class User
         bool isNickSet() const;
         bool isUserSet() const;
         bool isAuthenticated() const;
+
+        /* Buffer accessors for I/O */
+        std::string& getInBuffer();
+        std::string& getOutBuffer();
+        size_t&      getOutOffset();
+        void         appendToOutBuffer(const std::string &data);
 
         class userAlreadyInChannelException : public std::exception
         {
