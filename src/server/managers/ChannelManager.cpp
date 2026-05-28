@@ -50,14 +50,18 @@ void ChannelManager::removeUserFromChannel(const std::string &channelName, User*
 
 void ChannelManager::removeUserFromAllChannels(User* user)
 {
-    for (std::map<std::string, Channel*>::iterator it = channels.begin(); it != channels.end(); ++it) {
+	for (std::map<std::string, Channel*>::iterator it = channels.begin(); it != channels.end(); ) {
         Channel* ch = it->second;
         if (ch->hasUser(user)) {
             ch->deleteUser(user);
             if (ch->isEmpty()) {
-                deleteChannel(ch->getName());
+                std::map<std::string, Channel*>::iterator toErase = it++;
+                delete toErase->second;
+                channels.erase(toErase);
+                continue;
             }
         }
+        ++it;
     }
 }
 

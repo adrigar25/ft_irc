@@ -6,6 +6,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include "Server.hpp"
+#include <cstdlib>
 
 /**
  * @brief Valida los argumentos de línea de comandos esperados.
