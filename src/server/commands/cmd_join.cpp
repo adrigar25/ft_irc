@@ -138,8 +138,10 @@ void CmdJoin::execute(RequestContext &ctx)
     {
         const std::string &channelName = channelNames[i];
         const std::string key = (i < keys.size() ? keys[i] : "");
-        Channel *channel = ctx.services.channels().getChannel(channelName);
+        // perform join/create which may create the channel
         joinSingleChannel(ctx, channelName, key);
+        // obtain the (possibly newly created) channel and send replies
+        Channel *channel = ctx.services.channels().getChannel(channelName);
         if (channel) {
             sendJoinMessage(ctx, channel);
             sendNamesList(ctx, channel);
