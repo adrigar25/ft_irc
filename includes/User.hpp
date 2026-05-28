@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 00:08:12 by agarcia           #+#    #+#             */
-/*   Updated: 2026/05/19 00:18:11 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/05/26 18:34:45 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ class User
     public:
                     User(int socket, const std::string &name);
                     ~User();
-        void        joinChannel(Channel *channel);
+        bool        joinChannel(Channel *channel, const std::string &key);
         void        leaveChannel(Channel *channel);
         std::string getNickname() const;
         int         getSocket() const;
@@ -57,14 +57,6 @@ class User
         std::string& getOutBuffer();
         size_t&      getOutOffset();
         void         appendToOutBuffer(const std::string &data);
-
-        class userAlreadyInChannelException : public std::exception
-        {
-            virtual const char* what() const throw()
-            {
-                return "User already in channel";
-            }
-        };
 };
 
 #endif
