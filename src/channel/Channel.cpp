@@ -15,10 +15,6 @@
 Channel::Channel(std::string name, User *creator)
 : name(name), topic(), key(), users(), voiceUsers(), operators(), invitedUsers(), bannedUsers(), exceptedUsers(), userCount(0), topicProtected(false), keyRequired(false), isInviteOnly(false), isSecret(false), userLimit(-1)
 {
-    if (creator) {
-        this->addUser(creator);
-        this->changeRole(creator, "operator");
-    }
     if (creator)
         std::cout << "Channel " << this->name << " created by " << creator->getNickname() << std::endl;
     else
