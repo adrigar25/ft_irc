@@ -3,6 +3,7 @@
 #include "Services.hpp"
 #include "Channel.hpp"
 #include "User.hpp"
+#include "Exceptions.hpp"
 #include <vector>
 #include <string>
 #include <sstream>
@@ -45,28 +46,95 @@ static void parseKeys(const std::string &params, std::vector<std::string> &keys)
     return;
 }
 
+// Límite por defecto de canales por usuario (si no hay configuración explícita)
+static const size_t MAX_CHANNELS_PER_USER = 10;
+
+static void sendResponse(RequestContext &ctx, const std::string &code, const std::string &message)
+{
+    std::string serverName = ctx.services.getServerName();
+    std::string response = std::string(":") + serverName + " " + code + " " + ctx.sender->getNickname() + " " + message;
+    ctx.services.sendToUser(ctx.sender, response);
+}
+
 static void joinSingleChannel(RequestContext &ctx, const std::string &channelName, const std::string &key)
 {
+    if (!ctx.sender) return;
+
+    // Comprobar límite máximo de canales del usuario
+    if (ctx.sender->getChannels().size() >= MAX_CHANNELS_PER_USER) {
+        sendResponse(ctx, "405", channelName + " :You have joined too many channels");
+        return;
+    }
+
     Channel *channel = ctx.services.channels().getChannel(channelName);
 
     if (!channel) {
         try {
             ctx.services.channels().createChannel(channelName, ctx.sender);
+        } catch (const IrcException &ie) {
+            // Mapear códigos internos a numerics cuando sea posible
+            int code = ie.getCode();
+            if (code == IRC_ERR_CHANNEL_FULL)
+                sendResponse(ctx, "471", channelName + " :Cannot join channel (+l)");
+            else if (code == IRC_ERR_CHANNEL_INVITE_ONLY)
+                sendResponse(ctx, "473", channelName + " :Cannot join channel (+i)");
+            else if (code == IRC_ERR_USER_BANNED)
+                sendResponse(ctx, "474", channelName + " :Cannot join channel (+b)");
+            else if (code == IRC_ERR_INCORRECT_CHANNEL_KEY)
+                sendResponse(ctx, "475", channelName + " :Cannot join channel (+k)");
+            else
+                sendResponse(ctx, "475", channelName + " :Cannot join channel");
+            return;
         } catch (const std::exception &e) {
-            ctx.services.sendToUser(ctx.sender, std::string("Failed to create channel: ") + channelName + " - " + e.what());
+            sendResponse(ctx, "475", channelName + " :Cannot create/join channel");
             return;
         }
         channel = ctx.services.channels().getChannel(channelName);
         if (!channel) {
-            ctx.services.sendToUser(ctx.sender, std::string("Failed to obtain channel after creation: ") + channelName);
+            sendResponse(ctx, "475", channelName + " :Failed to obtain channel after creation");
             return;
         }
     }
     else {
+        // El canal existe: comprobar motivos por los que no se puede unir
+        if (channel->getUserLimit() != -1 && channel->getUserCount() >= channel->getUserLimit()) {
+            sendResponse(ctx, "471", channelName + " :Cannot join channel (+l)");
+            return;
+        }
+        if (channel->getIsInviteOnly() && !channel->isUserInvited(ctx.sender)) {
+            sendResponse(ctx, "473", channelName + " :Cannot join channel (+i)");
+            return;
+        }
+        if (channel->isUserBanned(ctx.sender)) {
+            sendResponse(ctx, "474", channelName + " :Cannot join channel (+b)");
+            return;
+        }
+        if (channel->getKeyRequired() && channel->getKey() != key) {
+            sendResponse(ctx, "475", channelName + " :Cannot join channel (+k)");
+            return;
+        }
+
         try {
             ctx.sender->joinChannel(channel, key);
+        } catch (const IrcException &ie) {
+            int code = ie.getCode();
+            if (code == IRC_ERR_USER_ALREADY_IN_CHANNEL) {
+                // Silencioso o se podría enviar otro numeric; dejamos sin respuesta
+                return;
+            } else if (code == IRC_ERR_CHANNEL_FULL) {
+                sendResponse(ctx, "471", channelName + " :Cannot join channel (+l)");
+            } else if (code == IRC_ERR_CHANNEL_INVITE_ONLY) {
+                sendResponse(ctx, "473", channelName + " :Cannot join channel (+i)");
+            } else if (code == IRC_ERR_USER_BANNED) {
+                sendResponse(ctx, "474", channelName + " :Cannot join channel (+b)");
+            } else if (code == IRC_ERR_INCORRECT_CHANNEL_KEY) {
+                sendResponse(ctx, "475", channelName + " :Cannot join channel (+k)");
+            } else {
+                sendResponse(ctx, "475", channelName + " :Cannot join channel");
+            }
+            return;
         } catch (const std::exception &e) {
-            ctx.services.sendToUser(ctx.sender, std::string("Cannot join channel ") + channelName + ": " + e.what());
+            sendResponse(ctx, "475", channelName + " :Cannot join channel");
             return;
         }
     }
@@ -126,7 +194,7 @@ void CmdJoin::execute(RequestContext &ctx)
         const std::string key = (i < keys.size() ? keys[i] : "");
         joinSingleChannel(ctx, channelName, key);
         Channel *channel = ctx.services.channels().getChannel(channelName);
-        if (channel) {
+        if (channel && channel->hasUser(ctx.sender)) {
             sendJoinMessage(ctx, channel);
             sendNamesList(ctx, channel);
         }
