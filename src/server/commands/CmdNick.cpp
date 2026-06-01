@@ -6,12 +6,6 @@
 #include <string>
 #include <cstring>
 
-
-/**
- * @brief Extrae y limpia el nick de la línea cruda.
- * @param raw Línea de parámetros.
- * @return nick limpio.
- */
 static std::string extractNick(const std::string &raw)
 {
     std::string nick = raw;
@@ -20,10 +14,6 @@ static std::string extractNick(const std::string &raw)
     return nick;
 }
 
-/**
- * @brief Comprueba disponibilidad del nick y responde en caso de conflicto.
- * @return true si el nick está disponible para este usuario.
- */
 static bool nickAvailable(RequestContext &ctx, const std::string &nick)
 {
     User* existing = ctx.services.users().findByNick(nick);
@@ -34,9 +24,6 @@ static bool nickAvailable(RequestContext &ctx, const std::string &nick)
     return true;
 }
 
-/**
- * @brief Aplica el nick al usuario y confirma al cliente.
- */
 static void applyNick(RequestContext &ctx, const std::string &nick)
 {
     ctx.sender->setNickname(nick);

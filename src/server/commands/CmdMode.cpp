@@ -4,9 +4,6 @@
 
 #include <string>
 
-/**
- * @brief Handler para el comando MODE (actualmente no implementado).
- */
 static void handleMode(RequestContext &ctx)
 {
     ctx.services.sendToUser(ctx.sender, std::string("MODE command not implemented yet"));
