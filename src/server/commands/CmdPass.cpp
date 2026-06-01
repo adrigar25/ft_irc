@@ -5,21 +5,8 @@
 #include <string>
 #include <cstring>
 
-/**
- * @brief Limpia espacios iniciales y CR final de un parámetro.
- */
-static std::string trimParam(const std::string &s)
-{
-    std::string r = s;
-    if (!r.empty() && r[0] == ' ') r.erase(0,1);
-    if (!r.empty() && r[r.size() - 1] == '\r') r.erase(r.size() - 1, 1);
-    return r;
-}
+#include "line_utils.h"
 
-/**
- * @brief Valida la contraseña contra el servidor y aplica el estado en el usuario.
- * @return true si la contraseña fue aceptada.
- */
 static bool applyPassword(RequestContext &ctx, const std::string &pass)
 {
     Server* srv = ctx.services.getServer();

@@ -1,5 +1,4 @@
 #include "commands/CmdPrivmsg.hpp"
-
 #include "RequestContext.hpp"
 #include "Services.hpp"
 #include "Channel.hpp"
@@ -9,10 +8,6 @@
 #include <iostream>
 #include <string>
 
-/**
- * @brief Parsea parámetros de PRIVMSG en target y mensaje.
- * @return true si el parse fue correcto, false y responde con error si no lo fue.
- */
 static bool parsePrivmsgParams(const std::string &params, std::string &outTarget, std::string &outMsg)
 {
     size_t sp = params.find(' ');
@@ -28,23 +23,15 @@ static bool parsePrivmsgParams(const std::string &params, std::string &outTarget
     return false;
 }
 
-/**
- * @brief Construye la línea completa de PRIVMSG con prefijo de usuario.
- */
 static std::string buildPrivmsgOut(RequestContext &ctx, const std::string &target, const std::string &msg)
 {
-    char hostname[256];
-    if (gethostname(hostname, sizeof(hostname)) != 0)
-        std::strcpy(hostname, "localhost");
+    std::string serverName = ctx.services.getServerName();
     std::string uname = ctx.sender->getUsername();
     if (uname.empty()) uname = "~";
-    std::string out = std::string(":") + ctx.sender->getNickname() + "!" + uname + "@" + hostname + " PRIVMSG " + target + " :" + msg + "\r\n";
+    std::string out = std::string(":") + ctx.sender->getNickname() + "!" + uname + "@" + serverName + " PRIVMSG " + target + " :" + msg + "\r\n";
     return out;
 }
 
-/**
- * @brief Envía el PRIVMSG al destino (canal o usuario), respondiendo con errores si procede.
- */
 static void dispatchPrivmsg(RequestContext &ctx, const std::string &target, const std::string &out)
 {
     if(target.empty()) {
