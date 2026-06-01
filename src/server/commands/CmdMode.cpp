@@ -17,16 +17,6 @@ static std::vector<std::string> splitLine(const std::string &line)
 	return (tokens);
 }
 
-static User* findUserByNick(Channel* ch, const std::string &nick)
-{
-    const std::map<int, User*>& users = ch->getUsers();
-    for (std::map<int, User*>::const_iterator it = users.begin(); it != users.end(); ++it)
-    {
-        if (it->second->getNickname() == nick)
-            return it->second;
-    }
-    return NULL;
-}
 
 static void handleModeI(Channel* ch, bool isAdding)
 {
@@ -52,9 +42,8 @@ static void handleModeK(Channel* ch, bool isAdding, const std::string &password)
     }
 }
 
-static void handleModeO(Channel* ch, bool isAdding, const std::string &nick)
+static void handleModeO(Channel* ch, bool isAdding, User* targetUser)
 {
-    User* targetUser = findUserByNick(ch, nick);
     if (!targetUser)
 	{
         return;
@@ -72,6 +61,14 @@ static void handleModeL(Channel* ch, bool isAdding, int limit)
         ch->setUserLimit(limit);
     else
         ch->setUserLimit(-1);
+}
+
+static void handleModeB(Channel* ch, bool isAdding, User* targetUser)
+{
+    if(isAdding)
+        ch->banUser(targetUser);
+    else
+        ch->unbanUser(targetUser);
 }
 
 void CmdMode::execute(RequestContext &ctx)
@@ -125,12 +122,17 @@ void CmdMode::execute(RequestContext &ctx)
         else if (mode == 'o')
 		{
             if (paramIndex < (int)tokens.size())
-                handleModeO(ch, isAdding, tokens[paramIndex++]);
+                handleModeO(ch, isAdding, ctx.services.users().findByNick(tokens[paramIndex++]));
         }
         else if (mode == 'l')
 		{
             if (paramIndex < (int)tokens.size())
                 handleModeL(ch, isAdding, std::atoi(tokens[paramIndex++].c_str()));
+        }
+        else if (mode == 'b')
+        {
+            if (paramIndex < (int)tokens.size())
+                handleModeB(ch, isAdding, ctx.services.users().findByNick(tokens[paramIndex++]));
         }
     }
 	std::string modeMessage = std::string(":") + ctx.sender->getNickname() + " MODE " + channelName + " " + modeString;

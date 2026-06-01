@@ -54,15 +54,6 @@ void Channel::addUserToMap(std::map<int, User*> &userMap, User *user)
 }
 
 /**
- * @brief Marca a `user` como invitado en el canal.
- */
-void Channel::inviteUser(User *user)
-{
-    addUserToMap(this->invitedUsers, user);
-}
-
-
-/**
  * @brief Elimina `user` del mapa `userMap` si existe.
  */
 void Channel::deleteUserFromMap(std::map<int, User*> &userMap, User *user)
@@ -72,3 +63,23 @@ void Channel::deleteUserFromMap(std::map<int, User*> &userMap, User *user)
         return;
     userMap.erase(fd);
 }
+
+/**
+ * @brief Marca a `user` como invitado en el canal.
+ */
+void Channel::inviteUser(User *user)
+{
+    addUserToMap(this->invitedUsers, user);
+}
+
+void Channel::banUser(User *user)
+{
+    addUserToMap(this->bannedUsers, user);
+}
+
+
+void Channel::unbanUser(User *user)
+{
+    deleteUserFromMap(this->bannedUsers, user);
+}
+

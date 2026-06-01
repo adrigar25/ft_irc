@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 00:08:03 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/01 18:09:03 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/06/01 20:37:11 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,8 @@ class Channel
             void    addUserToMap(std::map<int, User*> &userMap, User *user);
             void    deleteUserFromMap(std::map<int, User*> &userMap, User *user);
             void    inviteUser(User *user);
+            void    banUser(User *user);
+            void    unbanUser(User *user);
 
             /* Roles */
             void    changeRole(User *user, std::string role);
