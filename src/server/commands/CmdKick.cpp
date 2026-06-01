@@ -6,9 +6,6 @@
 #include <unistd.h>
 #include <cstring>
 
-/**
- * @brief Parsea parámetros de KICK en canal, usuario y razón.
- */
 static void parseKickParams(const std::string &raw, std::string &outChannel, std::string &outTargetNick, std::string &outReason)
 {
     outChannel.clear();
@@ -32,9 +29,6 @@ static void parseKickParams(const std::string &raw, std::string &outChannel, std
     if (!outReason.empty() && outReason[outReason.size() - 1] == '\r') outReason.erase(outReason.size() - 1, 1);
 }
 
-/**
- * @brief Valida condiciones para poder kickear. Envía errores al cliente si fallan.
- */
 static bool validateKick(RequestContext &ctx, const std::string &channelName, const std::string &targetNick, Channel *&outChannel, User *&outTarget)
 {
     outChannel = ctx.services.channels().getChannel(channelName);
@@ -62,24 +56,17 @@ static bool validateKick(RequestContext &ctx, const std::string &channelName, co
     return true;
 }
 
-/**
- * @brief Ejecuta el KICK: notifica canal y remueve al usuario.
- */
 static void doKick(RequestContext &ctx, Channel *channel, User *target, const std::string &reason)
 {
-    // Build KICK line with prefix
-    char hostname[256];
-    if (gethostname(hostname, sizeof(hostname)) != 0) std::strcpy(hostname, "localhost");
+    std::string serverName = ctx.services.getServerName();
     std::string uname = ctx.sender->getUsername();
     if (uname.empty()) uname = "~";
-    std::string out = std::string(":") + ctx.sender->getNickname() + "!" + uname + "@" + hostname + " KICK " + channel->getName() + " " + target->getNickname();
+    std::string out = std::string(":") + ctx.sender->getNickname() + "!" + uname + "@" + serverName + " KICK " + channel->getName() + " " + target->getNickname();
     if (!reason.empty()) out += std::string(" :") + reason;
     out += "\r\n";
 
-    // broadcast to channel (include all)
     ctx.services.sendToChannel(channel, out, NULL);
 
-    // remove user from channel
     target->leaveChannel(channel);
 }
 

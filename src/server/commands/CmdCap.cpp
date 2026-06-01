@@ -5,13 +5,7 @@
 #include <string>
 #include <sstream>
 
-static std::string trimParam(const std::string &s)
-{
-    std::string r = s;
-    if (!r.empty() && r[0] == ' ') r.erase(0,1);
-    if (!r.empty() && r[r.size() - 1] == '\r') r.erase(r.size() - 1, 1);
-    return r;
-}
+#include "line_utils.h"
 
 void CmdCap::execute(RequestContext &ctx)
 {

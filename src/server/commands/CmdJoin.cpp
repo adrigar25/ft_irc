@@ -17,8 +17,9 @@ static bool parseChannels(const std::string &params, std::vector<std::string> &c
     std::string value;
     while (std::getline(iss, value, ','))
     {
-        if (!value.empty() && value[0] == ' ')
-            value.erase(0, 1);
+        if (!value.empty() && value[0] == ' ') value.erase(0, 1);
+        while (!value.empty() && (value[value.size() - 1] == '\r' || value[value.size() - 1] == ' '))
+            value.erase(value.size() - 1, 1);
         if (!value.empty() && (value[0] == '#' || value[0] == '&' || value[0] == '+' || value[0] == '!'))
             channelNames.push_back(value);
         else if (!value.empty())
@@ -35,20 +36,15 @@ static void parseKeys(const std::string &params, std::vector<std::string> &keys)
     std::string value;
     while (std::getline(iss, value, ','))
     {
-        if (!value.empty() && value[0] == ' ')
-            value.erase(0, 1);
+        if (!value.empty() && value[0] == ' ') value.erase(0, 1);
+        while (!value.empty() && (value[value.size() - 1] == '\r' || value[value.size() - 1] == ' '))
+            value.erase(value.size() - 1, 1);
         if (!value.empty())
             keys.push_back(value);
     }
     return;
 }
 
-/**
- * @brief Realiza el proceso de unirse/crear a un canal concreto y envía los replies correspondientes.
- * @param ctx Contexto de la petición.
- * @param channelName Nombre del canal objetivo.
- * @param key Clave del canal (puede estar vacía).
- */
 static void joinSingleChannel(RequestContext &ctx, const std::string &channelName, const std::string &key)
 {
     Channel *channel = ctx.services.channels().getChannel(channelName);
@@ -76,26 +72,18 @@ static void joinSingleChannel(RequestContext &ctx, const std::string &channelNam
     }
 }
 
-/**
- * @brief Envía el mensaje JOIN al canal (prefijo del usuario que se une).
- */
 static void sendJoinMessage(RequestContext &ctx, Channel *channel)
 {
-    char hostname[256];
-    if (gethostname(hostname, sizeof(hostname)) != 0) std::strcpy(hostname, "localhost");
+    std::string serverName = ctx.services.getServerName();
     std::string uname = ctx.sender->getUsername();
     if (uname.empty()) uname = "~";
-    std::string joinMsg = ":" + ctx.sender->getNickname() + "!" + uname + "@" + hostname + " JOIN " + channel->getName() + "\r\n";
+    std::string joinMsg = ":" + ctx.sender->getNickname() + "!" + uname + "@" + serverName + " JOIN " + channel->getName() + "\r\n";
     ctx.services.sendToChannel(channel, joinMsg, NULL);
 }
 
-/**
- * @brief Construye y envía la lista de nombres del canal al usuario que se une.
- */
 static void sendNamesList(RequestContext &ctx, Channel *channel)
 {
-    char hostname[256];
-    if (gethostname(hostname, sizeof(hostname)) != 0) std::strcpy(hostname, "localhost");
+    std::string serverName = ctx.services.getServerName();
     const std::map<int, User*>& usersMap = channel->getUsers();
     std::string namesList;
     for (std::map<int, User*>::const_iterator uit = usersMap.begin(); uit != usersMap.end(); ++uit) {
@@ -105,14 +93,12 @@ static void sendNamesList(RequestContext &ctx, Channel *channel)
         else
             namesList += uit->second->getNickname();
     }
-    std::string namesReply = std::string(":") + hostname + " 353 " + ctx.sender->getNickname() + " = " + channel->getName() + " :" + namesList + "\r\n";
+    std::string namesReply = std::string(":") + serverName + " 353 " + ctx.sender->getNickname() + " = " + channel->getName() + " :" + namesList + "\r\n";
     ctx.services.sendToUser(ctx.sender, namesReply);
 
-    std::string endNames = std::string(":") + hostname + " 366 " + ctx.sender->getNickname() + " " + channel->getName() + " :End of /NAMES list\r\n";
+    std::string endNames = std::string(":") + serverName + " 366 " + ctx.sender->getNickname() + " " + channel->getName() + " :End of /NAMES list\r\n";
     ctx.services.sendToUser(ctx.sender, endNames);
 }
-
-// After extracting helpers we call them from the loop in execute()
 
 void CmdJoin::execute(RequestContext &ctx)
 {
@@ -138,9 +124,7 @@ void CmdJoin::execute(RequestContext &ctx)
     {
         const std::string &channelName = channelNames[i];
         const std::string key = (i < keys.size() ? keys[i] : "");
-        // perform join/create which may create the channel
         joinSingleChannel(ctx, channelName, key);
-        // obtain the (possibly newly created) channel and send replies
         Channel *channel = ctx.services.channels().getChannel(channelName);
         if (channel) {
             sendJoinMessage(ctx, channel);
