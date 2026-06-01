@@ -27,3 +27,8 @@ void Services::sendToUser(User* user, const std::string &message) {
 void Services::sendToChannel(Channel* channel, const std::string &message, User* exclude) {
 	if (server) server->sendMessageToChannel(channel, message, exclude);
 }
+std::string Services::getServerName() const {
+    if (server)
+        return server->getHostname();
+    return std::string("localhost");
+}
