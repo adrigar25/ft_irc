@@ -177,6 +177,12 @@ bool User::joinChannel(Channel *channel, const std::string &key)
  */
 void User::leaveChannel(Channel *channel)
 {
+    if (!channel) return;
+    // remove channel from user's map first
+    std::map<std::string, Channel*>::iterator it = this->channels.find(channel->getName());
+    if (it != this->channels.end())
+        this->channels.erase(it);
+    // then remove user from channel
     channel->deleteUser(this);
 }
 
