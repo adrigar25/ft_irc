@@ -6,7 +6,6 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
-#include <netinet/in.h>
 
 /**
  * @brief Constructor del servidor.
@@ -20,6 +19,11 @@
 Server::Server(unsigned int port, std::string password): port(port), password(password), services(this)
 {
     this->serverSocket = -1;
+    char buf[256];
+    if (gethostname(buf, sizeof(buf)) != 0)
+        this->hostname = std::string("localhost");
+    else
+        this->hostname = std::string(buf);
     std::cout << "Server created" << std::endl;
 }
 
@@ -32,10 +36,10 @@ Server::Server(unsigned int port, std::string password): port(port), password(pa
  */
 Server::~Server()
 {
-    for (size_t i = 1; i < this->fds.size(); ++i)
-    {
-        if (this->fds[i].fd >= 0)
-            close(this->fds[i].fd);
+    // Process client disconnections so other clients receive QUIT messages
+    while (this->fds.size() > 1) {
+        // always disconnect the first client entry (index 1)
+        this->handleDisconnectionByIndex(1);
     }
     if (this->serverSocket >= 0)
         close(this->serverSocket);
@@ -44,27 +48,16 @@ Server::~Server()
     this->services.channels().clear();
     std::cout << "Server destroyed" << std::endl;
 }
-/**
- * @brief Crea el socket de escucha del servidor.
- *
- * Crea un socket TCP IPv4, y configura `O_NONBLOCK` y `FD_CLOEXEC`.
- * Lanza `errorStartingServerException` si la creación falla.
- */
+/** @brief Crea el socket de escucha del servidor. */
 void Server::createServerSocket()
 {
-    // Create socket
-    // AF_INET: IPv4, SOCK_STREAM: TCP
     this->serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (this->serverSocket < 0)
         throw IrcException(IRC_ERR_STARTING_SERVER, std::string("socket failed: ") + strerror(errno));
     setSocketNonBlocking(this->serverSocket);
     setSocketCloexec(this->serverSocket);
 }
-/**
- * @brief Configura opciones del socket de servidor (ej. `SO_REUSEADDR`).
- *
- * Lanza `errorStartingServerException` si `setsockopt` falla.
- */
+
 void Server::setSocketOptions()
 {
     int opt = 1;
@@ -73,11 +66,6 @@ void Server::setSocketOptions()
     std::cout << "Socket options set" << std::endl;
 }
 
-/**
- * @brief Enlaza (`bind`) el `serverSocket` al puerto configurado.
- *
- * Lanza `errorStartingServerException` si `bind` falla.
- */
 void Server::bindServerSocket()
 {
     struct sockaddr_in address;
@@ -92,11 +80,6 @@ void Server::bindServerSocket()
     std::cout << "Bind successful" << std::endl;
 }
 
-/**
- * @brief Pone el `serverSocket` en modo escucha (`listen`).
- *
- * @throws errorStartingServerException si `listen` falla.
- */
 void Server::listenServerSocket()
 {
     if (listen(this->serverSocket, 64) < 0)
@@ -104,22 +87,12 @@ void Server::listenServerSocket()
     std::cout << "Server is listening on port " << this->port << "..." << std::endl;
 }
 
-/**
- * @brief Inicializa la lista `fds` usada por `poll` y registra el socket
- * de servidor para eventos de lectura.
- */
 void Server::setupPollFds()
 {
     this->fds.clear();
     pushPollFd(this->serverSocket, POLLIN);
 }
 
-/**
- * @brief Añade un `pollfd` al vector `fds` con los `events` indicados.
- *
- * @param fd Descriptor de archivo a monitorizar.
- * @param events Máscara de eventos (ej. `POLLIN`).
- */
 void Server::pushPollFd(int fd, short events)
 {
     struct pollfd pfd;
@@ -129,16 +102,6 @@ void Server::pushPollFd(int fd, short events)
     this->fds.push_back(pfd);
 }
 
-/**
- * @brief Inicializa y arranca el ciclo principal del servidor.
- *
- * - Crea y configura el socket, lo enlaza y pone en escucha.
- * - Prepara `fds` y luego entra en `handleEvents()` que gestiona el bucle
- *   principal de `poll`.
- *
- * Si ocurre un error en la fase de inicio, cierra el socket y muestra el
- * error por `stderr`.
- */
 void Server::startServer()
 {
     try {
@@ -157,12 +120,15 @@ void Server::startServer()
         std::cerr << "ERROR: " << e.what() << std::endl;
         return;
     }
+    // this->services.channels().createChannel("#general", nullptr);
+    // Channel* general = this->services.channels().getChannel("#general");
+    // general->setTopic("Welcome to the general channel!");
+    // general->setIsInviteOnly(false);
+    // general->setKey("1234");
+    // general->setKeyRequired(true);
     handleEvents();
 }
 
-/**
- * @brief Detiene el servidor cerrando el socket de escucha.
- */
 void Server::stopServer()
 {
     if (this->serverSocket >= 0) {

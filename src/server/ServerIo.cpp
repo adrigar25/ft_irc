@@ -8,26 +8,6 @@
 #include <cstring>
 #include <cstdio>
 
-/**
- * @brief Habilita la vigilancia de POLLOUT para un fd concreto en el vector
- * `this->fds`.
- *
- * @param fd descriptor a habilitar
- */
-void Server::enablePollOutForFd(int fd)
-{
-    for (size_t i = 1; i < this->fds.size(); ++i)
-    {
-        if (this->fds[i].fd == fd)
-        {
-            this->fds[i].events |= POLLOUT;
-            break;
-        }
-    }
-}
-
-// formatMessage moved to socket_utils.cpp
-
 static std::string prepareOutMessage(User *user, const std::string &message)
 {
     std::string msg = message;
@@ -74,13 +54,6 @@ static std::string escapeForLog(const std::string &msg)
     return escaped;
 }
 
-/**
- * Attempt to send `len` bytes from `buf` to `fd` in non-blocking mode.
- * Returns the number of bytes successfully written (may be 0).
- * On fatal error returns -1 and sets errno accordingly.
- * If the socket would block before sending all bytes, returns the number
- * of bytes sent so far and leaves errno as EAGAIN/EWOULDBLOCK.
- */
 static ssize_t performSend(int fd, const char *buf, size_t len)
 {
     size_t total = 0;
@@ -91,21 +64,17 @@ static ssize_t performSend(int fd, const char *buf, size_t len)
             continue;
         }
         if (n == 0) {
-            /* treat as disconnect */
             return static_cast<ssize_t>(total);
         }
         if (errno == EINTR)
             continue;
         if (errno == EAGAIN || errno == EWOULDBLOCK) {
-            /* socket would block, return bytes written so far */
             return static_cast<ssize_t>(total);
         }
-        /* fatal error */
         return -1;
     }
     return static_cast<ssize_t>(total);
 }
-
 
 void Server::enqueuePending(User *user, const char *buf, size_t len)
 {
@@ -114,21 +83,6 @@ void Server::enqueuePending(User *user, const char *buf, size_t len)
     enablePollOutForFd(user->getSocket());
 }
 
-/**
- * @brief Envía un mensaje completo a un `User`, manejando envíos parciales.
- *
- * Asegura que el `message` termine en CRLF (`\r\n`) si no lo tiene,
- * y usa `send()` en un bucle para completar la escritura cuando `send`
- * devuelve menos bytes de los esperados (envíos parciales). Maneja errores
- * comunes: reintenta en `EINTR`, detecta `EAGAIN`/`EWOULDBLOCK` (socket en
- * modo no bloqueante) y registra fallos en `send`.
- *
- * @param user Puntero al `User` destino (se usa `user->getSocket()`).
- * @param message Texto a enviar; puede no incluir CRLF.
- *
- * @note Si `send` devuelve `EAGAIN`/`EWOULDBLOCK`, la función sale sin
- *       reintentar continuamente; los bytes no enviados no se encolan aquí.
- */
 void Server::sendToUser(User *user, const std::string &message)
 {
     std::string msg = prepareOutMessage(user, message);
@@ -161,18 +115,6 @@ void Server::sendToUser(User *user, const std::string &message)
         enqueuePending(user, buf + sent, len - sent);
 }
 
-/**
- * @brief Envía `message` a todos los usuarios registrados en `channel`.
- *
- * Itera sobre el mapa de usuarios del canal y llama a `sendToUser` por
- * cada `User*`. No realiza filtrado adicional (por ejemplo, no excluye al
- * emisor); cualquier lógica de exclusión debe aplicarse antes de llamar
- * a esta función.
- *
- * @param channel Canal destino cuyos usuarios recibirán el mensaje.
- * @param message Mensaje a enviar a cada usuario.
- * @param exclude Puntero al usuario a excluir de la lista de destinatarios.
- */
 void Server::sendToChannel(Channel *channel, const std::string &message, User *exclude)
 {
     const std::map<int, User*>& usersMap = channel->getUsers();
@@ -181,4 +123,15 @@ void Server::sendToChannel(Channel *channel, const std::string &message, User *e
         if (it->second && it->second != exclude)
             sendToUser(it->second, message);
     }
+}
+
+void Server::enablePollOutForFd(int fd)
+{
+    for (size_t i = 0; i < this->fds.size(); ++i) {
+        if (this->fds[i].fd == fd) {
+            this->fds[i].events |= POLLOUT;
+            return;
+        }
+    }
+    pushPollFd(fd, POLLIN | POLLOUT);
 }

@@ -5,7 +5,6 @@
 #include <sys/socket.h>
 #include <vector>
 
-
 static ssize_t recvFromFd(int fd, char *buffer, size_t buflen)
 {
     ssize_t n;
@@ -48,7 +47,6 @@ bool Server::handleClientRead(int idx)
     Server::processClientBuffer(user);
     return false;
 }
-
 
 
 void Server::processClientBuffer(User *user)

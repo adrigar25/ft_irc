@@ -18,9 +18,9 @@
 #include "commands/CmdInvite.hpp"
 #include "commands/CmdKick.hpp"
 #include "commands/CmdMode.hpp"
+#include "commands/CmdTopic.hpp"
 #include "RequestContext.hpp"
 
-// File-scoped dispatcher getter: registers handlers on first call.
 static CommandDispatcher& getDispatcher()
 {
     static CommandDispatcher dispatcher;
@@ -38,21 +38,12 @@ static CommandDispatcher& getDispatcher()
         dispatcher.registerHandler("INVITE", new CmdInvite());
         dispatcher.registerHandler("KICK", new CmdKick());
         dispatcher.registerHandler("MODE", new CmdMode());
+        dispatcher.registerHandler("TOPIC", new CmdTopic());
         inited = true;
     }
     return dispatcher;
 }
 
-/**
- * @brief Parsea una línea de comando enviada por un cliente y la ejecuta.
- *
- * Extrae el nombre del comando (texto hasta el primer espacio) y los
- * parámetros restantes. Registra el comando y delega la ejecución a
- * `executeCommand`.
- *
- * @param user Puntero al `User` que envió la línea.
- * @param commandLine Línea completa recibida del cliente (puede incluir CR/LF).
- */
 void Server::handleClientCommand(User *user, const std::string &commandLine)
 {
     if (!user) {
@@ -76,19 +67,6 @@ void Server::handleClientCommand(User *user, const std::string &commandLine)
     executeCommand(user, cmd, args);
 }
 
-/**
- * @brief Enruta y ejecuta el comando recibido según el estado de autenticación.
- *
- * - Si el `user` no está autenticado permite solo `PASS`, `NICK` y `USER`.
- *   Si tras esos valores el usuario queda completo, marca `authenticated`.
- * - Si está autenticado despacha los comandos conocidos a sus handlers
- *   correspondientes. En caso de comando no reconocido llama a
- *   `handleUnknownCommand`.
- *
- * @param user Usuario emisor del comando.
- * @param command Nombre del comando (esperado en mayúsculas).
- * @param args Parámetros asociados al comando.
- */
 void Server::executeCommand(User *user, const std::string &command, const std::string &args)
 {
 
@@ -115,4 +93,3 @@ void Server::executeCommand(User *user, const std::string &command, const std::s
     RequestContext ctx(this->services, user, args);
     dispatcher.dispatch(command, ctx);
 }
-
