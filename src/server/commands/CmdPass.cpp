@@ -5,7 +5,7 @@
 #include <string>
 #include <cstring>
 
-#include "line_utils.h"
+#include "LineUtils.hpp"
 
 static bool applyPassword(RequestContext &ctx, const std::string &pass)
 {

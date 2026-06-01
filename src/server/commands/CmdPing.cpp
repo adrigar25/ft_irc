@@ -4,7 +4,7 @@
 #include "User.hpp"
 #include <string>
 
-#include "line_utils.h"
+#include "LineUtils.hpp"
 
 void CmdPing::execute(RequestContext &ctx)
 {

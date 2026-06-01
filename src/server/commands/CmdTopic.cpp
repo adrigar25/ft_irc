@@ -8,7 +8,7 @@
 #include <unistd.h>
 #include <cstring>
 
-#include "line_utils.h"
+#include "LineUtils.hpp"
 
 static void parseTopicParams(const std::string &params, std::string &outChannelName, std::string &outTopic)
 {
