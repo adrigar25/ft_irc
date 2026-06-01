@@ -9,4 +9,8 @@
 // The extracted lines are appended to `out` and removed from the front of `buffer`.
 void popLines(std::string &buffer, std::vector<std::string> &out);
 
+// Trim a command parameter: remove a single leading space (if present)
+// and any trailing spaces or trailing CR ('\r').
+std::string trimParam(const std::string &s);
+
 #endif

@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 00:08:03 by agarcia           #+#    #+#             */
-/*   Updated: 2026/05/26 19:46:13 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/05/31 16:03:34 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,21 +34,35 @@ class Channel
         std::map<int, User*>    bannedUsers;
         std::map<int, User*>    exceptedUsers;
         int                     userCount;
-        bool                    isPrivate;
+        bool                    topicProtected;
         bool                    keyRequired;
+        bool                    isInviteOnly;
+        bool                    isSecret;
         int                     userLimit;
     public:
                 Channel(std::string name, User *creator);
                 ~Channel();
+
+            /* Gestión de usuarios */
             void    addUser(User *user);
             void    deleteUser(User *user);
-            void    changeRole(User *user, std::string role);
             void    addUserToMap(std::map<int, User*> &userMap, User *user);
             void    deleteUserFromMap(std::map<int, User*> &userMap, User *user);
             void    inviteUser(User *user);
-            void    setIsPrivate(bool val);
+
+            /* Roles */
+            void    changeRole(User *user, std::string role);
+
+            /* Setters */
+            void    setIsInviteOnly(bool val);
             void    setUserLimit(int limit);
             void    setTopic(const std::string &t);
+            void    setKey(const std::string &k);
+            void    setKeyRequired(bool val);
+            void    setIsSecret(bool val);
+            void    setTopicProtected(bool val);
+
+            /* Consultas */
             bool    canUserJoin(User *user) const;
             bool    hasUser(User *user) const;
             bool    isUserOperator(User *user) const;
@@ -57,12 +71,23 @@ class Channel
             bool    isUserBanned(User *user) const;
             bool    isUserExcepted(User *user) const;
             bool    isEmpty() const;
+
+            /* Getters */
             int     getUserCount() const;
             int     getUserLimit() const;
-            bool    getIsPrivate() const;
+            bool    getIsInviteOnly() const;
+            bool    getTopicProtected() const;
+            bool    getIsSecret() const;
             bool    getKeyRequired() const;
+
+            std::string                 getTopic() const;
             std::string                 getKey() const;
             const std::map<int, User*>& getUsers() const;
+            const std::map<int, User*>& getOperators() const;
+            const std::map<int, User*>& getVoiceUsers() const;
+            const std::map<int, User*>& getInvitedUsers() const;
+            const std::map<int, User*>& getBannedUsers() const;
+            const std::map<int, User*>& getExceptedUsers() const;
             std::string                 getName() const;
     /* Exceptions moved to includes/Exceptions.hpp */
 };

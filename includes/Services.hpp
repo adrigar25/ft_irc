@@ -30,14 +30,10 @@ public:
     ChannelManager& channels() { return channelManager; }
     const UserManager& users() const { return userManager; }
     const ChannelManager& channels() const { return channelManager; }
-     /* Helpers to send messages through the server.
-         These delegate to `Server::sendMessageToUser/Channel` and exist so
-         command handlers can send messages without touching sockets or
-         poll internals. They are thin shims and can be removed if callers
-         use the Server API directly, but keeping them improves testability
-         and decoupling. */
-     void sendToUser(User* user, const std::string &message);
-     void sendToChannel(Channel* channel, const std::string &message, User* exclude = NULL);
+    std::string getServerName() const;
+    void sendToUser(User* user, const std::string &message);
+    void sendToChannel(Channel* channel, const std::string &message, User* exclude = NULL);
+
 };
 
 #endif
