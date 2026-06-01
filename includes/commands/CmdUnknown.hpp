@@ -1,20 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*   CmdPing.hpp                                                               */
+/*   CmdUnknown.hpp                                                                */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CMD_PING_HPP
-#define CMD_PING_HPP
+#ifndef CMD_UNKNOWN_HPP
+#define CMD_UNKNOWN_HPP
 
 #include "commands/ICommand.hpp"
-#include "RequestContext.hpp"
+#include "../RequestContext.hpp"
 #include <string>
 
-class CmdPing : public ICommand {
+class CmdUnknown : public ICommand {
 public:
-    CmdPing() {}
-    virtual ~CmdPing() {}
+    CmdUnknown() {}
+    virtual ~CmdUnknown() {}
     virtual void execute(RequestContext &ctx);
 };
 

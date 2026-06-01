@@ -7,9 +7,6 @@
 #include <unistd.h>
 #include <cstring>
 
-/**
- * @brief Parsea la línea de USER en nombre y realname.
- */
 static void parseUserLine(const std::string &raw, std::string &outUsername, std::string &outReal)
 {
     std::istringstream iss(raw);
@@ -22,20 +19,16 @@ static void parseUserLine(const std::string &raw, std::string &outUsername, std:
     outReal = real;
 }
 
-/**
- * @brief Aplica username al usuario y envía el welcome si corresponde.
- */
 static void setUserAndMaybeWelcome(RequestContext &ctx, const std::string &username, const std::string &real)
 {
+    (void)real;
     ctx.sender->setUsername(username);
     ctx.services.sendToUser(ctx.sender, std::string("Username set"));
 
     if (ctx.sender->isPassSet() && ctx.sender->isNickSet() && ctx.sender->isUserSet()) {
         ctx.sender->setAuthenticated(true);
-        char hostname[256];
-        if (gethostname(hostname, sizeof(hostname)) != 0)
-            std::strcpy(hostname, "localhost");
-        std::string welcome = std::string(":") + hostname + " 001 " + ctx.sender->getNickname() + " :Welcome to " + hostname;
+        std::string serverName = ctx.services.getServerName();
+        std::string welcome = std::string(":") + serverName + " 001 " + ctx.sender->getNickname() + " :Welcome to " + serverName;
         ctx.services.sendToUser(ctx.sender, welcome);
     }
 }

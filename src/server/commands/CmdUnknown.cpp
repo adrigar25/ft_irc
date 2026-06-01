@@ -1,0 +1,19 @@
+#include "commands/CmdUnknown.hpp"
+#include "RequestContext.hpp"
+#include "Services.hpp"
+#include <string>
+
+void CmdUnknown::execute(RequestContext &ctx)
+{
+    if (!ctx.sender) return;
+    ctx.services.sendToUser(ctx.sender, std::string("421 " ) + ctx.rawLine + " :Unknown command\r\n");
+}
+#include "Server.hpp"
+#include "User.hpp"
+#include <string>
+
+bool Server::handleUnknownCommand(User *user, const std::string &command)
+{
+    sendToUser(user, std::string("421 ") + command + " :Unknown command");
+    return true;
+}
