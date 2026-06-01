@@ -186,6 +186,11 @@ void CmdJoin::execute(RequestContext &ctx)
         return;
     }
 
+    if (channelNames.empty()) {
+        sendResponse(ctx, "461", "JOIN :Not enough parameters");
+        return;
+    }
+
     parseKeys(keysPart, keys);
 
     for (size_t i = 0; i < channelNames.size(); ++i)
