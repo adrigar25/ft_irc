@@ -1,2 +1,22 @@
-objs
+# System files
+.DS_Store
+.vscode
+
+# Compiled files
+*.o
+*.a
+a.out
 ircserv
+bot_ircserv
+
+# Git
+.git
+*.git
+.dir
+
+# Project-specific
+Cursus/C/Libft/libftTester
+libftprintf.a
+
+# Object files
+*.m
