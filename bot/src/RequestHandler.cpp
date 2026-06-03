@@ -6,7 +6,7 @@
 /*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/02 23:09:03 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/02 23:12:39 by adriescr         ###   ########.fr       */
+/*   Updated: 2026/06/03 17:25:17 by adriescr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ void RequestHandler::handleLine(const std::string &line)
 					this->cm->sendToChannel(dest, reply);
 			} else {
 				if (this->conn)
-					this->conn->sendRaw("PRIVMSG " + sender + " :" + reply);
+					this->conn->sendRaw("PRIVMSG" + sender + " :" + reply);
 			}
 		}
 		return;

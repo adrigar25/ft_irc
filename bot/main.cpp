@@ -6,7 +6,7 @@
 /*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/02 20:17:22 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/03 17:06:33 by adriescr         ###   ########.fr       */
+/*   Updated: 2026/06/03 17:12:29 by adriescr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,8 +72,10 @@ int main(int argc, char **argv){
 		host = BOT_DEFAULT_HOST;
 
 	std::string password;
-	password = argv[4];
-	std::cout << "Bot will connect with nick: " << nick << ", host: " << host << ", password: " << (password.empty() ? "(empty)" : "(set)") << "\n";
+	if (argc > 4)
+		password = argv[4];
+	else
+		password = "";
 
 	Bot bot(nick, host, password);
 
