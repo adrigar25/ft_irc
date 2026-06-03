@@ -6,7 +6,7 @@
 /*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 00:08:09 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/02 20:40:33 by adriescr         ###   ########.fr       */
+/*   Updated: 2026/06/02 21:09:16 by adriescr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ class Server
         int     getServerSocket() const;
         bool    validatePassword(const std::string &p) const { return this->password == p; }
         const std::string& getHostname() const { return hostname; }
+		int     startBot();
 
 };
 
