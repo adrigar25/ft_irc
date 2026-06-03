@@ -25,8 +25,8 @@ static std::string trim(const std::string &s){
 	return (s.substr(b, e-b+1));
 }
 
-Bot::Bot(const std::string &nick, const std::string &host)
-	: nick(nick), host(host), conn(nullptr), cm(nullptr), rh(nullptr), port(std::atoi(BOT_DEFAULT_PORT))
+Bot::Bot(const std::string &nick, const std::string &host , const std::string &password)
+	: nick(nick), host(host), password(password), conn(nullptr), cm(nullptr), rh(nullptr), port(std::atoi(BOT_DEFAULT_PORT))
 {
 	std::srand(static_cast<unsigned int>(std::time(nullptr)));
 	this->conn = new IRCConnection();
@@ -47,8 +47,13 @@ Bot::~Bot()
 std::string Bot::getNick() const {
 	return (nick);
 }
+
 std::string Bot::getHost() const {
 	return (host);
+}
+
+std::string Bot::getPassword() const {
+	return (password);
 }
 
 void Bot::setPort(int p) {
@@ -70,6 +75,7 @@ void Bot::run()
 		return;
 	}
 
+	this->conn->sendRaw("PASS " + this->password);
 	this->conn->sendRaw("NICK " + this->nick);
 	this->conn->sendRaw("USER " + this->nick + " 0 * :" + this->nick);
 
@@ -91,6 +97,6 @@ void Bot::run()
 		}
 
 		if (this->rh)
-		this->rh->handleLine(line);
+			this->rh->handleLine(line);
 	}
 }

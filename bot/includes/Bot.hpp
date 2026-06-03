@@ -6,7 +6,7 @@
 /*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/02 22:27:25 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/02 23:05:16 by adriescr         ###   ########.fr       */
+/*   Updated: 2026/06/03 17:03:42 by adriescr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,15 +28,17 @@ class Bot
 	private:
 		std::string nick;
 		std::string host;
+		std::string password;
 		IRCConnection *conn;
 		ChannelManager *cm;
 		RequestHandler *rh;
 	public:
 		int port;
-		Bot(const std::string &nick = BOT_DEFAULT_NICK, const std::string &host = BOT_DEFAULT_HOST);
+		Bot(const std::string &nick = BOT_DEFAULT_NICK, const std::string &host = BOT_DEFAULT_HOST, const std::string &password);
 		~Bot();
 		std::string getNick() const;
 		std::string getHost() const;
+		std::string getPassword() const;
 		void setPort(int p);
 		int connectToServer();
 		void run();

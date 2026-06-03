@@ -23,15 +23,17 @@ Ejecutar
 Uso básico:
 
 ```bash
-./ircbot <host> <port> <nick>
+./ircbot <nick> <host> <port> <password>
+```
 # ejemplo:
-./ircbot localhost 6667 MiBot
+```bash
+./ircbot MiBot localhost 6667 mi_contraseña
 ```
 
 Modo automático de puerto (tu script de servidor debe escribir el puerto en `.irc_port`):
 
 ```bash
-./ircbot localhost auto MiBot
+./ircbot MiBot localhost auto mi_contraseña
 ```
 
 Notas

@@ -6,7 +6,7 @@
 /*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/02 20:17:22 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/02 23:08:08 by adriescr         ###   ########.fr       */
+/*   Updated: 2026/06/03 17:06:33 by adriescr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ static int determine_port(int argc, char **argv){
 
 int main(int argc, char **argv){
 	if (argc > 1 && std::string(argv[1]) == "--help"){
-		std::cout << "Usage: " << argv[0] << " [nick] [host] [port]\n";
+		std::cout << "Usage: " << argv[0] << " [nick] [host] [port] [password]\n";
 		std::cout << "If host is 'auto', it will connect to localhost. If port is 'auto', it will read the port from .irc_port.\n";
 		return 0;
 	}
@@ -71,7 +71,11 @@ int main(int argc, char **argv){
 	else
 		host = BOT_DEFAULT_HOST;
 
-	Bot bot(nick, host);
+	std::string password;
+	password = argv[4];
+	std::cout << "Bot will connect with nick: " << nick << ", host: " << host << ", password: " << (password.empty() ? "(empty)" : "(set)") << "\n";
+
+	Bot bot(nick, host, password);
 
 	int port = determine_port(argc, argv);
 
