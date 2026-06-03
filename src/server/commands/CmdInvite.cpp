@@ -44,4 +44,7 @@ void CmdInvite::execute(RequestContext &ctx)
 
     if (!canInvite(ctx, targetUser, channel)) return;
     channel->inviteUser(targetUser);
+
+    ctx.services.sendToUser(targetUser, ":" + ctx.sender->getNickname() + " INVITE " + targetUser->getNickname() + " :" + channel->getName());
+    ctx.services.sendToUser(ctx.sender, ":server 341 " + ctx.sender->getNickname() + " " + targetUser->getNickname() + " :" + channel->getName());
 }
