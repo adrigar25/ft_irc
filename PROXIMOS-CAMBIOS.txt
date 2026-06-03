@@ -1,5 +1,5 @@
 -   Terminar todas las funciones de los commandos 
-    en server_commands.cpp
+    en commands
 
 -   Añadir operadores para los canales (canales moderados)
 
@@ -12,6 +12,8 @@
     invitar jugadores a canales
 
 -   Poder banear usuarios
+
+-   Manejar las signals
 
 //BONUS
 

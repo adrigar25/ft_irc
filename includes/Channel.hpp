@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 00:08:03 by agarcia           #+#    #+#             */
-/*   Updated: 2026/05/15 00:53:28 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/01 20:37:11 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ class Channel
 {
     private:
         std::string             name;
+        std::string             topic;
+        std::string             key;
         std::map<int, User*>    users;
         std::map<int, User*>    voiceUsers;
         std::map<int, User*>    operators;
@@ -32,16 +34,38 @@ class Channel
         std::map<int, User*>    bannedUsers;
         std::map<int, User*>    exceptedUsers;
         int                     userCount;
-        bool                    isPrivate;
+        bool                    topicProtected;
+        bool                    keyRequired;
+        bool                    isInviteOnly;
+        bool                    isSecret;
         int                     userLimit;
     public:
                 Channel(std::string name, User *creator);
                 ~Channel();
+
+            /* Gestión de usuarios */
             void    addUser(User *user);
             void    deleteUser(User *user);
-            void    changeRole(User *user, std::string role);
             void    addUserToMap(std::map<int, User*> &userMap, User *user);
             void    deleteUserFromMap(std::map<int, User*> &userMap, User *user);
+            void    inviteUser(User *user);
+            void    banUser(User *user);
+            void    unbanUser(User *user);
+
+            /* Roles */
+            void    changeRole(User *user, std::string role);
+			void	removeRole(User *user, std::string role);
+
+            /* Setters */
+            void    setIsInviteOnly(bool val);
+            void    setUserLimit(int limit);
+            void    setTopic(const std::string &t);
+            void    setKey(const std::string &k);
+            void    setKeyRequired(bool val);
+            void    setIsSecret(bool val);
+            void    setTopicProtected(bool val);
+
+            /* Consultas */
             bool    canUserJoin(User *user) const;
             bool    hasUser(User *user) const;
             bool    isUserOperator(User *user) const;
@@ -49,53 +73,26 @@ class Channel
             bool    isUserInvited(User *user) const;
             bool    isUserBanned(User *user) const;
             bool    isUserExcepted(User *user) const;
+            bool    isEmpty() const;
+
+            /* Getters */
             int     getUserCount() const;
             int     getUserLimit() const;
-            bool    getIsPrivate() const;
+            bool    getIsInviteOnly() const;
+            bool    getTopicProtected() const;
+            bool    getIsSecret() const;
+            bool    getKeyRequired() const;
+
+            std::string                 getTopic() const;
+            std::string                 getKey() const;
             const std::map<int, User*>& getUsers() const;
+            const std::map<int, User*>& getOperators() const;
+            const std::map<int, User*>& getVoiceUsers() const;
+            const std::map<int, User*>& getInvitedUsers() const;
+            const std::map<int, User*>& getBannedUsers() const;
+            const std::map<int, User*>& getExceptedUsers() const;
             std::string                 getName() const;
-    class userAlreadyExistsException : public std::exception
-    {
-        virtual const char* what() const throw()
-        {
-            return "User already exists in channel";
-        }
-    };
-    class userNotFoundException : public std::exception
-    {
-        virtual const char* what() const throw()
-        {
-            return "User not found in channel";
-        }
-    };
-    class channelFullException : public std::exception
-    {
-        virtual const char* what() const throw()
-        {
-            return "Channel is full";
-        }
-    };
-    class roleNotFoundException : public std::exception
-    {
-        virtual const char* what() const throw()
-        {
-            return "Role not found";
-        }
-    };
-    class privateChannelException : public std::exception
-    {
-        virtual const char* what() const throw()
-        {
-            return "Channel is private, user must be invited to join";
-        }
-    };
-    class userBannedException : public std::exception
-    {
-        virtual const char* what() const throw()
-        {
-            return "User is banned from this channel";
-        }
-    };
+    /* Exceptions moved to includes/Exceptions.hpp */
 };
 
 #endif

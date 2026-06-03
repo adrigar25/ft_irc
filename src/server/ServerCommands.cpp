@@ -1,0 +1,95 @@
+#include "Server.hpp"
+#include "User.hpp"
+#include <vector>
+#include <list>
+#include <iostream>
+#include <sstream>
+#include <utility>
+#include "CommandDispatcher.hpp"
+#include "commands/CmdPrivmsg.hpp"
+#include "commands/CmdPass.hpp"
+#include "commands/CmdNick.hpp"
+#include "commands/CmdUser.hpp"
+#include "commands/CmdJoin.hpp"
+#include "commands/CmdPart.hpp"
+#include "commands/CmdPing.hpp"
+#include "commands/CmdQuit.hpp"
+#include "commands/CmdList.hpp"
+#include "commands/CmdInvite.hpp"
+#include "commands/CmdKick.hpp"
+#include "commands/CmdMode.hpp"
+#include "commands/CmdTopic.hpp"
+#include "RequestContext.hpp"
+
+static CommandDispatcher& getDispatcher()
+{
+    static CommandDispatcher dispatcher;
+    static bool inited = false;
+    if (!inited) {
+        dispatcher.registerHandler("PASS", new CmdPass());
+        dispatcher.registerHandler("NICK", new CmdNick());
+        dispatcher.registerHandler("USER", new CmdUser());
+        dispatcher.registerHandler("JOIN", new CmdJoin());
+        dispatcher.registerHandler("PART", new CmdPart());
+        dispatcher.registerHandler("PRIVMSG", new CmdPrivmsg());
+        dispatcher.registerHandler("QUIT", new CmdQuit());
+        dispatcher.registerHandler("PING", new CmdPing());
+        dispatcher.registerHandler("LIST", new CmdList());
+        dispatcher.registerHandler("INVITE", new CmdInvite());
+        dispatcher.registerHandler("KICK", new CmdKick());
+        dispatcher.registerHandler("MODE", new CmdMode());
+        dispatcher.registerHandler("TOPIC", new CmdTopic());
+        inited = true;
+    }
+    return dispatcher;
+}
+
+void Server::handleClientCommand(User *user, const std::string &commandLine)
+{
+    if (!user) {
+        std::cerr << "handleClientCommand: null user for command: " << commandLine << std::endl;
+        return;
+    }
+    size_t sp = commandLine.find(' ');
+    std::string cmd;
+    std::string args;
+    if (sp == std::string::npos) {
+        cmd = commandLine;
+        args = "";
+    } else {
+        cmd = commandLine.substr(0, sp);
+        if (sp + 1 < commandLine.size())
+            args = commandLine.substr(sp + 1);
+        else
+            args = "";
+    }
+    std::cout << "[" << cmd << "] " << "fd:" << user->getSocket() << " args:" << (args.empty() ? "<EMPTY>" : args) << std::endl;
+    executeCommand(user, cmd, args);
+}
+
+void Server::executeCommand(User *user, const std::string &command, const std::string &args)
+{
+
+    CommandDispatcher& dispatcher = getDispatcher();
+
+    if (!user)
+        return;
+
+
+    if (!dispatcher.hasHandler(command))
+    {
+        handleUnknownCommand(user, command);
+        return;
+    }
+
+    if (!user->isAuthenticated())
+    {
+        if (command != "PASS" && command != "NICK" && command != "USER" && command != "CAP" && command != "PING" && command != "PONG") {
+            sendToUser(user, std::string("You're not authenticated"));
+            return;
+        }
+    }
+
+    RequestContext ctx(this->services, user, args);
+    dispatcher.dispatch(command, ctx);
+}
