@@ -6,7 +6,7 @@
 /*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/02 23:09:03 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/03 17:25:17 by adriescr         ###   ########.fr       */
+/*   Updated: 2026/06/04 17:10:26 by adriescr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,10 +102,22 @@ void RequestHandler::handleLine(const std::string &line)
 			return; // ignore own messages
 
 		bool addressed = false;
+		// direct/private message to the bot
 		if (dest == this->nick)
 			addressed = true;
-		if (!addressed && payload.find(this->nick) != std::string::npos)
+		// channel command prefix (e.g. "!hola")
+		std::string stripped = trim(payload);
+		if (!addressed && !stripped.empty() && (stripped[0] == '!'))
 			addressed = true;
+		// mention of the bot (case-insensitive)
+		if (!addressed) {
+			std::string lowerPayload = payload;
+			std::string lowerNick = this->nick;
+			std::transform(lowerPayload.begin(), lowerPayload.end(), lowerPayload.begin(), ::tolower);
+			std::transform(lowerNick.begin(), lowerNick.end(), lowerNick.begin(), ::tolower);
+			if (lowerPayload.find(lowerNick) != std::string::npos)
+				addressed = true;
+		}
 
 		if (addressed){
 			std::string reply = chooseReply(payload);
@@ -115,8 +127,8 @@ void RequestHandler::handleLine(const std::string &line)
 				if (this->cm)
 					this->cm->sendToChannel(dest, reply);
 			} else {
-				if (this->conn)
-					this->conn->sendRaw("PRIVMSG" + sender + " :" + reply);
+				if (this->conn && !sender.empty())
+					this->conn->sendRaw("PRIVMSG " + sender + " :" + reply);
 			}
 		}
 		return;

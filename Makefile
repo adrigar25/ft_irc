@@ -6,7 +6,7 @@
 #    By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/17 11:32:11 by adriescr          #+#    #+#              #
-#    Updated: 2026/06/02 20:25:52 by adriescr         ###   ########.fr        #
+#    Updated: 2026/06/04 16:53:01 by adriescr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -67,18 +67,24 @@ $(NAME): $(OBJS)
 # Clean object files
 clean:
 	@printf 'Eliminando directorio de objetos: \033[38;5;208m%s\033[0m\n' "$(OBJS_DIR)"
+	@$(MAKE) -C bot clean
 	@rm -rf $(OBJS_DIR)
 
 # Clean executable
 fclean: clean
 	@printf 'Eliminando ejecutable:\033[0;32m %s\033[0m\n' "$(NAME)"
+	@$(MAKE) -C bot fclean
 	@rm -f $(NAME)
 
 # Rebuild the project
 re: fclean all
 
 # Other targets
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re bot
+
+# Bot target: delega la compilación al Makefile dentro de `bot/`
+bot:
+	@$(MAKE) -C bot
 
 # Prevent make from deleting intermediate marker files (.dir)
 .SECONDARY:
