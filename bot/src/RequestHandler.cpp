@@ -29,6 +29,14 @@ static std::string trim(const std::string &s)
 	return (s.substr(a, b-a));
 }
 
+static std::string cleanIrcParam(const std::string &s)
+{
+	std::string value = trim(s);
+	if (!value.empty() && value[0] == ':')
+		value.erase(0, 1);
+	return (value);
+}
+
 RequestHandler::RequestHandler(IRCConnection *conn, ChannelManager *cm, const std::string &nick)
 : conn(conn), cm(cm), nick(nick) {}
 
@@ -67,6 +75,7 @@ void RequestHandler::handleLine(const std::string &line)
 	if (cmd == "INVITE"){
 		std::string target, chan;
 		iss >> target >> chan;
+		chan = cleanIrcParam(chan);
 		if (target == this->nick){
 			if (this->cm)
 				this->cm->joinChannel(chan);
