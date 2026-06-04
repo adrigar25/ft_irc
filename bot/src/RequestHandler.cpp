@@ -6,7 +6,7 @@
 /*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/02 23:09:03 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/04 17:27:09 by adriescr         ###   ########.fr       */
+/*   Updated: 2026/06/04 17:32:59 by adriescr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,10 +47,12 @@ std::string RequestHandler::chooseReply(const std::string &text) const
 	std::string t = text;
 	// lowercase
 	std::transform(t.begin(), t.end(), t.begin(), ::tolower);
-	if (t.find(BOT_TRIGGER_1) != std::string::npos)
-		return (BOT_RESPONSE_1);
-	if (t.find(BOT_TRIGGER_2) != std::string::npos)
-		return (BOT_RESPONSE_2);
+	for (const BotCmd *cmd = BOT_COMMANDS; cmd->trigger; ++cmd) {
+		std::string trig = cmd->trigger;
+		std::transform(trig.begin(), trig.end(), trig.begin(), ::tolower);
+		if (t.find(trig) != std::string::npos)
+			return std::string(cmd->response);
+	}
 	return ("");
 }
 
@@ -125,10 +127,13 @@ void RequestHandler::handleLine(const std::string &line)
 			std::transform(lowerStripped.begin(), lowerStripped.end(), lowerStripped.begin(), ::tolower);
 			if (lowerStripped == "!help" || lowerStripped.rfind("!help ", 0) == 0) {
 				std::ostringstream oss;
-				oss << "Comandos disponibles: ";
-				oss << "!help - muestra esta ayuda; ";
-				oss << "!" << BOT_TRIGGER_1 << " - " << BOT_RESPONSE_1 << "; ";
-				oss << "!" << BOT_TRIGGER_2 << " - " << BOT_RESPONSE_2;
+				oss << "Comandos disponibles:\n";
+				oss << "!help - muestra esta ayuda;\n";
+				for (const BotCmd *cmd = BOT_COMMANDS; cmd->trigger; ++cmd) {
+					oss << "!" << cmd->trigger << " - " << cmd->response;
+					if ((cmd + 1)->trigger)
+						oss << "; \n";
+				}
 				std::string helpMsg = oss.str();
 				if (dest.size() && (dest[0] == '#' || dest[0] == '&')){
 					if (this->cm)
