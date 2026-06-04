@@ -6,7 +6,7 @@
 /*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/02 23:09:03 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/04 17:10:26 by adriescr         ###   ########.fr       */
+/*   Updated: 2026/06/04 17:27:09 by adriescr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,15 +120,34 @@ void RequestHandler::handleLine(const std::string &line)
 		}
 
 		if (addressed){
-			std::string reply = chooseReply(payload);
-			if (reply.empty())
-				reply = "No entiendo...";
-			if (dest.size() && (dest[0] == '#' || dest[0] == '&')){
-				if (this->cm)
-					this->cm->sendToChannel(dest, reply);
+			// soporte para comando de ayuda: !help
+			std::string lowerStripped = stripped;
+			std::transform(lowerStripped.begin(), lowerStripped.end(), lowerStripped.begin(), ::tolower);
+			if (lowerStripped == "!help" || lowerStripped.rfind("!help ", 0) == 0) {
+				std::ostringstream oss;
+				oss << "Comandos disponibles: ";
+				oss << "!help - muestra esta ayuda; ";
+				oss << "!" << BOT_TRIGGER_1 << " - " << BOT_RESPONSE_1 << "; ";
+				oss << "!" << BOT_TRIGGER_2 << " - " << BOT_RESPONSE_2;
+				std::string helpMsg = oss.str();
+				if (dest.size() && (dest[0] == '#' || dest[0] == '&')){
+					if (this->cm)
+						this->cm->sendToChannel(dest, helpMsg);
+				} else {
+					if (this->conn && !sender.empty())
+						this->conn->sendRaw("PRIVMSG " + sender + " :" + helpMsg);
+				}
 			} else {
-				if (this->conn && !sender.empty())
-					this->conn->sendRaw("PRIVMSG " + sender + " :" + reply);
+				std::string reply = chooseReply(payload);
+				if (reply.empty())
+					reply = "No entiendo...";
+				if (dest.size() && (dest[0] == '#' || dest[0] == '&')){
+					if (this->cm)
+						this->cm->sendToChannel(dest, reply);
+				} else {
+					if (this->conn && !sender.empty())
+						this->conn->sendRaw("PRIVMSG " + sender + " :" + reply);
+				}
 			}
 		}
 		return;
