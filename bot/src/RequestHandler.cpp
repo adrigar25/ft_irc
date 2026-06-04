@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   RequestHandler.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/02 23:09:03 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/04 17:32:59 by adriescr         ###   ########.fr       */
+/*   Updated: 2026/06/04 18:48:33 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,12 +135,29 @@ void RequestHandler::handleLine(const std::string &line)
 						oss << "; \n";
 				}
 				std::string helpMsg = oss.str();
+				// Send help message line-by-line to avoid embedding '\n' inside a single PRIVMSG
 				if (dest.size() && (dest[0] == '#' || dest[0] == '&')){
-					if (this->cm)
-						this->cm->sendToChannel(dest, helpMsg);
+					if (this->cm) {
+						std::istringstream lss(helpMsg);
+						std::string lineMsg;
+						while (std::getline(lss, lineMsg)) {
+							lineMsg = trim(lineMsg);
+							if (lineMsg.empty())
+								continue;
+							this->cm->sendToChannel(dest, lineMsg);
+						}
+					}
 				} else {
-					if (this->conn && !sender.empty())
-						this->conn->sendRaw("PRIVMSG " + sender + " :" + helpMsg);
+					if (this->conn && !sender.empty()){
+						std::istringstream lss(helpMsg);
+						std::string lineMsg;
+						while (std::getline(lss, lineMsg)) {
+							lineMsg = trim(lineMsg);
+							if (lineMsg.empty())
+								continue;
+							this->conn->sendRaw("PRIVMSG " + sender + " :" + lineMsg);
+						}
+					}
 				}
 			} else {
 				std::string reply = chooseReply(payload);
