@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRCConnection.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/02 23:10:43 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/02 23:20:25 by adriescr         ###   ########.fr       */
+/*   Updated: 2026/06/07 12:44:02 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,18 @@ void IRCConnection::closeConn()
 	}
 }
 
-bool IRCConnection::isConnected() const { return this->sockfd >= 0; }
+bool IRCConnection::isConnected() const 
+{
+	// send(this->sockfd, "PING 1123424524253\r\n", 21, MSG_NOSIGNAL);
+	// char buf[21];
+	// ssize_t n = recv(this->sockfd, buf, sizeof(buf), MSG_PEEK | MSG_DONTWAIT);
+	// if (n <= 0) return false;
+
+	// buf[n] = '\0';
+	// std::string response(buf);
+	// if (response.find("PONG") == std::string::npos) return false;
+	// if(response.find("1123424524253") == std::string::npos) return false;
+	return true;
+}
 
 int IRCConnection::getFd() const { return this->sockfd; }
