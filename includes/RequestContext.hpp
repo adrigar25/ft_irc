@@ -14,9 +14,9 @@
 #define REQUESTCONTEXT_HPP
 
 #include <string>
-#include "Services.hpp"
 #include "User.hpp"
 
+class Services;
 struct RequestContext {
     Services &services;
     User *sender;
