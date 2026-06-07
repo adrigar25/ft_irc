@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 00:08:03 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/01 20:37:11 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/05 22:09:52 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ class Channel
         bool                    keyRequired;
         bool                    isInviteOnly;
         bool                    isSecret;
+        bool                   isModerated;
         int                     userLimit;
     public:
                 Channel(std::string name, User *creator);
@@ -64,6 +65,7 @@ class Channel
             void    setKeyRequired(bool val);
             void    setIsSecret(bool val);
             void    setTopicProtected(bool val);
+            void    setModerated(bool val);
 
             /* Consultas */
             bool    canUserJoin(User *user) const;
@@ -74,7 +76,7 @@ class Channel
             bool    isUserBanned(User *user) const;
             bool    isUserExcepted(User *user) const;
             bool    isEmpty() const;
-
+            
             /* Getters */
             int     getUserCount() const;
             int     getUserLimit() const;
@@ -82,6 +84,7 @@ class Channel
             bool    getTopicProtected() const;
             bool    getIsSecret() const;
             bool    getKeyRequired() const;
+            bool    getIsModerated() const;
 
             std::string                 getTopic() const;
             std::string                 getKey() const;
