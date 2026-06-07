@@ -13,6 +13,7 @@
 #include "commands/CmdQuit.hpp"
 #include "RequestContext.hpp"
 #include "Services.hpp"
+#include "Server.hpp"
 #include <string>
 
 void CmdQuit::execute(RequestContext &ctx)
