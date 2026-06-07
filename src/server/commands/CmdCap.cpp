@@ -29,7 +29,7 @@ void CmdCap::execute(RequestContext &ctx)
     std::string sub;
     iss >> sub;
     if (sub == "LS") {
-        ctx.services.sendToUser(ctx.sender, std::string("CAP * LS :"));
+        ctx.services.sendToUser(ctx.sender, std::string("CAP * LS : multi-prefix"));
         return;
     }
     if (sub == "LIST") {

@@ -31,6 +31,7 @@
 #include "commands/CmdKick.hpp"
 #include "commands/CmdMode.hpp"
 #include "commands/CmdTopic.hpp"
+#include "commands/CmdCap.hpp"
 #include "RequestContext.hpp"
 
 static CommandDispatcher& getDispatcher()
@@ -51,6 +52,7 @@ static CommandDispatcher& getDispatcher()
         dispatcher.registerHandler("KICK", new CmdKick());
         dispatcher.registerHandler("MODE", new CmdMode());
         dispatcher.registerHandler("TOPIC", new CmdTopic());
+        dispatcher.registerHandler("CAP", new CmdCap());
         inited = true;
     }
     return dispatcher;
