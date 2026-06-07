@@ -16,6 +16,7 @@
 #include <string>
 #include "managers/UserManager.hpp"
 #include "managers/ChannelManager.hpp"
+#include "RequestContext.hpp"
 
 class Server;
 class User;
@@ -39,6 +40,7 @@ public:
     std::string getServerName() const;
     void sendToUser(User* user, const std::string &message);
     void sendToChannel(Channel* channel, const std::string &message, User* exclude = NULL);
+    void sendResponse(RequestContext &ctx, const std::string &code, const std::string &message);
 
 };
 
