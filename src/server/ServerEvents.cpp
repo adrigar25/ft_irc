@@ -15,6 +15,7 @@
 #include <cerrno>
 #include <poll.h>
 #include <sys/socket.h>
+#include <unistd.h>
 
 int Server::performPoll()
 {
@@ -39,17 +40,25 @@ void Server::handleClientEvents()
 }
 
 void Server::handleEvents()
+
 {
+
     int ready = 0;
-    while (true)
+
+    while (this->running)
     {
-        if (this->fds.size() == 0)
+        if (this->fds.empty())
+        {
+            usleep(100);
             continue;
+        }
         ready = performPoll();
-        if (ready == 0)
-            continue;
         if (ready < 0)
             break;
+
+        if (ready == 0)
+            continue;
+
         if (!this->fds.empty() && (this->fds[0].revents & POLLIN))
         {
             try {
@@ -62,7 +71,8 @@ void Server::handleEvents()
         try {
             handleClientEvents();
         } catch (const std::exception &e) {
-            std::cerr << "Error processing client events: " << e.what() << std::endl;
+            std::cerr << "Client error: " << e.what() << std::endl;
         }
     }
+    cleanup();
 }
