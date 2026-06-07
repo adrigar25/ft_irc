@@ -88,6 +88,15 @@ void User::setUsername(const std::string &name)
     this->userSet = true;
 }
 
+/**
+ * @brief Establece el nombre real (realname) del usuario.
+ * @param name Nombre real.
+ */
+void User::setRealName(const std::string &name)
+{
+    this->realname = name;
+}
+
 
 /**
  * @brief Devuelve el `username` del usuario.
@@ -96,6 +105,15 @@ void User::setUsername(const std::string &name)
 std::string User::getUsername() const
 {
     return this->username;
+}
+
+/**
+ * @brief Devuelve el `realname` del usuario.
+ * @return `std::string` con el realname.
+ */
+std::string User::getRealName() const
+{
+    return this->realname;
 }
 
 
