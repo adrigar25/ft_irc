@@ -16,12 +16,14 @@
 #include <cstring>
 #include <cerrno>
 #include <unistd.h>
-#include <signal.h>
 #include <fstream>
 #include <limits.h>
 #include <cstdlib>
 #include <arpa/inet.h>
 #include <sys/socket.h>
+
+
+Server* Server::instance = NULL;
 
 /**
  * @brief Constructor del servidor.
@@ -52,14 +54,6 @@ Server::Server(unsigned int port, std::string password): port(port), password(pa
  */
 Server::~Server()
 {
-	// Process client disconnections so other clients receive QUIT messages
-	while (this->fds.size() > 1) {
-		// always disconnect the first client entry (index 1)
-		this->handleDisconnectionByIndex(1);
-	}
-	if (this->serverSocket >= 0)
-		close(this->serverSocket);
-	// clear remaining users and channels via managers
 	this->services.users().clear();
 	this->services.channels().clear();
 	std::cout << "Server destroyed" << std::endl;
@@ -185,11 +179,14 @@ int Server::startBot()
 void Server::startServer()
 {
 	try {
+		running = true;
+		instance = this;
 		createServerSocket();
 		setSocketOptions();
 		bindServerSocket();
 		listenServerSocket();
 		setupPollFds();
+		initSignals();
 	}
 	catch (const std::exception &e)
 	{
@@ -200,21 +197,40 @@ void Server::startServer()
 		std::cerr << "ERROR: " << e.what() << std::endl;
 		return;
 	}
-	// this->services.channels().createChannel("#general", nullptr);
-	// Channel* general = this->services.channels().getChannel("#general");
-	// general->setTopic("Welcome to the general channel!");
-	// general->setIsInviteOnly(false);
-	// general->setKey("1234");
-	// general->setKeyRequired(true);
 	startBot();
 	handleEvents();
 }
 
 void Server::stopServer()
 {
+	running = false;
 	if (this->serverSocket >= 0) {
 		close(this->serverSocket);
 		this->serverSocket = -1;
 	}
 	std::cout << "Server stopped" << std::endl;
 }
+
+void Server::cleanup()
+{
+    std::cout << "Cleaning up server..." << std::endl;
+    for (size_t i = 0; i < this->fds.size(); ++i)
+    {
+        if (this->fds[i].fd >= 0)
+            close(this->fds[i].fd);
+    }
+
+    this->fds.clear();
+    this->services.users().clear();
+    this->services.channels().clear();
+    this->serverSocket = -1;
+    std::cout << "Server cleaned up" << std::endl;
+}
+
+
+
+Server* Server::getInstance()
+{
+	return Server::instance;
+}
+
