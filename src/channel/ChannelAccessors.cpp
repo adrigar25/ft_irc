@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ChannelAccessors.cpp                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/06/07 12:37:19 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/07 12:37:20 by agarcia          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "Channel.hpp"
 #include "User.hpp"
 #include "Exceptions.hpp"
@@ -36,6 +48,10 @@ void Channel::setIsSecret(bool val)
 void Channel::setTopicProtected(bool val)
 {
     this->topicProtected = val;
+}
+void Channel::setModerated(bool val)
+{
+    this->isModerated = val;
 }
 
 /**
@@ -137,4 +153,9 @@ const std::map<int, User*>& Channel::getBannedUsers() const
 const std::map<int, User*>& Channel::getExceptedUsers() const
 {
     return this->exceptedUsers;
+}
+
+bool Channel::getIsModerated() const
+{
+    return this->isModerated;
 }

@@ -1,7 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ChannelRoles.cpp                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/06/07 12:37:27 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/07 15:45:52 by agarcia          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "Channel.hpp"
 #include "User.hpp"
 #include "Exceptions.hpp"
 #include <map>
+#include <iostream>
+#include <string>
 
 /**
  * @brief Cambia el rol de un `user` añadiéndolo al conjunto correspondiente.

@@ -1,8 +1,15 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                    CommandDispatcher.hpp   */
+/*                                                        :::      ::::::::   */
+/*   CommandDispatcher.hpp                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/06/07 12:38:23 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/07 12:38:24 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #ifndef COMMANDDISPATCHER_HPP
 #define COMMANDDISPATCHER_HPP

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/06/07 12:39:11 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/07 14:13:04 by agarcia          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <iostream>
 #include <cstring>
 #include <cerrno>
@@ -49,9 +61,8 @@ int main(int argc, char* argv[]) {
 	unsigned int port;
 	std::string password;
 
-	if (checkArgs(argc, argv, port, password) != 0) {
+	if (checkArgs(argc, argv, port, password) != 0)
 		return 1;
-	}
 
 	try {
 		Server server(port, password);
@@ -63,5 +74,6 @@ int main(int argc, char* argv[]) {
 		std::cerr << "Fatal: Unknown exception" << std::endl;
 		return 1;
 	}
+	std::cout << "Server stopped gracefully." << std::endl;
 	return 0;
 }
