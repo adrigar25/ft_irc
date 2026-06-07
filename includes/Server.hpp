@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 00:08:09 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/02 21:09:16 by adriescr         ###   ########.fr       */
+/*   Updated: 2026/06/07 16:37:00 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,9 @@ class Server
         Services                        services;
         std::string                     hostname;
         std::vector<struct pollfd>      fds;
+        static Server*                  instance;
+        bool                            running;
+
         void        handleEvents();
         int         performPoll();
         void        handleClientEvents();
@@ -64,11 +67,14 @@ class Server
         void        sendToChannel(Channel *channel, const std::string &message, User *exclude);
         void        addUser(User* user);
         void        deleteUser(int fd);
+        void        initSignals();
+        void        cleanup();
     public:
                 Server(unsigned int port, std::string password);
                 ~Server();
         void    sendMessageToUser(User *user, const std::string &message) { sendToUser(user, message); }
         void    sendMessageToChannel(Channel *channel, const std::string &message, User *exclude) { sendToChannel(channel, message, exclude); }
+        void    sendNamesList(RequestContext &ctx, Channel *channel);
         void    startServer();
         void    stopServer();
         int     getPort() const;
@@ -76,6 +82,7 @@ class Server
         bool    validatePassword(const std::string &p) const { return this->password == p; }
         const std::string& getHostname() const { return hostname; }
 		int     startBot();
+        static Server* getInstance();
 
 };
 
