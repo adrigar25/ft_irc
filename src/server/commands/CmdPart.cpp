@@ -71,12 +71,19 @@ static void partFromChannel(RequestContext &ctx, const std::string &channelName,
 
 static void splitChannelsAndMsg(const std::string &raw, std::string &outChannels, std::string &outMsg)
 {
-    outChannels = raw;
-    outMsg.clear();
-    size_t sp = raw.find(' ');
-    if (sp != std::string::npos) {
-        outChannels = raw.substr(0, sp);
-        outMsg = raw.substr(sp + 1);
+    std::istringstream iss(raw);
+    std::string channelsPart;
+    if (!std::getline(iss, channelsPart, ' ')) {
+        outChannels = raw;
+        outMsg = "";
+        return;
+    }else {
+        outChannels = channelsPart;
+        std::string rest;
+        if (std::getline(iss, rest))
+            outMsg = rest;
+        else
+            outMsg = "";
     }
 }
 
@@ -88,6 +95,18 @@ void CmdPart::execute(RequestContext &ctx)
     std::string channelsPart;
     std::string msgPart;
     splitChannelsAndMsg(ctx.rawLine, channelsPart, msgPart);
+
+    if(channelsPart.empty())
+    {
+        ctx.services.sendToUser(ctx.sender, "461 Not enough parameters");
+        return ;
+    }
+
+    if(msgPart.size() > 0 && msgPart[0] != ':')
+    {
+        ctx.services.sendToUser(ctx.sender, "461 Not enough parameters");
+        return ;
+    }
 
     parseChannelList(channelsPart, channelNames, ctx);
 
