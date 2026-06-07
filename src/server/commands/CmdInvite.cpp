@@ -29,8 +29,12 @@ static void parseInviteParams(const std::string &params, std::string &outTargetN
 
 static bool canInvite(RequestContext &ctx, User* targetUser, Channel* channel)
 {
-    if (!targetUser || !channel) {
-        ctx.services.sendToUser(ctx.sender, std::string("Invalid user or channel"));
+    if (!targetUser) {
+        ctx.services.sendToUser(ctx.sender, std::string("No such user"));
+        return false;
+    }
+    if (!channel) {
+        ctx.services.sendToUser(ctx.sender, std::string("No such channel"));
         return false;
     }
     if (!channel->isUserOperator(ctx.sender)) {
