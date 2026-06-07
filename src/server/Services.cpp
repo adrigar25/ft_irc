@@ -44,3 +44,10 @@ std::string Services::getServerName() const {
         return server->getHostname();
     return std::string("localhost");
 }
+
+void Services::sendResponse(RequestContext &ctx, const std::string &code, const std::string &message)
+{
+    std::string serverName = ctx.services.getServerName();
+    std::string response = std::string(":") + serverName + " " + code + " " + ctx.sender->getNickname() + " " + message;
+    ctx.services.sendToUser(ctx.sender, response);
+}
