@@ -61,6 +61,10 @@ static void dispatchPrivmsg(RequestContext &ctx, const std::string &target, cons
             ctx.services.sendToUser(ctx.sender, std::string("404 ") + target + " :Cannot send to channel");
             return;
         }
+        if(channel->getIsModerated() && !channel->isUserVoice(ctx.sender) && !channel->isUserOperator(ctx.sender)) {
+            ctx.services.sendToUser(ctx.sender, std::string("404 ") + target + " :Cannot send to channel (moderated)");
+            return;
+        }
         ctx.services.sendToChannel(channel, out, ctx.sender);
     } else {
         User *dest = ctx.services.users().findByNick(target);
