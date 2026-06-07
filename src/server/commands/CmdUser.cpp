@@ -31,18 +31,11 @@ static void parseUserLine(const std::string &raw, std::string &outUsername, std:
     outReal = real;
 }
 
-static void setUserAndMaybeWelcome(RequestContext &ctx, const std::string &username, const std::string &real)
+static void setUser(RequestContext &ctx, const std::string &username, const std::string &real)
 {
-    (void)real;
     ctx.sender->setUsername(username);
-    ctx.services.sendToUser(ctx.sender, std::string("Username set"));
+    ctx.sender->setRealName(real);
 
-    if (ctx.sender->isPassSet() && ctx.sender->isNickSet() && ctx.sender->isUserSet()) {
-        ctx.sender->setAuthenticated(true);
-        std::string serverName = ctx.services.getServerName();
-        std::string welcome = std::string(":") + serverName + " 001 " + ctx.sender->getNickname() + " :Welcome to " + serverName;
-        ctx.services.sendToUser(ctx.sender, welcome);
-    }
 }
 
 void CmdUser::execute(RequestContext &ctx)
@@ -54,5 +47,5 @@ void CmdUser::execute(RequestContext &ctx)
     }
     std::string username, real;
     parseUserLine(ctx.rawLine, username, real);
-    setUserAndMaybeWelcome(ctx, username, real);
+    setUser(ctx, username, real);
 }

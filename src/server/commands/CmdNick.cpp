@@ -36,11 +36,6 @@ static bool nickAvailable(RequestContext &ctx, const std::string &nick)
     return true;
 }
 
-static void applyNick(RequestContext &ctx, const std::string &nick)
-{
-    ctx.sender->setNickname(nick);
-    ctx.services.sendToUser(ctx.sender, std::string("Nickname set"));
-}
 
 void CmdNick::execute(RequestContext &ctx)
 {
@@ -52,6 +47,6 @@ void CmdNick::execute(RequestContext &ctx)
         return;
     }
 
-    if (!nickAvailable(ctx, nick)) return;
-    applyNick(ctx, nick);
+    if (!nickAvailable(ctx, nick)) return; 
+        ctx.sender->setNickname(nick);
 }

@@ -58,6 +58,15 @@ static CommandDispatcher& getDispatcher()
     return dispatcher;
 }
 
+static void checkAuthentication(RequestContext &ctx)
+{
+    if (ctx.sender->isPassSet() && ctx.sender->isNickSet() && ctx.sender->isUserSet()) {
+        ctx.sender->setAuthenticated(true);
+        std::string serverName = ctx.services.getServerName();
+        std::string welcome = "Welcome to " + serverName + ", " + ctx.sender->getRealName() + "!";
+        ctx.services.sendResponse(ctx, "001", welcome);
+    }
+}
 void Server::handleClientCommand(User *user, const std::string &commandLine)
 {
     if (!user) {
@@ -89,7 +98,6 @@ void Server::executeCommand(User *user, const std::string &command, const std::s
     if (!user)
         return;
 
-
     if (!dispatcher.hasHandler(command))
     {
         handleUnknownCommand(user, command);
@@ -98,7 +106,8 @@ void Server::executeCommand(User *user, const std::string &command, const std::s
 
     if (!user->isAuthenticated())
     {
-        if (command != "PASS" && command != "NICK" && command != "USER" && command != "CAP" && command != "PING" && command != "PONG") {
+        if (command != "PASS" && command != "NICK" && command != "USER" && command != "CAP" && command != "PING" && command != "PONG")
+        {
             sendToUser(user, std::string("You're not authenticated"));
             return;
         }
@@ -106,4 +115,6 @@ void Server::executeCommand(User *user, const std::string &command, const std::s
 
     RequestContext ctx(this->services, user, args);
     dispatcher.dispatch(command, ctx);
+    if(!user->isAuthenticated())
+        checkAuthentication(ctx);
 }

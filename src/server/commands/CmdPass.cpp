@@ -21,6 +21,10 @@
 
 static bool applyPassword(RequestContext &ctx, const std::string &pass)
 {
+    if(ctx.sender->isPassSet()) {
+        ctx.services.sendToUser(ctx.sender, std::string("462 PASS :You may not reregister"));
+        return false;
+    }
     Server* srv = ctx.services.getServer();
     if (srv && srv->validatePassword(pass)) {
         ctx.sender->setPass(true);
