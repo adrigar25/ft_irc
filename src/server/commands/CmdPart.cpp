@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 12:37:53 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/07 12:37:54 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/08 12:16:54 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,22 +35,16 @@ static void parseChannelList(const std::string &channelsPart, std::vector<std::s
     }
 }
 
-static void sendResponse(RequestContext &ctx, const std::string &code, const std::string &message)
-{
-    std::string serverName = ctx.services.getServerName();
-    std::string response = std::string(":") + serverName + " " + code + " " + ctx.sender->getNickname() + " " + message;
-    ctx.services.sendToUser(ctx.sender, response);
-}
 
 static void partFromChannel(RequestContext &ctx, const std::string &channelName, const std::string &msg)
 {
     Channel *channel = ctx.services.channels().getChannel(channelName);
     if (!channel) {
-        sendResponse(ctx, "403", channelName + " :No such channel");
+        ctx.services.sendResponse(ctx, "403", channelName + " :No such channel");
         return;
     }
     if (!channel->hasUser(ctx.sender)) {
-        sendResponse(ctx, "442", channelName + " :You're not on that channel");
+        ctx.services.sendResponse(ctx, "442", channelName + " :You're not on that channel");
         return;
     }
 
