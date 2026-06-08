@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CmdJoin.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
+/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 12:37:39 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/08 12:20:13 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/08 18:58:38 by adriescr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,21 +46,27 @@ static void parseKeys(const std::string &params, std::vector<std::string> &keys)
 {
     if (params.empty())
         return;
-    std::istringstream iss(params);
-    std::string value;
-    while (std::getline(iss, value, ','))
-    {
-        if (!value.empty() && value[0] == ' ') value.erase(0, 1);
+    size_t len = params.size();
+    size_t start = 0;
+    while (start <= len) {
+        size_t pos = params.find(',', start);
+        if (pos == std::string::npos)
+            pos = len;
+        std::string value = params.substr(start, pos - start);
+        // trim leading spaces
+        while (!value.empty() && value[0] == ' ')
+            value.erase(0, 1);
+        // trim trailing CR and spaces
         while (!value.empty() && (value[value.size() - 1] == '\r' || value[value.size() - 1] == ' '))
             value.erase(value.size() - 1, 1);
-        if (!value.empty())
-            keys.push_back(value);
+        // push the parsed value even if empty to preserve position for channels without keys
+        keys.push_back(value);
+        if (pos == len)
+            break;
+        start = pos + 1;
     }
     return;
 }
-
-
-
 
 static void joinSingleChannel(RequestContext &ctx, const std::string &channelName, const std::string &key)
 {
