@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/02 23:10:43 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/07 12:44:02 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/08 00:57:22 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,8 @@ IRCConnection::IRCConnection(): sockfd(-1) {}
 
 IRCConnection::~IRCConnection()
 {
-	if (this->sockfd >= 0) close(this->sockfd);
+	if (this->sockfd >= 0) 
+		close(this->sockfd);
 }
 
 int IRCConnection::connectTo(const std::string &host, int port)
@@ -32,23 +33,32 @@ int IRCConnection::connectTo(const std::string &host, int port)
 	struct addrinfo hints;
 	struct addrinfo *res = NULL;
 	struct addrinfo *p = NULL;
+	
 	memset(&hints, 0, sizeof(hints));
+
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
+
 	std::ostringstream oss;
 	oss << port;
 	std::string sport = oss.str();
-	if (getaddrinfo(host.c_str(), sport.c_str(), &hints, &res) != 0) return -1;
+	if (getaddrinfo(host.c_str(), sport.c_str(), &hints, &res) != 0)
+		return -1;
+	
 	int sock = -1;
+	
 	for (p = res; p != NULL; p = p->ai_next) {
 		sock = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
-		if (sock < 0) continue;
-		if (connect(sock, p->ai_addr, p->ai_addrlen) == 0) break;
+		if (sock < 0)
+			continue;
+		if (connect(sock, p->ai_addr, p->ai_addrlen) == 0)
+			break;
 		close(sock);
 		sock = -1;
 	}
 	freeaddrinfo(res);
-	if (sock < 0) return -1;
+	if (sock < 0)
+		return -1;
 	this->sockfd = sock;
 	return sock;
 }
@@ -82,16 +92,7 @@ void IRCConnection::closeConn()
 
 bool IRCConnection::isConnected() const 
 {
-	// send(this->sockfd, "PING 1123424524253\r\n", 21, MSG_NOSIGNAL);
-	// char buf[21];
-	// ssize_t n = recv(this->sockfd, buf, sizeof(buf), MSG_PEEK | MSG_DONTWAIT);
-	// if (n <= 0) return false;
-
-	// buf[n] = '\0';
-	// std::string response(buf);
-	// if (response.find("PONG") == std::string::npos) return false;
-	// if(response.find("1123424524253") == std::string::npos) return false;
-	return true;
+	return this->sockfd >= 0;
 }
 
 int IRCConnection::getFd() const { return this->sockfd; }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Bot.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/02 22:27:25 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/03 17:13:09 by adriescr         ###   ########.fr       */
+/*   Updated: 2026/06/08 00:50:41 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ class Bot
 		std::string nick;
 		std::string host;
 		std::string password;
-		IRCConnection *conn;
+		IRCConnection *irc;
 		ChannelManager *cm;
 		RequestHandler *rh;
 	public:

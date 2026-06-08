@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Bot.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/02 23:13:33 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/02 23:15:17 by adriescr         ###   ########.fr       */
+/*   Updated: 2026/06/08 17:23:52 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,21 +17,13 @@
 #include <cstdlib>
 #include <ctime>
 
-static std::string trim(const std::string &s){
-	size_t b = s.find_first_not_of(" \r\n");
-	if (b==std::string::npos)
-		return ("");
-	size_t e = s.find_last_not_of(" \r\n");
-	return (s.substr(b, e-b+1));
-}
-
 Bot::Bot(const std::string &nick, const std::string &host , const std::string &password)
-	: nick(nick), host(host), password(password), conn(nullptr), cm(nullptr), rh(nullptr), port(std::atoi(BOT_DEFAULT_PORT))
+	: nick(nick), host(host), password(password), irc(nullptr), cm(nullptr), rh(nullptr), port(std::atoi(BOT_DEFAULT_PORT))
 {
 	std::srand(static_cast<unsigned int>(std::time(nullptr)));
-	this->conn = new IRCConnection();
-	this->cm = new ChannelManager(this->conn);
-	this->rh = new RequestHandler(this->conn, this->cm, this->nick);
+	this->irc = new IRCConnection();
+	this->cm = new ChannelManager(this->irc);
+	this->rh = new RequestHandler(this->irc, this->cm, this->nick);
 }
 
 Bot::~Bot()
@@ -40,8 +32,8 @@ Bot::~Bot()
 		delete (this->rh);
 	if (this->cm)
 		delete (this->cm);
-	if (this->conn)
-		delete (this->conn);
+	if (this->irc)
+		delete (this->irc);
 }
 
 std::string Bot::getNick() const {
@@ -63,36 +55,37 @@ void Bot::setPort(int p) {
 
 int Bot::connectToServer()
 {
-	if (!this->conn)
+	if (!this->irc)
 		return (-1);
-	return (this->conn->connectTo(this->host, this->port));
+	return (this->irc->connectTo(this->host, this->port));
 }
 
 void Bot::run()
 {
-	if (!this->conn || !this->conn->isConnected()){
+	if (!this->irc || !this->irc->isConnected()){
 		std::cerr << "Bot: socket not connected\n";
 		return;
 	}
 
-	this->conn->sendRaw("PASS " + this->password);
-	this->conn->sendRaw("NICK " + this->nick);
-	this->conn->sendRaw("USER " + this->nick + " 0 * :" + this->nick);
+	this->irc->sendRaw("PASS " + this->password);
+	this->irc->sendRaw("NICK " + this->nick);
+	this->irc->sendRaw("USER " + this->nick + " 0 * :" + this->nick);
 
-	while (this->conn && this->conn->isConnected()){
-		std::string line = this->conn->recvLine();
+	while (true){
+		std::string line = this->irc->recvLine();
 		if (line.empty()){
 			std::cerr << "Conexión cerrada\n";
 			break;
 		}
-		std::string tline = trim(line);
+		std::string tline = line.substr(0, line.size() - 2);
 		std::cout << "< " << tline << "\n";
 
 		if (tline.rfind("PING", 0) == 0){
-			std::string token = trim(tline.substr(4));
+			std::cout << "Responding to PING\n";
+			std::string token = tline.substr(5);
 			if (!token.empty() && token[0] == ':')
 				token = token.substr(1);
-			this->conn->sendRaw("PONG :" + token);
+			this->irc->sendRaw("PONG :" + token);
 			continue;
 		}
 

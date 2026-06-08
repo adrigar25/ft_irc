@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ChannelManager.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/02 23:12:59 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/02 23:13:24 by adriescr         ###   ########.fr       */
+/*   Updated: 2026/06/08 01:56:21 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void ChannelManager::partChannel(const std::string &channel)
 		return;
 	if (this->conn)
 		this->conn->sendRaw("PART " + channel + " :Leaving");
-	this->joined.erase(std::remove(this->joined.begin(), this->joined.end(), channel), this->joined.end());
+	deleteChannel(channel);
 }
 
 bool ChannelManager::isInChannel(const std::string &channel) const
@@ -41,8 +41,7 @@ bool ChannelManager::isInChannel(const std::string &channel) const
 	return (std::find(this->joined.begin(), this->joined.end(), channel) != this->joined.end());
 }
 
-void ChannelManager::sendToChannel(const std::string &channel, const std::string &message)
+void ChannelManager::deleteChannel(const std::string &channel)
 {
-	if (this->conn)
-		this->conn->sendRaw("PRIVMSG " + channel + " :" + message);
+	this->joined.erase(std::remove(this->joined.begin(), this->joined.end(), channel), this->joined.end());
 }

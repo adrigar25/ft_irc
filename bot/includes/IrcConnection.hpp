@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IrcConnection.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/02 23:15:52 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/03 16:54:08 by adriescr         ###   ########.fr       */
+/*   Updated: 2026/06/08 00:49:12 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,8 @@ public:
 	IRCConnection();
 	~IRCConnection();
 
-	// Connects to host:port, returns socket fd or -1 on error
 	int connectTo(const std::string &host, int port);
-	// Send a raw IRC line (adds CRLF)
 	ssize_t sendRaw(const std::string &s);
-	// Receive a single line (including trailing LF), or empty on disconnect
 	std::string recvLine();
 	void closeConn();
 	bool isConnected() const;

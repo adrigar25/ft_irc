@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/02 23:09:03 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/04 18:48:33 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/08 17:06:12 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,52 +17,37 @@
 #include <sstream>
 #include <algorithm>
 #include <cctype>
-
-static std::string trim(const std::string &s)
-{
-	size_t a = 0;
-	size_t b = s.size();
-	while (a < b && std::isspace((unsigned char)s[a]))
-		++a;
-	while (b > a && std::isspace((unsigned char)s[b-1]))
-		--b;
-	return (s.substr(a, b-a));
-}
+#include <iostream>
 
 static std::string cleanIrcParam(const std::string &s)
 {
-	std::string value = trim(s);
+	std::string value = s;
 	if (!value.empty() && value[0] == ':')
 		value.erase(0, 1);
 	return (value);
 }
 
-RequestHandler::RequestHandler(IRCConnection *conn, ChannelManager *cm, const std::string &nick)
-: conn(conn), cm(cm), nick(nick) {}
+RequestHandler::RequestHandler(IRCConnection *irc, ChannelManager *cm, const std::string &nick)
+: irc(irc), cm(cm), nick(nick) {}
 
 RequestHandler::~RequestHandler() {}
 
-std::string RequestHandler::chooseReply(const std::string &text) const
+ const BotCmd &RequestHandler::chooseReply(const std::string &text) const
 {
-	std::string t = text;
-	// lowercase
-	std::transform(t.begin(), t.end(), t.begin(), ::tolower);
-	for (const BotCmd *cmd = BOT_COMMANDS; cmd->trigger; ++cmd) {
-		std::string trig = cmd->trigger;
-		std::transform(trig.begin(), trig.end(), trig.begin(), ::tolower);
-		if (t.find(trig) != std::string::npos)
-			return std::string(cmd->response);
+	std::string cmd = text.substr(1);
+	std::transform(cmd.begin(), cmd.end(), cmd.begin(), ::tolower);
+	for (size_t i = 0; BOT_COMMANDS[i].trigger != ""; ++i)
+	{
+		if (cmd == BOT_COMMANDS[i].trigger)
+			return (BOT_COMMANDS[i]);
 	}
-	return ("");
+	return (BOT_COMMANDS[0]);
 }
-
-void RequestHandler::handleLine(const std::string &line)
+static void parseMessage(const std::string &line, std::string &prefix, std::string &cmd, std::vector<std::string> &params)
 {
-	// Parse: [:prefix] COMMAND params :trail
-	std::string raw = trim(line);
+	std::string raw = line.substr(0, line.find("\r\n"));
 	if (raw.empty())
 		return;
-	std::string prefix;
 	std::string rest = raw;
 	if (rest[0] == ':'){
 		size_t sp = rest.find(' ');
@@ -72,106 +57,87 @@ void RequestHandler::handleLine(const std::string &line)
 		rest = rest.substr(sp+1);
 	}
 	std::istringstream iss(rest);
-	std::string cmd;
 	iss >> cmd;
+	std::string param;
+	while (iss >> param)
+		params.push_back(param);
+}
+
+static void handlePRIVMSG(IRCConnection *irc, const std::string &target, const BotCmd &reply, const std::vector<std::string> &params)
+{
+		
+	if(reply.action == "PRIVMSG")
+	{
+		std::string response = reply.response;
+		if(reply.trigger == "help")
+		{
+			for (size_t i = 1; BOT_COMMANDS[i].trigger != ""; ++i)
+				response += "!" + BOT_COMMANDS[i].trigger + " ";
+			irc->sendRaw("PRIVMSG " + target + " :" + response);
+		}else if(reply.trigger == "dice")
+		{
+			int roll = rand() % 6 + 1;
+			response += std::to_string(roll);
+			irc->sendRaw("PRIVMSG " + target + " :" + response);
+		}
+		else if(reply.trigger == "coin")
+		{
+			std::string coin = (rand() % 2 == 0) ? "Heads" : "Tails";
+			response += coin;
+			irc->sendRaw("PRIVMSG " + target + " :" + response);
+		}
+		else
+			irc->sendRaw("PRIVMSG " + target + " :" + reply.response);
+	}
+	
+	if(reply.action == "KICK")
+	{
+		if(params.size() < 3)
+			return;
+		irc->sendRaw("KICK " + target + " " + params[2] + " :" + reply.response);
+	}
+}
+
+void RequestHandler::handleLine(const std::string &line)
+{
+	this->irc->isConnected();
+	std::string prefix, cmd;
+	std::vector<std::string> params;
+	parseMessage(line, prefix, cmd, params);
+
 	if (cmd == "INVITE"){
-		std::string target, chan;
-		iss >> target >> chan;
-		chan = cleanIrcParam(chan);
-		if (target == this->nick){
-			if (this->cm)
-				this->cm->joinChannel(chan);
-			if (this->cm)
-				this->cm->sendToChannel(chan, "Gracias por invitarme! Me uno.");
-		}
+		this->cm->joinChannel(cleanIrcParam(params[1]));
 		return;
 	}
-	if (cmd == "PRIVMSG"){
-		std::string dest;
-		iss >> dest;
-		std::string payload;
-		// remainder may start with :
-		size_t pos = rest.find(" :");
-		if (pos != std::string::npos)
-			payload = rest.substr(pos+2);
-		std::string sender = prefix;
-		// reduce sender to nick if contains '!'
-		size_t excl = sender.find('!');
-		if (excl != std::string::npos)
-			sender = sender.substr(0, excl);
 
-		if (sender == this->nick)
-			return; // ignore own messages
+	if(cmd == "PRIVMSG")
+	{
+		if(params.size() < 2)
+			return;
 
-		bool addressed = false;
-		// direct/private message to the bot
-		if (dest == this->nick)
-			addressed = true;
-		// channel command prefix (e.g. "!hola")
-		std::string stripped = trim(payload);
-		if (!addressed && !stripped.empty() && (stripped[0] == '!'))
-			addressed = true;
-		// mention of the bot (case-insensitive)
-		if (!addressed) {
-			std::string lowerPayload = payload;
-			std::string lowerNick = this->nick;
-			std::transform(lowerPayload.begin(), lowerPayload.end(), lowerPayload.begin(), ::tolower);
-			std::transform(lowerNick.begin(), lowerNick.end(), lowerNick.begin(), ::tolower);
-			if (lowerPayload.find(lowerNick) != std::string::npos)
-				addressed = true;
-		}
+		std::string target = cleanIrcParam(params[0]);
+		std::string message = cleanIrcParam(params[1]);
 
-		if (addressed){
-			// soporte para comando de ayuda: !help
-			std::string lowerStripped = stripped;
-			std::transform(lowerStripped.begin(), lowerStripped.end(), lowerStripped.begin(), ::tolower);
-			if (lowerStripped == "!help" || lowerStripped.rfind("!help ", 0) == 0) {
-				std::ostringstream oss;
-				oss << "Comandos disponibles:\n";
-				oss << "!help - muestra esta ayuda;\n";
-				for (const BotCmd *cmd = BOT_COMMANDS; cmd->trigger; ++cmd) {
-					oss << "!" << cmd->trigger << " - " << cmd->response;
-					if ((cmd + 1)->trigger)
-						oss << "; \n";
-				}
-				std::string helpMsg = oss.str();
-				// Send help message line-by-line to avoid embedding '\n' inside a single PRIVMSG
-				if (dest.size() && (dest[0] == '#' || dest[0] == '&')){
-					if (this->cm) {
-						std::istringstream lss(helpMsg);
-						std::string lineMsg;
-						while (std::getline(lss, lineMsg)) {
-							lineMsg = trim(lineMsg);
-							if (lineMsg.empty())
-								continue;
-							this->cm->sendToChannel(dest, lineMsg);
-						}
-					}
-				} else {
-					if (this->conn && !sender.empty()){
-						std::istringstream lss(helpMsg);
-						std::string lineMsg;
-						while (std::getline(lss, lineMsg)) {
-							lineMsg = trim(lineMsg);
-							if (lineMsg.empty())
-								continue;
-							this->conn->sendRaw("PRIVMSG " + sender + " :" + lineMsg);
-						}
-					}
-				}
-			} else {
-				std::string reply = chooseReply(payload);
-				if (reply.empty())
-					reply = "No entiendo...";
-				if (dest.size() && (dest[0] == '#' || dest[0] == '&')){
-					if (this->cm)
-						this->cm->sendToChannel(dest, reply);
-				} else {
-					if (this->conn && !sender.empty())
-						this->conn->sendRaw("PRIVMSG " + sender + " :" + reply);
-				}
-			}
-		}
+		if(message.empty() || message[0] != '!')
+			return;
+		
+		const BotCmd &reply = chooseReply(message);
+
+		if(reply.trigger.empty())
+			return;
+
+		if(!this->cm->isInChannel(target))
+			return;
+		handlePRIVMSG(this->irc, target, reply, params);
 		return;
 	}
+
+	if(cmd == "KICK")
+	{
+		if(params.size() < 2)
+			return;
+		std::string channel = cleanIrcParam(params[0]);
+		this->cm->deleteChannel(channel);
+	}
+	
 }
