@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 12:38:45 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/07 15:01:36 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/08 12:20:57 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@
 #include "commands/CmdMode.hpp"
 #include "commands/CmdTopic.hpp"
 #include "commands/CmdCap.hpp"
+#include "commands/CmdNames.hpp"
 #include "RequestContext.hpp"
 
 static CommandDispatcher& getDispatcher()
@@ -53,6 +54,7 @@ static CommandDispatcher& getDispatcher()
         dispatcher.registerHandler("MODE", new CmdMode());
         dispatcher.registerHandler("TOPIC", new CmdTopic());
         dispatcher.registerHandler("CAP", new CmdCap());
+        dispatcher.registerHandler("NAMES", new CmdNames());
         inited = true;
     }
     return dispatcher;
