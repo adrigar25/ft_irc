@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CmdJoin.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
+/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 12:37:39 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/08 19:06:55 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/08 19:15:36 by adriescr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,17 +29,34 @@ static bool parseChannels(const std::string &params, std::vector<std::string> &c
 {
     std::istringstream iss(params);
     std::string value;
-    while (std::getline(iss, value, ','))
-    {
-        if (!value.empty() && value[0] == ' ') value.erase(0, 1);
-        while (!value.empty() && (value[value.size() - 1] == '\r' || value[value.size() - 1] == ' '))
-            value.erase(value.size() - 1, 1);
-        if (!value.empty() && (value[0] == '#' || value[0] == '&' || value[0] == '+' || value[0] == '!'))
-            channelNames.push_back(value);
-        else if (!value.empty())
+        if (params.empty())
             return false;
-    }
-    return true;
+        size_t len = params.size();
+        size_t start = 0;
+        while (start <= len) {
+            size_t pos = params.find(',', start);
+            if (pos == std::string::npos)
+                pos = len;
+            std::string value = params.substr(start, pos - start);
+            // trim leading spaces
+            while (!value.empty() && value[0] == ' ')
+                value.erase(0, 1);
+            // trim trailing CR and spaces
+            while (!value.empty() && (value[value.size() - 1] == '\r' || value[value.size() - 1] == ' '))
+                value.erase(value.size() - 1, 1);
+            if (value.empty()) {
+                // skip empty tokens
+            } else if (value[0] == '#' || value[0] == '&' || value[0] == '+' || value[0] == '!') {
+                channelNames.push_back(value);
+            } else {
+                // accept channel names without prefix by auto-prefixing '#'
+                channelNames.push_back(std::string("#") + value);
+            }
+            if (pos == len)
+                break;
+            start = pos + 1;
+        }
+        return true;
 }
 
 static void parseKeys(const std::string &params, std::vector<std::string> &keys)
@@ -71,7 +88,7 @@ static void parseKeys(const std::string &params, std::vector<std::string> &keys)
 static void joinSingleChannel(RequestContext &ctx, const std::string &channelName, const std::string &key)
 {
     if (!ctx.sender) return;
- 
+
     Channel *channel = ctx.services.channels().getChannel(channelName);
 
     if (!channel) {
