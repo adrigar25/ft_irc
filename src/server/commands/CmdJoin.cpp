@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CmdJoin.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 12:37:39 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/08 18:58:38 by adriescr         ###   ########.fr       */
+/*   Updated: 2026/06/08 19:06:55 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ static void parseKeys(const std::string &params, std::vector<std::string> &keys)
 static void joinSingleChannel(RequestContext &ctx, const std::string &channelName, const std::string &key)
 {
     if (!ctx.sender) return;
-
+ 
     Channel *channel = ctx.services.channels().getChannel(channelName);
 
     if (!channel) {
@@ -150,7 +150,7 @@ void CmdJoin::execute(RequestContext &ctx)
         keysPart = ctx.rawLine.substr(sp + 1);
     }
     if (!parseChannels(channelsPart, channelNames)) {
-        ctx.services.sendResponse(ctx, "461", "JOIN :Not enough parameters");
+        ctx.services.sendResponse(ctx, "461", "JOIN :Invalid channel name(s)");
         return;
     }
 
@@ -160,6 +160,9 @@ void CmdJoin::execute(RequestContext &ctx)
     }
 
     parseKeys(keysPart, keys);
+    for(size_t i = 0; i < keys.size(); ++i) {
+        std::cout << "Parsed key " << i << ": '" << keys[i] << "'" << std::endl;
+    }
 
     for (size_t i = 0; i < channelNames.size(); ++i)
     {
