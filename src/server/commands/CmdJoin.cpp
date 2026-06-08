@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CmdJoin.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 12:37:39 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/08 19:15:36 by adriescr         ###   ########.fr       */
+/*   Updated: 2026/06/08 19:24:28 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,14 +44,8 @@ static bool parseChannels(const std::string &params, std::vector<std::string> &c
             // trim trailing CR and spaces
             while (!value.empty() && (value[value.size() - 1] == '\r' || value[value.size() - 1] == ' '))
                 value.erase(value.size() - 1, 1);
-            if (value.empty()) {
-                // skip empty tokens
-            } else if (value[0] == '#' || value[0] == '&' || value[0] == '+' || value[0] == '!') {
+            if (!value.empty())
                 channelNames.push_back(value);
-            } else {
-                // accept channel names without prefix by auto-prefixing '#'
-                channelNames.push_back(std::string("#") + value);
-            }
             if (pos == len)
                 break;
             start = pos + 1;
@@ -104,6 +98,8 @@ static void joinSingleChannel(RequestContext &ctx, const std::string &channelNam
                 ctx.services.sendResponse(ctx, "474", channelName + " :Cannot join channel (+b)");
             else if (code == IRC_ERR_INCORRECT_CHANNEL_KEY)
                 ctx.services.sendResponse(ctx, "475", channelName + " :Cannot join channel (+k)");
+            else if (code == IRC_ERR_BAD_CHANNEL_NAME)
+                ctx.services.sendResponse(ctx, "476", channelName + " :Bad channel mask");
             else
                 ctx.services.sendResponse(ctx, "475", channelName + " :Cannot join channel");
             return;
