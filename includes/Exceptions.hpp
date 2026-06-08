@@ -37,6 +37,7 @@ enum IrcErrorCode {
     IRC_ERR_USER_ALREADY_IN_CHANNEL = 24,
     IRC_ERR_CANNOT_JOIN_CHANNEL = 25,
     IRC_ERR_INCORRECT_CHANNEL_KEY = 26,
+    IRC_ERR_BAD_CHANNEL_NAME = 27
 };
 
 class IrcException : public std::runtime_error

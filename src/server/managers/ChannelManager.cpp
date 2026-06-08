@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 12:38:14 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/07 12:38:14 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/08 19:21:26 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@ void ChannelManager::createChannel(const std::string &name, User* creator)
     if (channels.find(name) != channels.end())
         throw IrcException(IRC_ERR_CHANNEL_ALREADY_EXISTS, std::string("Channel already exists: ") + name);
 
+    if(name.empty() || name[0] != '#' || name.find(' ') != std::string::npos)
+        throw IrcException(IRC_ERR_BAD_CHANNEL_NAME, std::string("Invalid channel name: ") + name);
     Channel *ch = new Channel(name, creator);
     channels.insert(std::make_pair(name, ch));
     if (creator) {
