@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 12:37:39 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/07 15:54:58 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/08 12:20:13 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,7 +163,7 @@ void CmdJoin::execute(RequestContext &ctx)
         Channel *channel = ctx.services.channels().getChannel(channelName);
         if (channel && channel->hasUser(ctx.sender)) {
             sendJoinMessage(ctx, channel);
-            ctx.services.getServer()->sendNamesList(ctx, channel);
+            ctx.services.getServer()->sendNamesList(ctx.sender, channel);
         }
     }
 }

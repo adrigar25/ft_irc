@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 00:08:09 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/07 16:37:00 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/08 12:21:47 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,13 +74,13 @@ class Server
                 ~Server();
         void    sendMessageToUser(User *user, const std::string &message) { sendToUser(user, message); }
         void    sendMessageToChannel(Channel *channel, const std::string &message, User *exclude) { sendToChannel(channel, message, exclude); }
-        void    sendNamesList(RequestContext &ctx, Channel *channel);
+        void    sendNamesList(User *target, Channel *channel);
         void    startServer();
         void    stopServer();
         int     getPort() const;
         int     getServerSocket() const;
         bool    validatePassword(const std::string &p) const { return this->password == p; }
-        const std::string& getHostname() const { return hostname; }
+        const std::string& getHostname() const;
 		int     startBot();
         static Server* getInstance();
 

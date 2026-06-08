@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 12:39:01 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/07 12:39:01 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/08 12:47:27 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,11 @@
 Services::Services(Server* srv): server(srv), userManager(), channelManager() {}
 
 Services::~Services() {}
+
+UserManager& Services::users() { return userManager; }
+ChannelManager& Services::channels() { return channelManager; }
+const UserManager& Services::users() const { return userManager; }
+const ChannelManager& Services::channels() const { return channelManager; }
 
 Server* Services::getServer() const { return server; }
 

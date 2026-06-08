@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 12:36:56 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/07 12:36:58 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/08 12:47:19 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,10 +33,10 @@ private:
     UserManager userManager;
     ChannelManager channelManager;
 public:
-    UserManager& users() { return userManager; }
-    ChannelManager& channels() { return channelManager; }
-    const UserManager& users() const { return userManager; }
-    const ChannelManager& channels() const { return channelManager; }
+    UserManager& users();
+    ChannelManager& channels() ;
+    const UserManager& users() const;
+    const ChannelManager& channels() const;
     std::string getServerName() const;
     void sendToUser(User* user, const std::string &message);
     void sendToChannel(Channel* channel, const std::string &message, User* exclude = NULL);
