@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 12:38:07 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/08 21:21:27 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/09 17:02:10 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,8 @@ void CmdTopic::execute(RequestContext &ctx)
 
     std::string serverName = ctx.services.getServerName();
     std::string uname = ctx.sender->getUsername();
-    if (uname.empty()) uname = "~";
+    if (uname.empty())
+        uname = "~";
 
     parseTopicParams(params, channelName, topic);
 
