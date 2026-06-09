@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 12:38:03 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/07 12:38:03 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/09 18:18:01 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,24 +15,26 @@
 #include "Services.hpp"
 #include "Channel.hpp"
 #include "User.hpp"
+#include "LineUtils.hpp"
 #include <unistd.h>
 #include <cstring>
 #include <iostream>
 #include <string>
 
-static bool parsePrivmsgParams(const std::string &params, std::string &outTarget, std::string &outMsg)
+static bool parsePrivmsgParams(const std::string &params, std::vector<std::string> &outTargets, std::string &outMsg)
 {
-    size_t sp = params.find(' ');
-    outTarget = (sp == std::string::npos) ? params : params.substr(0, sp);
+    std::vector<std::string> parts = split(params, ' ');
+    if (parts.size() < 2) return false;
 
-    if (sp != std::string::npos) {
-        outMsg = params.substr(sp + 1);
-        if (!outMsg.empty() && outMsg[0] == ' ') outMsg.erase(0,1);
-        if (!outMsg.empty() && outMsg[0] == ':') outMsg.erase(0,1);
-        if (!outMsg.empty() && outMsg[outMsg.size() - 1] == '\r') outMsg.erase(outMsg.size() - 1, 1);
-        return true;
+    outTargets = split(parts[0], ',');
+    
+    if(params.find(" :") != std::string::npos) {
+        outMsg = params.substr(params.find(" :") + 2);
+    } else {
+        outMsg = parts[1];
     }
-    return false;
+    
+    return true;
 }
 
 static std::string buildPrivmsgOut(RequestContext &ctx, const std::string &target, const std::string &msg)
@@ -80,17 +82,19 @@ void CmdPrivmsg::execute(RequestContext &ctx)
 {
     if (!ctx.sender) return;
     const std::string &params = ctx.rawLine;
-    std::string target;
+    std::vector<std::string> targets;
     std::string msg;
-    if (!parsePrivmsgParams(params, target, msg)) {
+    if (!parsePrivmsgParams(params, targets, msg)) {
         ctx.services.sendToUser(ctx.sender, std::string("461 PRIVMSG :Not enough parameters"));
         return;
     }
-    if(target.empty() || msg.empty()) {
-        ctx.services.sendToUser(ctx.sender, std::string("461 PRIVMSG :Not enough parameters"));
-        return;
+    for (size_t i = 0; i < targets.size(); ++i) {
+        const std::string &target = targets[i];
+        if(target.empty() || msg.empty()) {
+            ctx.services.sendToUser(ctx.sender, std::string("461 PRIVMSG :Not enough parameters"));
+            return;
+        }
+        std::string out = buildPrivmsgOut(ctx, target, msg);
+        dispatchPrivmsg(ctx, target, out);
     }
-
-    std::string out = buildPrivmsgOut(ctx, target, msg);
-    dispatchPrivmsg(ctx, target, out);
 }
