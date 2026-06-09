@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 12:36:30 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/07 12:36:31 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/08 21:20:04 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,8 @@
 #include <string>
 #include <vector>
 
-// Extract complete lines (ending with '\n') from `buffer`.
-// For each extracted line the terminating CR (if present) is removed.
-// The extracted lines are appended to `out` and removed from the front of `buffer`.
 void popLines(std::string &buffer, std::vector<std::string> &out);
-
-// Trim a command parameter: remove a single leading space (if present)
-// and any trailing spaces or trailing CR ('\r').
-std::string trimParam(const std::string &s);
+std::string trim(const std::string &s, const std::string &chars);
+std::vector<std::string> split(const std::string &s, char delimiter);
 
 #endif
