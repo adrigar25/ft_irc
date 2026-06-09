@@ -5,253 +5,234 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/07 12:37:48 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/07 16:21:59 by agarcia          ###   ########.fr       */
+/*   Created: 2026/06/09 17:52:57 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/09 17:57:32 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "commands/CmdMode.hpp"
 #include "RequestContext.hpp"
 #include "Services.hpp"
-#include <string>
-#include <sstream>
+#include "LineUtils.hpp"
+
 #include <vector>
+#include <string>
+#include <cctype>
 #include <cstdlib>
-#include <iostream>
 
-static std::vector<std::string> splitLine(const std::string &line)
+static bool isNumber(const std::string &s)
 {
-	std::vector<std::string> tokens;
-	std::istringstream iss(line);
-	std::string token;
-
-	while(iss >> token)
-		tokens.push_back(token);
-	return (tokens);
+    for (size_t i = 0; i < s.size(); ++i)
+        if (!std::isdigit(s[i]))
+            return false;
+    return !s.empty();
 }
 
-
-static void handleModeI(Channel* ch, bool isAdding)
+static void sendMode(RequestContext &ctx, Channel *ch, const std::string &channelName,
+                     char sign, char mode, const std::string &param)
 {
-    ch->setIsInviteOnly(isAdding);
+    std::string msg = ":"
+        + ctx.sender->getNickname()
+        + " MODE "
+        + channelName
+        + " ";
+
+    msg += sign;
+    msg += mode;
+
+    if (!param.empty())
+        msg += " " + param;
+
+    msg += "\r\n";
+
+    ctx.services.sendToChannel(ch, msg);
 }
 
-static void handleModeT(Channel* ch, bool isAdding)
+/* ===================== HANDLERS ===================== */
+
+static void modeI(Channel *ch, bool add)
 {
-    ch->setTopicProtected(isAdding);
+    ch->setIsInviteOnly(add);
 }
 
-static void handleModeK(Channel* ch, bool isAdding, const std::string &password)
+static void modeT(Channel *ch, bool add)
 {
-    if (isAdding)
-	{
-        ch->setKey(password);
+    ch->setTopicProtected(add);
+}
+
+static void modeM(Channel *ch, bool add)
+{
+    ch->setModerated(add);
+}
+
+static void modeK(Channel *ch, bool add, const std::string &key)
+{
+    if (add)
+    {
+        ch->setKey(key);
         ch->setKeyRequired(true);
     }
-	else
-	{
+    else
+    {
         ch->setKey("");
         ch->setKeyRequired(false);
     }
 }
 
-static bool handleModeO(Channel* ch, bool isAdding, User* targetUser, RequestContext &ctx)
+static void modeL(Channel *ch, bool add, int limit)
 {
-    if (!targetUser)
-        return true;
-    
-    if (isAdding)
-        ch->changeRole(targetUser, "operator");
-    else
-	{
-		if(targetUser->getNickname() == ctx.sender->getNickname())
-			return true;
-		if(ch->getOperators().size() == 1 && ch->isUserOperator(targetUser))
-			return true;
-        ch->removeRole(targetUser, "operator");
-	}
-	return false;
-}
-
-static void handleModeL(Channel* ch, bool isAdding, int limit,  RequestContext &ctx)
-{
-    if (isAdding)
-	{
-		if (limit < 1 || ch->getUserCount() > limit)
-		{
-			std::ostringstream oss;
-			oss << "696 " << ctx.sender->getNickname() << " " << ch->getName() << " :Invalid limit";
-			ctx.services.sendToUser(ctx.sender, oss.str());
-			return ;
-		}
-		ch->setUserLimit(limit);
-	}
+    if (add)
+        ch->setUserLimit(limit);
     else
         ch->setUserLimit(-1);
 }
 
-static void handleModeB(Channel* ch, bool isAdding, User* targetUser)
+static void modeO(Channel *ch, bool add, User *u)
 {
-    if(isAdding)
-        ch->banUser(targetUser);
+    if (add)
+        ch->changeRole(u, "operator");
     else
-		ch->unbanUser(targetUser);
+        ch->removeRole(u, "operator");
 }
 
-static void handleModeV(Channel* ch, bool isAdding, User* targetUser)
+static void modeV(Channel *ch, bool add, User *u)
 {
-    if (isAdding)
-        ch->changeRole(targetUser, "voice");
+    if (add)
+        ch->changeRole(u, "voice");
     else
-        ch->removeRole(targetUser, "voice");
-}
-static void handleModeM(Channel* ch, bool isAdding)
-{
-    ch->setModerated(isAdding);
+        ch->removeRole(u, "voice");
 }
 
-static bool validateModeCommand(RequestContext &ctx, const std::vector<std::string> &tokens, Channel *&ch)
+static void modeB(Channel *ch, bool add, User *u)
 {
-    if (tokens.size() < 2)
+    if (add)
+        ch->banUser(u);
+    else
+        ch->unbanUser(u);
+}
+
+/* ===================== EXEC ===================== */
+
+void CmdMode::execute(RequestContext &ctx)
+{
+    if (!ctx.sender || ctx.rawLine.empty())
+        return;
+
+    std::vector<std::string> t = split(ctx.rawLine, ' ');
+
+    if (t.size() < 2)
     {
         ctx.services.sendResponse(ctx, "461", "Not enough parameters");
-        return false;
+        return;
     }
 
-    ch = ctx.services.channels().getChannel(tokens[0]);
+    std::string channelName = t[0];
+    std::string modes = t[1];
+
+    Channel *ch = ctx.services.channels().getChannel(channelName);
     if (!ch)
     {
-        ctx.services.sendResponse(ctx, "483", tokens[0] + " :No such channel");
-        return false;
+        ctx.services.sendResponse(ctx, "403", channelName + " :No such channel");
+        return;
     }
 
     if (!ch->isUserOperator(ctx.sender))
     {
-        ctx.services.sendResponse(ctx, "482", "You're not channel operator");
-        return false;
+        ctx.services.sendResponse(ctx, "482", channelName + " :You're not channel operator");
+        return;
     }
-    return true;
-}
 
-static bool requireParameter(RequestContext &ctx, size_t paramIndex, const std::vector<std::string> &modeParams)
-{
-    if (paramIndex >= modeParams.size())
-    {		
-		ctx.services.sendResponse(ctx, "461", "Not enough parameters");
-        return false;
-    }
-    return true;
-}
+    std::vector<std::string> params;
+    for (size_t i = 2; i < t.size(); ++i)
+        params.push_back(t[i]);
 
-static bool isValidLimit(const std::string &limitStr)
-{
-    for (size_t i = 0; i < limitStr.size(); ++i)
+    size_t p = 0;
+    bool add = true;
+
+    for (size_t i = 0; i < modes.size(); ++i)
     {
-        if (!std::isdigit(limitStr[i]))
-            return false;
+        char m = modes[i];
+
+        if (m == '+') { add = true; continue; }
+        if (m == '-') { add = false; continue; }
+
+        std::string param;
+
+        switch (m)
+        {
+            case 'i':
+                modeI(ch, add);
+                sendMode(ctx, ch, channelName, add ? '+' : '-', 'i', "");
+                break;
+
+            case 't':
+                modeT(ch, add);
+                sendMode(ctx, ch, channelName, add ? '+' : '-', 't', "");
+                break;
+
+            case 'm':
+                modeM(ch, add);
+                sendMode(ctx, ch, channelName, add ? '+' : '-', 'm', "");
+                break;
+
+            case 'k':
+                if (add)
+                {
+                    if (p >= params.size())
+                        return;
+                    param = params[p++];
+                }
+                modeK(ch, add, param);
+                sendMode(ctx, ch, channelName, add ? '+' : '-', 'k', param);
+                break;
+
+            case 'l':
+                if (add)
+                {
+                    if (p >= params.size())
+                        return;
+                    if (!isNumber(params[p]))
+                    {
+                        ctx.services.sendResponse(ctx, "696", channelName + " :Invalid limit");
+                        return;
+                    }
+                    int limit = std::atoi(params[p++].c_str());
+                    modeL(ch, add, limit);
+                    sendMode(ctx, ch, channelName, '+', 'l', params[p - 1]);
+                }
+                else
+                {
+                    modeL(ch, add, -1);
+                    sendMode(ctx, ch, channelName, '-', 'l', "");
+                }
+                break;
+
+            case 'o':
+            case 'v':
+            case 'b':
+            {
+                if (p >= params.size())
+                    return;
+
+                User *u = ctx.services.users().findByNick(params[p++]);
+                if (!u)
+                {
+                    ctx.services.sendResponse(ctx, "401", params[p - 1] + " :No such user");
+                    continue;
+                }
+
+                if (m == 'o') modeO(ch, add, u);
+                if (m == 'v') modeV(ch, add, u);
+                if (m == 'b') modeB(ch, add, u);
+
+                std::string nick = u->getNickname();
+                sendMode(ctx, ch, channelName, add ? '+' : '-', m, nick);
+                break;
+            }
+
+            default:
+                ctx.services.sendResponse(ctx, "472", std::string(1, m) + " :Unknown mode");
+                break;
+        }
     }
-    return !limitStr.empty();
-}
-
-static void broadcastMode(RequestContext &ctx, Channel *ch, const std::string &channelName, const std::string &modeString, const std::vector<std::string> &tokens)
-{
-    std::string modeMessage = std::string(":") + ctx.sender->getNickname() + " MODE " + channelName + " " + modeString;
-
-    for (int i = 2; i < (int)tokens.size(); i++)
-        modeMessage += " " + tokens[i];
-
-    const std::map<int, User*>& users = ch->getUsers();
-    for (std::map<int, User*>::const_iterator it = users.begin(); it != users.end(); ++it)
-        ctx.services.sendToUser(it->second, modeMessage);
-}
-
-void CmdMode::execute(RequestContext &ctx)
-{
-	if (!ctx.sender)
-		return;
-	if(ctx.rawLine.empty())
-		return;
-	
-	std::vector<std::string> tokens = splitLine(ctx.rawLine);
-
-	std::string channelName = tokens[0];
-	std::string modeString = tokens[1];
-	std::vector<std::string> modeParams;
-	if(tokens.size() > 2)
-		modeParams = std::vector<std::string>(tokens.begin() + 2, tokens.end());
-
-	size_t paramIndex = 0;
-	bool adding = true;
-	bool errorOccurred = false;
-	Channel* ch = NULL;
-	if (!validateModeCommand(ctx, tokens, ch))
-		return;
-
-	for(size_t i = 0; i < modeString.size(); ++i)
-	{
-		char modeChar = modeString[i];
-		if (modeChar == '+')
-			adding = true;
-		else if (modeChar == '-')
-			adding = false;
-		else
-		{
-			if (modeChar == 'i')
-				handleModeI(ch, adding);
-			else if (modeChar == 't')
-				handleModeT(ch, adding);
-			else if (modeChar == 'k')
-			{
-				if (!requireParameter(ctx, paramIndex, modeParams))
-					return;
-				handleModeK(ch, adding, modeParams[paramIndex++]);
-			}
-			else if (modeChar == 'o' || modeChar == 'v' || modeChar == 'b')
-			{
-				if (!requireParameter(ctx, paramIndex, modeParams))
-					return;
-				User* targetUser = ctx.services.users().findByNick(modeParams[paramIndex++]);
-				if (!targetUser)
-				{
-					ctx.services.sendResponse(ctx, "401", modeParams[paramIndex - 1] + " :No such user");
-					return ;
-				}
-				if (modeChar == 'o')
-					errorOccurred = handleModeO(ch, adding, targetUser, ctx);
-				else if (modeChar == 'v')
-					handleModeV(ch, adding, targetUser);
-				else if (modeChar == 'b')
-					handleModeB(ch, adding, targetUser);
-			}
-			else if (modeChar == 'l')
-			{
-				if (adding)
-				{
-					if (!requireParameter(ctx, paramIndex, modeParams))
-						return;
-
-					std::string limitStr = modeParams[paramIndex];
-					if (!isValidLimit(limitStr))
-					{
-						ctx.services.sendResponse(ctx, "696", ch->getName() + " :Invalid limit");
-						return;
-					}
-					int limit = std::atoi(modeParams[paramIndex++].c_str());
-					handleModeL(ch, adding, limit, ctx);
-				}
-				else
-					handleModeL(ch, adding, -1, ctx);
-			}
-			else if (modeChar == 'm')
-				handleModeM(ch, adding);
-			else
-			{
-				ctx.services.sendResponse(ctx, "472", channelName + " :Unknown mode");
-				return ;
-			}
-		}
-	}
-
-	if (!errorOccurred)
-		broadcastMode(ctx, ch, channelName, modeString, tokens);
 }
