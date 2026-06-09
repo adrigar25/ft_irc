@@ -136,8 +136,8 @@ void CmdKick::execute(RequestContext &ctx)
         return;
     }
 
-    std::vector<std::string> channels = split(parts[0], ',');
-    std::vector<std::string> users = split(parts[1], ',');
+    std::vector<std::string> channels = split(trim(parts[0], " "), ',');
+    std::vector<std::string> users = split(trim(parts[1], " "), ',');
 
     std::string reason = "";
     size_t pos = ctx.rawLine.find(" :");

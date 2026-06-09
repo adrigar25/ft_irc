@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 12:37:39 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/08 21:20:29 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/09 16:40:13 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,16 +84,14 @@ void CmdJoin::execute(RequestContext &ctx)
     std::vector<std::string> channelNames;
     std::vector<std::string> keys;
 
-    std::string channelsPart = ctx.rawLine;
-    std::string keysPart;
-   
-    channelNames = split(trim(channelsPart, " "), ',');
-    keys = split(trim(keysPart, " "), ',');
-
-    if (channelNames.empty()) {
+    std::vector<std::string> parts = split(ctx.rawLine, ' ');
+    if (parts.size() < 1) {
         ctx.services.sendResponse(ctx, "461", "JOIN :Not enough parameters");
         return;
     }
+    channelNames = split(trim(parts[0], " "), ',');
+    if(parts.size() > 1)
+        keys = split(trim(parts[1], " "), ',');
 
     for (size_t i = 0; i < channelNames.size(); ++i)
     {
