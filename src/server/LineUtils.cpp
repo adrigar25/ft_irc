@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 12:38:31 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/08 21:19:46 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/09 17:14:09 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,14 +40,32 @@ std::string trim(const std::string &s, const std::string &chars)
     }
     return r;
 }
-
+#include <iostream>
 std::vector<std::string> split(const std::string &s, char delim)
 {
     std::vector<std::string> res;
-    std::string tmp;
-    std::stringstream ss(s);
+    std::string token;
 
-    while (std::getline(ss, tmp, delim))
-        res.push_back(tmp);
+    for (size_t i = 0; i < s.size(); i++)
+    {
+        if (s[i] == delim)
+        {
+            if (!token.empty())
+            {
+                res.push_back(token);
+                token.clear();
+            }
+        }
+        else
+            token += s[i];
+    }
+    
+    if (!token.empty())
+        res.push_back(token);
+
+    std::cout << "split: [" << s << "] by '" << delim << "' -> " << res.size() << " tokens" << std::endl;
+    for (size_t i = 0; i < res.size(); ++i)
+        std::cout << "  token[" << i << "]: [" << res[i] << "]" << std::endl;
+
     return res;
 }
