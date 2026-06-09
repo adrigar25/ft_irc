@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 12:37:33 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/07 15:17:52 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/08 21:20:56 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 void CmdCap::execute(RequestContext &ctx)
 {
     if (!ctx.sender) return;
-    std::string params = trimParam(ctx.rawLine);
+    std::string params = trim(ctx.rawLine, " \r");
     if (params.empty()) return;
 
     std::istringstream iss(params);

@@ -6,13 +6,14 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 12:37:35 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/07 12:37:35 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/08 21:21:37 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "commands/CmdInvite.hpp"
 #include "RequestContext.hpp"
 #include "Services.hpp"
+#include "LineUtils.hpp"
 #include "User.hpp"
 #include "Channel.hpp"
 #include <string>
@@ -20,11 +21,11 @@
 
 static void parseInviteParams(const std::string &params, std::string &outTargetNick, std::string &outChannelName)
 {
-    size_t sp = params.find(' ');
-    outTargetNick = (sp == std::string::npos) ? params : params.substr(0, sp);
-    outChannelName = (sp == std::string::npos) ? std::string() : params.substr(sp + 1);
-    if (!outChannelName.empty() && outChannelName[0] == ' ') outChannelName.erase(0,1);
-    if (!outChannelName.empty() && outChannelName[outChannelName.size() - 1] == '\r') outChannelName.erase(outChannelName.size() - 1, 1);
+    std::vector<std::string> parts = split(trim(params, " \r"), ' ');
+    if (parts.size() >= 2) {
+        outTargetNick = parts[0];
+        outChannelName = parts[1];
+    }
 }
 
 static bool canInvite(RequestContext &ctx, User* targetUser, Channel* channel)
@@ -54,6 +55,12 @@ void CmdInvite::execute(RequestContext &ctx)
     std::string targetNick;
     std::string channelName;
     parseInviteParams(ctx.rawLine, targetNick, channelName);
+
+    if (targetNick.empty() || channelName.empty()) 
+    {
+        ctx.services.sendToUser(ctx.sender, std::string("461 INVITE :Not enough parameters"));
+        return;
+    }
 
     User* targetUser = ctx.services.users().findByNick(targetNick);
     Channel* channel = ctx.services.channels().getChannel(channelName);

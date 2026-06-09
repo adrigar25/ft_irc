@@ -157,15 +157,9 @@ void CmdJoin::execute(RequestContext &ctx)
 
     std::string channelsPart = ctx.rawLine;
     std::string keysPart;
-    size_t sp = ctx.rawLine.find(' ');
-    if (sp != std::string::npos) {
-        channelsPart = ctx.rawLine.substr(0, sp);
-        keysPart = ctx.rawLine.substr(sp + 1);
-    }
-    if (!parseChannels(channelsPart, channelNames)) {
-        ctx.services.sendResponse(ctx, "461", "JOIN :Invalid channel name(s)");
-        return;
-    }
+   
+    channelNames = split(trim(channelsPart, " "), ',');
+    keys = split(trim(keysPart, " "), ',');
 
     if (channelNames.empty()) {
         ctx.services.sendResponse(ctx, "461", "JOIN :Not enough parameters");

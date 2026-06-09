@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 12:37:57 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/07 14:51:26 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/08 21:21:17 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ static bool applyPassword(RequestContext &ctx, const std::string &pass)
 void CmdPass::execute(RequestContext &ctx)
 {
     if (!ctx.sender) return;
-    std::string params = trimParam(ctx.rawLine);
+    std::string params = trim(ctx.rawLine, " \r");
 
     if (params.empty()) {
         ctx.services.sendToUser(ctx.sender, std::string("461 PASS :Not enough parameters"));

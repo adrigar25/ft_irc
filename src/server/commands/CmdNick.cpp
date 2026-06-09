@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 12:37:50 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/07 15:02:21 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/08 21:20:41 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,19 @@
 #include "RequestContext.hpp"
 #include "Services.hpp"
 #include "User.hpp"
+#include "LineUtils.hpp"
 #include "managers/UserManager.hpp"
 #include <string>
 #include <cstring>
 
 static std::string extractNick(const std::string &raw)
 {
-    std::string nick = raw;
-    if (!nick.empty() && nick[0] == ' ') nick.erase(0, 1);
-    if (!nick.empty() && nick[nick.size() - 1] == '\r') nick.erase(nick.size() - 1, 1);
+    std::string nick = trim(raw, " \r");
+    if (nick.empty())
+        return "";
+    size_t spacePos = nick.find(' ');
+    if (spacePos != std::string::npos)
+        nick = nick.substr(0, spacePos);
     return nick;
 }
 
