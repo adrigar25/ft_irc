@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 12:36:35 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/07 12:36:36 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/09 18:18:42 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ struct RequestContext {
     User *sender;
     std::string rawLine;
 
-    RequestContext(Services &svc, User *s, const std::string &r): services(svc), sender(s), rawLine(r) {}
+    RequestContext(Services &svc, User *s, const std::string &r);
 };
 
 #endif
