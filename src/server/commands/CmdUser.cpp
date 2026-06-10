@@ -45,7 +45,15 @@ void CmdUser::execute(RequestContext &ctx)
         ctx.services.sendToUser(ctx.sender, std::string("461 USER :Not enough parameters"));
         return;
     }
+    if (ctx.sender->isAuthenticated()) {
+        ctx.services.sendToUser(ctx.sender, std::string("462 USER :Unauthorized command (already registered)"));
+        return;
+    }
     std::string username, real;
     parseUserLine(ctx.rawLine, username, real);
+    if (username.empty() || real.empty()) {
+        ctx.services.sendToUser(ctx.sender, std::string("461 USER :Not enough parameters"));
+        return;
+    }
     setUser(ctx, username, real);
 }

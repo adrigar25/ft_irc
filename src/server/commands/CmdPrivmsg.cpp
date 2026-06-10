@@ -85,13 +85,17 @@ void CmdPrivmsg::execute(RequestContext &ctx)
     std::vector<std::string> targets;
     std::string msg;
     if (!parsePrivmsgParams(params, targets, msg)) {
-        ctx.services.sendToUser(ctx.sender, std::string("461 PRIVMSG :Not enough parameters"));
+        ctx.services.sendToUser(ctx.sender, std::string("412 PRIVMSG :No text to send"));
         return;
     }
     for (size_t i = 0; i < targets.size(); ++i) {
         const std::string &target = targets[i];
-        if(target.empty() || msg.empty()) {
-            ctx.services.sendToUser(ctx.sender, std::string("461 PRIVMSG :Not enough parameters"));
+        if(target.empty()) {
+            ctx.services.sendToUser(ctx.sender, std::string("411 PRIVMSG :No recipient given"));
+            return;
+        }
+        if(msg.empty()) {
+            ctx.services.sendToUser(ctx.sender, std::string("412 PRIVMSG :No text to send"));
             return;
         }
         std::string out = buildPrivmsgOut(ctx, target, msg);

@@ -92,13 +92,13 @@ void CmdPart::execute(RequestContext &ctx)
 
     if(channelsPart.empty())
     {
-        ctx.services.sendToUser(ctx.sender, "461 Not enough parameters");
+        ctx.services.sendToUser(ctx.sender, "461 PART :Not enough parameters");
         return ;
     }
 
     if(msgPart.size() > 0 && msgPart[0] != ':')
     {
-        ctx.services.sendToUser(ctx.sender, "461 Not enough parameters");
+        ctx.services.sendToUser(ctx.sender, "461 PART :Not enough parameters");
         return ;
     }
 

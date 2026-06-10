@@ -18,7 +18,7 @@
 void CmdUnknown::execute(RequestContext &ctx)
 {
     if (!ctx.sender) return;
-    ctx.services.sendToUser(ctx.sender, std::string("421 " ) + ctx.rawLine + " :Unknown command\r\n");
+    ctx.services.sendToUser(ctx.sender, std::string("421 ") + ctx.rawLine + " :Unknown command");
 }
 #include "Server.hpp"
 #include "User.hpp"

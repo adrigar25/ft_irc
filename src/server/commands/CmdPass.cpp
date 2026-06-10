@@ -28,10 +28,9 @@ static bool applyPassword(RequestContext &ctx, const std::string &pass)
     Server* srv = ctx.services.getServer();
     if (srv && srv->validatePassword(pass)) {
         ctx.sender->setPass(true);
-        ctx.services.sendToUser(ctx.sender, std::string("Password accepted"));
         return true;
     }
-    ctx.services.sendToUser(ctx.sender, std::string("Invalid password"));
+    ctx.services.sendToUser(ctx.sender, std::string("464 PASS :Password incorrect"));
     return false;
 }
 
