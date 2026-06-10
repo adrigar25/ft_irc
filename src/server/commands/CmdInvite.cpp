@@ -31,19 +31,19 @@ static void parseInviteParams(const std::string &params, std::string &outTargetN
 static bool canInvite(RequestContext &ctx, User* targetUser, Channel* channel)
 {
     if (!targetUser) {
-        ctx.services.sendToUser(ctx.sender, std::string("No such user"));
+        ctx.services.sendResponse(ctx, "401", "INVITE :No such nick/channel");
         return false;
     }
     if (!channel) {
-        ctx.services.sendToUser(ctx.sender, std::string("No such channel"));
+        ctx.services.sendResponse(ctx, "403", "INVITE :No such channel");
         return false;
     }
     if (!channel->isUserOperator(ctx.sender)) {
-        ctx.services.sendToUser(ctx.sender, std::string("You must be an operator to invite users"));
+        ctx.services.sendResponse(ctx, "482", channel->getName() + " :You're not channel operator");
         return false;
     }
     if (channel->hasUser(targetUser)) {
-        ctx.services.sendToUser(ctx.sender, std::string("User is already in the channel"));
+        ctx.services.sendResponse(ctx, "443", targetUser->getNickname() + " " + channel->getName() + " :is already on channel");
         return false;
     }
     return true;
@@ -68,6 +68,7 @@ void CmdInvite::execute(RequestContext &ctx)
     if (!canInvite(ctx, targetUser, channel)) return;
     channel->inviteUser(targetUser);
 
+    std::string serverName = ctx.services.getServerName();
     ctx.services.sendToUser(targetUser, ":" + ctx.sender->getNickname() + " INVITE " + targetUser->getNickname() + " :" + channel->getName());
-    ctx.services.sendToUser(ctx.sender, ":server 341 " + ctx.sender->getNickname() + " " + targetUser->getNickname() + " :" + channel->getName());
+    ctx.services.sendToUser(ctx.sender, ":" + serverName + " 341 " + ctx.sender->getNickname() + " " + targetUser->getNickname() + " :" + channel->getName());
 }

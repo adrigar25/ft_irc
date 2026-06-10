@@ -33,40 +33,43 @@ static void handleJoinError(RequestContext &ctx, const std::string &channelName,
     else if (code == IRC_ERR_BAD_CHANNEL_NAME)
         ctx.services.sendResponse(ctx, "476", channelName + " :Bad channel mask");
     else if (code == IRC_ERR_USER_ALREADY_IN_CHANNEL)
-        ctx.services.sendResponse(ctx, "475", channelName + " :User already in channel");
+        ctx.services.sendResponse(ctx, "443", channelName + " :is already on channel");
     else
         ctx.services.sendResponse(ctx, "475", channelName + " :Cannot join channel");
 }
 
 
-static void joinSingleChannel(RequestContext &ctx, const std::string &channelName, const std::string &key)
+static bool joinSingleChannel(RequestContext &ctx, const std::string &channelName, const std::string &key)
 {
-    if (!ctx.sender) return;
+    if (!ctx.sender) return false;
 
     Channel *channel = ctx.services.channels().getChannel(channelName);
 
     if (!channel) {
         try {
             ctx.services.channels().createChannel(channelName, ctx.sender);
+            return true;
         } catch (const IrcException &ie) {
             handleJoinError(ctx, channelName, ie.getCode());
-            return;
+            return false;
         } catch (const std::exception &e) {
             ctx.services.sendResponse(ctx, "475", channelName + " :Cannot create channel");
-            return;
+            return false;
         }
     }
     else {
         try {
             ctx.sender->joinChannel(channel, key);
+            return true;
         } catch (const IrcException &ie) {
             handleJoinError(ctx, channelName, ie.getCode());
-            return;
+            return false;
         } catch (const std::exception &e) {
             ctx.services.sendResponse(ctx, "475", channelName + " :Cannot join channel");
-            return;
+            return false;
         }
     }
+    return false;
 }
 
 static void sendJoinMessage(RequestContext &ctx, Channel *channel)
@@ -97,9 +100,9 @@ void CmdJoin::execute(RequestContext &ctx)
     {
         const std::string &channelName = channelNames[i];
         const std::string key = (i < keys.size() ? keys[i] : "");
-        joinSingleChannel(ctx, channelName, key);
+        bool joined = joinSingleChannel(ctx, channelName, key);
         Channel *channel = ctx.services.channels().getChannel(channelName);
-        if (channel && channel->hasUser(ctx.sender)) {
+        if (joined && channel && channel->hasUser(ctx.sender)) {
             sendJoinMessage(ctx, channel);
             ctx.services.getServer()->sendNamesList(ctx.sender, channel);
         }

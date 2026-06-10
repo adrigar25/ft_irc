@@ -194,7 +194,7 @@ void CmdMode::execute(RequestContext &ctx)
                 {
                     if (p >= params.size())
                     {
-                        ctx.services.sendResponse(ctx, "461", "MODE :Not enough parameters");
+                        ctx.services.sendResponse(ctx, "696", channelName + " :Invalid limit");
                         return;
                     }
                     if (!isNumber(params[p]))
