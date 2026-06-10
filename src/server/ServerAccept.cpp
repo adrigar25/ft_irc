@@ -37,7 +37,6 @@ void Server::handleNewConnection()
     User* newUser = new User(newSocket, ss.str());
     addUser(newUser);
 
-    std::cout << "New connection accepted | socket: " << newUser->getSocket() << " | nickname: " << newUser->getNickname() << std::endl;
 }
 
 void Server::handleDisconnectionByIndex(int idx)
@@ -49,7 +48,6 @@ void Server::handleDisconnectionByIndex(int idx)
 
     int fd = this->fds[idx].fd;
 
-    std::cout << "Client disconnected | fd: " << fd << std::endl;
     close(fd);
     this->deleteUser(fd);
     this->fds.erase(this->fds.begin() + idx);

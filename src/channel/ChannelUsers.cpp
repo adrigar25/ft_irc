@@ -14,7 +14,6 @@
 #include "User.hpp"
 #include "Exceptions.hpp"
 #include <map>
-#include <iostream>
 
 /**
  * @brief Añade un usuario al canal, validando restricciones (invite-only, límite, baneos).
@@ -35,7 +34,6 @@ void Channel::addUser(User *user)
         throw IrcException(IRC_ERR_USER_BANNED, "User is banned from this channel");
     this->users.insert(std::make_pair(fd, user));
     this->userCount++;
-    std::cout << "User " << user->getNickname() << " added to channel " << this->name << std::endl;
 }
 
 
@@ -50,7 +48,6 @@ void Channel::deleteUser(User *user)
         throw IrcException(IRC_ERR_USER_NOT_FOUND, "User not found in channel");
     this->users.erase(fd);
     this->userCount--;
-    std::cout << "User " << user->getNickname() << " removed from channel " << this->name << std::endl;
 }
 
 
@@ -94,4 +91,3 @@ void Channel::unbanUser(User *user)
 {
     deleteUserFromMap(this->bannedUsers, user);
 }
-

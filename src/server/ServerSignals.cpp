@@ -18,7 +18,7 @@ void handleSignalStopServer(int signum)
 {
 	Server *server = Server::getInstance();
 	if (server) {
-		std::cout << "\nReceived signal " << signum << ", stopping server..." << std::endl;
+		(void)signum;
 		server->stopServer();
 	}
 }

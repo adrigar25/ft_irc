@@ -83,6 +83,10 @@ void Server::handleClientCommand(User *user, const std::string &commandLine)
         if (sp + 1 < commandLine.size())
             args = commandLine.substr(sp + 1);
     }
+    std::cout << "[" << cmd << "]";
+    if (!args.empty())
+        std::cout << " " << args;
+    std::cout << std::endl;
     executeCommand(user, cmd, args);
 }
 
@@ -104,7 +108,7 @@ void Server::executeCommand(User *user, const std::string &command, const std::s
     {
         if (command != "PASS" && command != "NICK" && command != "USER" && command != "CAP" && command != "PING" && command != "PONG")
         {
-            sendToUser(user, std::string("You're not authenticated"));
+            sendToUser(user, std::string(":") + this->services.getServerName() + " 451 " + user->getNickname() + " :You have not registered");
             return;
         }
     }

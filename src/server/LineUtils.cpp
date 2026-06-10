@@ -40,7 +40,6 @@ std::string trim(const std::string &s, const std::string &chars)
     }
     return r;
 }
-#include <iostream>
 std::vector<std::string> split(const std::string &s, char delim)
 {
     std::vector<std::string> res;
@@ -62,10 +61,6 @@ std::vector<std::string> split(const std::string &s, char delim)
     
     if (!token.empty())
         res.push_back(token);
-
-    std::cout << "split: [" << s << "] by '" << delim << "' -> " << res.size() << " tokens" << std::endl;
-    for (size_t i = 0; i < res.size(); ++i)
-        std::cout << "  token[" << i << "]: [" << res[i] << "]" << std::endl;
 
     return res;
 }

@@ -42,7 +42,6 @@ Server::Server(unsigned int port, std::string password): port(port), password(pa
 		this->hostname = std::string("localhost");
 	else
 		this->hostname = std::string(buf);
-	std::cout << "Server created" << std::endl;
 }
 
 /**
@@ -56,7 +55,6 @@ Server::~Server()
 {
 	this->services.users().clear();
 	this->services.channels().clear();
-	std::cout << "Server destroyed" << std::endl;
 }
 /** @brief Crea el socket de escucha del servidor. */
 void Server::createServerSocket()
@@ -73,7 +71,6 @@ void Server::setSocketOptions()
 	int opt = 1;
 	if (setsockopt(this->serverSocket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
 		throw IrcException(IRC_ERR_STARTING_SERVER, std::string("setsockopt failed: ") + strerror(errno));
-	std::cout << "Socket options set" << std::endl;
 }
 
 void Server::bindServerSocket()
@@ -87,14 +84,12 @@ void Server::bindServerSocket()
 
 	if (bind(this->serverSocket, (struct sockaddr*)&address, sizeof(address)) < 0)
 		throw IrcException(IRC_ERR_STARTING_SERVER, std::string("bind failed: ") + strerror(errno));
-	std::cout << "Bind successful" << std::endl;
 }
 
 void Server::listenServerSocket()
 {
 	if (listen(this->serverSocket, 64) < 0)
 		throw IrcException(IRC_ERR_STARTING_SERVER, std::string("listen failed: ") + strerror(errno));
-	std::cout << "Server is listening on port " << this->port << "..." << std::endl;
 }
 
 void Server::setupPollFds()
@@ -127,7 +122,6 @@ int Server::startBot()
 		if (portfile) {
 			portfile << bound_port << std::endl;
 			portfile.close();
-			std::cout << "Wrote .irc_port: " << bound_port << std::endl;
 		} else {
 			std::cerr << "Warning: could not write .irc_port" << std::endl;
 		}
@@ -137,7 +131,6 @@ int Server::startBot()
 		if (getcwd(cwd_buf, sizeof(cwd_buf)) != NULL) {
 			std::string botpath = std::string(cwd_buf) + "/bot/ircbot";
 			if (access(botpath.c_str(), X_OK) != 0) {
-				std::cout << "Bot not found or not executable at: " << botpath << ", attempting to build..." << std::endl;
 				int build_ret = system("make -C bot ircbot");
 				if (build_ret != 0) {
 					std::cerr << "Building bot failed (make returned " << build_ret << ")." << std::endl;
@@ -208,12 +201,10 @@ void Server::stopServer()
 		close(this->serverSocket);
 		this->serverSocket = -1;
 	}
-	std::cout << "Server stopped" << std::endl;
 }
 
 void Server::cleanup()
 {
-    std::cout << "Cleaning up server..." << std::endl;
     for (size_t i = 0; i < this->fds.size(); ++i)
     {
         if (this->fds[i].fd >= 0)
@@ -224,7 +215,6 @@ void Server::cleanup()
     this->services.users().clear();
     this->services.channels().clear();
     this->serverSocket = -1;
-    std::cout << "Server cleaned up" << std::endl;
 }
 
 
@@ -233,4 +223,3 @@ Server* Server::getInstance()
 {
 	return Server::instance;
 }
-
