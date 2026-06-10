@@ -101,28 +101,6 @@ static void handleKickN1(RequestContext &ctx, const std::vector<std::string> &ch
     }
 }
 
-static void handleKickNN(RequestContext &ctx, const std::vector<std::string> &channels, const std::vector<std::string> &users, const std::string &reason)
-{
-    size_t n = std::min(channels.size(), users.size());
-
-    for (size_t i = 0; i < n; i++)
-    {
-        std::string chName = trim(channels[i], " \r");
-        std::string nick = trim(users[i], " \r");
-
-        if (chName.empty() || nick.empty())
-            continue;
-
-        Channel *channel = NULL;
-        User *target = NULL;
-
-        if (!validateKick(ctx, chName, nick, channel, target))
-            continue;
-
-        doKick(ctx, channel, target, reason);
-    }
-}
-#include <iostream>
 void CmdKick::execute(RequestContext &ctx)
 {
     if (!ctx.sender)
@@ -156,6 +134,7 @@ void CmdKick::execute(RequestContext &ctx)
     else if(users.size() == 1)
         handleKickN1(ctx, channels, users[0], reason);
     else
-        handleKickNN(ctx, channels, users, reason);
+        ctx.services.sendToUser(ctx.sender,
+            "461 KICK :Not enough parameters");
 
 }
