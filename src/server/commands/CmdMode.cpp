@@ -179,7 +179,10 @@ void CmdMode::execute(RequestContext &ctx)
                 if (add)
                 {
                     if (p >= params.size())
+                    {
+                        ctx.services.sendResponse(ctx, "461", "MODE :Not enough parameters");
                         return;
+                    }
                     param = params[p++];
                 }
                 modeK(ch, add, param);
@@ -190,7 +193,10 @@ void CmdMode::execute(RequestContext &ctx)
                 if (add)
                 {
                     if (p >= params.size())
+                    {
+                        ctx.services.sendResponse(ctx, "461", "MODE :Not enough parameters");
                         return;
+                    }
                     if (!isNumber(params[p]))
                     {
                         ctx.services.sendResponse(ctx, "696", channelName + " :Invalid limit");
@@ -212,7 +218,10 @@ void CmdMode::execute(RequestContext &ctx)
             case 'b':
             {
                 if (p >= params.size())
+                {
+                    ctx.services.sendResponse(ctx, "461", "MODE :Not enough parameters");
                     return;
+                }
 
                 User *u = ctx.services.users().findByNick(params[p++]);
                 if (!u)
