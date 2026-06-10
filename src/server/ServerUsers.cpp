@@ -28,7 +28,8 @@ void Server::deleteUser(int fd)
     const std::map<std::string, Channel*>& channels = this->services.channels().getAll();
     for (std::map<std::string, Channel*>::const_iterator cit = channels.begin(); cit != channels.end(); ++cit) {
         try {
-            if (cit->second) cit->second->deleteUser(user);
+            if (cit->second && cit->second->hasUser(user))
+                cit->second->deleteUser(user);
         } catch (const std::exception &e) {
             std::cerr << "ERROR: error removing user from channel " << cit->first << ": " << e.what() << std::endl;
         }
