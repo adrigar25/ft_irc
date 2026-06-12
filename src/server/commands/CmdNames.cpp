@@ -25,7 +25,7 @@ void CmdNames::execute(RequestContext &ctx)
     std::istringstream iss(ctx.rawLine);
     std::vector<std::string> channelNames;
     for(std::string word; iss >> word; ) {
-        if (word[0] == '#' || word[0] == '&' || word[0] == '+' || word[0] == '!')
+        if (word[0] == '#')
             channelNames.push_back(word);
     }
     if(channelNames.empty())
