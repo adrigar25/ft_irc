@@ -14,6 +14,7 @@
 #include "User.hpp"
 #include "Exceptions.hpp"
 #include <map>
+#include <sstream>
 
 void Channel::setIsInviteOnly(bool val)
 {
