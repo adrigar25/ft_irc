@@ -18,11 +18,12 @@
 #include <cstring>
 
 #include "LineUtils.hpp"
+#include "replies/Replies.hpp"
 
 static bool applyPassword(RequestContext &ctx, const std::string &pass)
 {
     if(ctx.sender->isPassSet()) {
-        ctx.services.sendToUser(ctx.sender, std::string("462 PASS :You may not reregister"));
+        ctx.services.sendResponse(ctx, ERR_ALREADYREGISTERED(ctx.sender->getNickname()));
         return false;
     }
     Server* srv = ctx.services.getServer();
@@ -30,7 +31,7 @@ static bool applyPassword(RequestContext &ctx, const std::string &pass)
         ctx.sender->setPass(true);
         return true;
     }
-    ctx.services.sendToUser(ctx.sender, std::string("464 PASS :Password incorrect"));
+    ctx.services.sendResponse(ctx, ERR_PASSWDMISMATCH(ctx.sender->getNickname()));
     return false;
 }
 
@@ -40,7 +41,7 @@ void CmdPass::execute(RequestContext &ctx)
     std::string params = trim(ctx.rawLine, " \r");
 
     if (params.empty()) {
-        ctx.services.sendToUser(ctx.sender, std::string("461 PASS :Not enough parameters"));
+        ctx.services.sendResponse(ctx, ERR_NEEDMOREPARAMS(ctx.sender->getNickname(), "PASS"));
         return;
     }
     applyPassword(ctx, params);

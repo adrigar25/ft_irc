@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 12:38:11 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/07 15:02:34 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/12 13:50:07 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include <string>
 #include <unistd.h>
 #include <cstring>
+#include "replies/Replies.hpp"
 
 static void parseUserLine(const std::string &raw, std::string &outUsername, std::string &outReal)
 {
@@ -41,18 +42,21 @@ static void setUser(RequestContext &ctx, const std::string &username, const std:
 void CmdUser::execute(RequestContext &ctx)
 {
     if (!ctx.sender) return;
-    if (ctx.rawLine.empty()) {
-        ctx.services.sendToUser(ctx.sender, std::string("461 USER :Not enough parameters"));
+
+
+    if (ctx.sender->isAuthenticated()) {
+        ctx.services.sendResponse(ctx, ERR_ALREADYREGISTERED(ctx.sender->getNickname()));
         return;
     }
-    if (ctx.sender->isAuthenticated()) {
-        ctx.services.sendToUser(ctx.sender, std::string("462 USER :Unauthorized command (already registered)"));
+    
+    if (ctx.rawLine.empty()) {
+        ctx.services.sendResponse(ctx, ERR_NEEDMOREPARAMS(ctx.sender->getNickname(), "USER"));
         return;
     }
     std::string username, real;
     parseUserLine(ctx.rawLine, username, real);
     if (username.empty() || real.empty()) {
-        ctx.services.sendToUser(ctx.sender, std::string("461 USER :Not enough parameters"));
+        ctx.services.sendResponse(ctx, ERR_NEEDMOREPARAMS(ctx.sender->getNickname(), "USER"));
         return;
     }
     setUser(ctx, username, real);

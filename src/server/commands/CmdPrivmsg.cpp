@@ -37,41 +37,35 @@ static bool parsePrivmsgParams(const std::string &params, std::vector<std::strin
     return true;
 }
 
-static std::string buildPrivmsgOut(RequestContext &ctx, const std::string &target, const std::string &msg)
+static void dispatchPrivmsg(RequestContext &ctx, const std::string &target, const std::string &msg)
 {
-    std::string serverName = ctx.services.getServerName();
-    std::string uname = ctx.sender->getUsername();
-    if (uname.empty()) uname = "~";
-    std::string out = std::string(":") + ctx.sender->getNickname() + "!" + uname + "@" + serverName + " PRIVMSG " + target + " :" + msg + "\r\n";
-    return out;
-}
 
-static void dispatchPrivmsg(RequestContext &ctx, const std::string &target, const std::string &out)
-{
     if(target.empty()) {
         ctx.services.sendToUser(ctx.sender, std::string("411 PRIVMSG :No recipient given"));
         return;
     }
 
-    if(target[0] == '#' || target[0] == '&' || target[0] == '+' || target[0] == '!') {
+    std::string out = ctx.services.getUserPrefix(ctx.sender) + RPL_PRIVMSG(target, msg);
+
+    if(target[0] == '#') {
         Channel *channel = ctx.services.channels().getChannel(target);
         if (!channel) {
-            ctx.services.sendToUser(ctx.sender, std::string("403 ") + target + " :No such channel");
+            ctx.services.sendResponse(ctx, ERR_NOSUCHNICK(ctx.sender->getNickname(), target));
             return;
         }
         if(!channel->hasUser(ctx.sender)) {
-            ctx.services.sendToUser(ctx.sender, std::string("404 ") + target + " :Cannot send to channel");
+            ctx.services.sendResponse(ctx, ERR_CANNOTSENDTOCHAN(ctx.sender->getNickname(), target));
             return;
         }
         if(channel->getIsModerated() && !channel->isUserVoice(ctx.sender) && !channel->isUserOperator(ctx.sender)) {
-            ctx.services.sendToUser(ctx.sender, std::string("404 ") + target + " :Cannot send to channel (moderated)");
+            ctx.services.sendResponse(ctx, ERR_CANNOTSENDTOCHAN(ctx.sender->getNickname(), target));
             return;
         }
         ctx.services.sendToChannel(channel, out, ctx.sender);
     } else {
         User *dest = ctx.services.users().findByNick(target);
         if (!dest) {
-            ctx.services.sendToUser(ctx.sender, std::string("401 ") + target + " :No such nick/channel");
+            ctx.services.sendResponse(ctx, ERR_NOSUCHNICK(ctx.sender->getNickname(), target));
             return;
         }
         ctx.services.sendToUser(dest, out);
@@ -84,8 +78,12 @@ void CmdPrivmsg::execute(RequestContext &ctx)
     const std::string &params = ctx.rawLine;
     std::vector<std::string> targets;
     std::string msg;
-    if (!parsePrivmsgParams(params, targets, msg)) {
-        ctx.services.sendToUser(ctx.sender, std::string("412 PRIVMSG :No text to send"));
+    
+    if(parts.empty()) {
+        ctx.services.sendResponse(ctx, ERR_NORECIPIENT(ctx.sender->getNickname(), "PRIVMSG"));
+        return;
+    }else if(parts.size() == 1 || (parts.size() > 1 && parts[1][0] != ':')) {
+        ctx.services.sendResponse(ctx, ERR_NOTEXTTOSEND(ctx.sender->getNickname(), "PRIVMSG"));
         return;
     }
     for (size_t i = 0; i < targets.size(); ++i) {

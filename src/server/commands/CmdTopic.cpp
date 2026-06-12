@@ -21,6 +21,7 @@
 #include <cstring>
 
 #include "LineUtils.hpp"
+#include "replies/Replies.hpp"
 
 static void parseTopicParams(const std::string &params, std::string &outChannelName, std::string &outTopic)
 {
@@ -28,13 +29,6 @@ static void parseTopicParams(const std::string &params, std::string &outChannelN
     outChannelName = (sp == std::string::npos) ? params : params.substr(0, sp);
     outTopic = (sp == std::string::npos) ? "" : params.substr(sp + 1);
     if (!outTopic.empty() && outTopic[0] == ':') outTopic.erase(0,1);
-}
-
-static void sendResponse(RequestContext &ctx, const std::string &code, const std::string &message)
-{
-    std::string serverName = ctx.services.getServerName();
-    std::string response = std::string(":") + serverName + " " + code + " " + ctx.sender->getNickname() + " " + message;
-    ctx.services.sendToUser(ctx.sender, response);
 }
 
 void CmdTopic::execute(RequestContext &ctx)
@@ -57,29 +51,29 @@ void CmdTopic::execute(RequestContext &ctx)
     parseTopicParams(params, channelName, topic);
 
     if(channelName.empty()) {
-        sendResponse(ctx, "461", "TOPIC :Not enough parameters");
+        ctx.services.sendResponse(ctx, ERR_NEEDMOREPARAMS(ctx.sender->getNickname(), "TOPIC"));
         return;
     }
 
     Channel *targetChannel = ctx.services.channels().getChannel(channelName);
 
     if(!targetChannel) {
-        sendResponse(ctx, "403", channelName + " :No such channel");
+        ctx.services.sendResponse(ctx, ERR_NOSUCHCHANNEL(ctx.sender->getNickname(), channelName));
         return;
     }
     if(topic.empty()) {
         if(targetChannel->getTopic().empty())
-            sendResponse(ctx, "331", channelName + " :No topic is set");
+            ctx.services.sendResponse(ctx, RPL_NOTOPIC(ctx.sender->getNickname(), channelName));
         else
-            sendResponse(ctx, "332", channelName + " :" + targetChannel->getTopic());
+            ctx.services.sendResponse(ctx, RPL_TOPIC(ctx.sender->getNickname(), channelName, targetChannel->getTopic()));
         return;
     }
     if(!targetChannel->hasUser(ctx.sender)) {
-        sendResponse(ctx, "442", channelName + " :You're not on that channel");
+        ctx.services.sendResponse(ctx, ERR_NOTONCHANNEL(ctx.sender->getNickname(), channelName));
         return;
     }
     if(!targetChannel->isUserOperator(ctx.sender) && targetChannel->getTopicProtected()) {
-        sendResponse(ctx, "482", channelName + " :You're not channel operator");
+        ctx.services.sendResponse(ctx, ERR_CHANOPRIVSNEEDED(ctx.sender->getNickname(), channelName));
         return;
     }
     targetChannel->setTopic(topic);

@@ -14,11 +14,14 @@
 #include "RequestContext.hpp"
 #include "Services.hpp"
 #include <string>
+#include "replies/Replies.hpp"
 
 void CmdUnknown::execute(RequestContext &ctx)
 {
     if (!ctx.sender) return;
-    ctx.services.sendToUser(ctx.sender, std::string("421 ") + ctx.rawLine + " :Unknown command");
+    if (ctx.rawLine.empty())
+        return;
+    ctx.services.sendResponse(ctx, ERR_UNKNOWNCOMMAND(ctx.sender->getNickname(), ctx.rawLine));
 }
 #include "Server.hpp"
 #include "User.hpp"
@@ -26,6 +29,9 @@ void CmdUnknown::execute(RequestContext &ctx)
 
 bool Server::handleUnknownCommand(User *user, const std::string &command)
 {
-    sendToUser(user, std::string("421 ") + command + " :Unknown command");
+    if (command.empty())
+        return false;
+    std::string reply = ERR_UNKNOWNCOMMAND(user->getNickname(), command);
+    sendToUser(user, std::string(":") + this->services.getServerName() + " " + reply);
     return true;
 }

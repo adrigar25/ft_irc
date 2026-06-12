@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 12:37:39 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/09 16:40:13 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/12 17:59:53 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,23 +19,26 @@
 #include <sstream>
 #include <unistd.h>
 #include <cstring>
+#include "replies/Replies.hpp"
 
 static void handleJoinError(RequestContext &ctx, const std::string &channelName, int code)
 {
     if (code == IRC_ERR_CHANNEL_FULL)
-        ctx.services.sendResponse(ctx, "471", channelName + " :Cannot join channel (+l)");
+        ctx.services.sendResponse(ctx, ERR_CHANNELISFULL(ctx.sender->getNickname(), channelName));
     else if (code == IRC_ERR_CHANNEL_INVITE_ONLY)
-        ctx.services.sendResponse(ctx, "473", channelName + " :Cannot join channel (+i)");
+        ctx.services.sendResponse(ctx, ERR_INVITEONLYCHAN(ctx.sender->getNickname(), channelName));
     else if (code == IRC_ERR_USER_BANNED)
-        ctx.services.sendResponse(ctx, "474", channelName + " :Cannot join channel (+b)");
+        ctx.services.sendResponse(ctx, ERR_BANNEDFROMCHAN(ctx.sender->getNickname(), channelName));
     else if (code == IRC_ERR_INCORRECT_CHANNEL_KEY)
-        ctx.services.sendResponse(ctx, "475", channelName + " :Cannot join channel (+k)");
+        ctx.services.sendResponse(ctx, ERR_BADCHANNELKEY(ctx.sender->getNickname(), channelName));
     else if (code == IRC_ERR_BAD_CHANNEL_NAME)
-        ctx.services.sendResponse(ctx, "476", channelName + " :Bad channel mask");
+        ctx.services.sendResponse(ctx, ERR_BADCHANMASK(ctx.sender->getNickname(), channelName));
     else if (code == IRC_ERR_USER_ALREADY_IN_CHANNEL)
-        ctx.services.sendResponse(ctx, "443", channelName + " :is already on channel");
-    else
-        ctx.services.sendResponse(ctx, "475", channelName + " :Cannot join channel");
+        ctx.services.sendResponse(ctx, ERR_USERONCHANNEL(ctx.sender->getNickname(), ctx.sender->getNickname(), channelName));
+    else if (code == IRC_ERR_BANNEDFROMCHAN)
+        ctx.services.sendResponse(ctx, ERR_BANNEDFROMCHAN(ctx.sender->getNickname(), channelName));
+    else if (code == IRC_ERR_ISINVITEONLYCHAN)
+        ctx.services.sendResponse(ctx, ERR_INVITEONLYCHAN(ctx.sender->getNickname(), channelName));
 }
 
 
@@ -53,7 +56,7 @@ static bool joinSingleChannel(RequestContext &ctx, const std::string &channelNam
             handleJoinError(ctx, channelName, ie.getCode());
             return false;
         } catch (const std::exception &e) {
-            ctx.services.sendResponse(ctx, "475", channelName + " :Cannot create channel");
+            ctx.services.sendResponse(ctx, ERR_BADCHANNELKEY(ctx.sender->getNickname(), channelName));
             return false;
         }
     }
@@ -65,7 +68,7 @@ static bool joinSingleChannel(RequestContext &ctx, const std::string &channelNam
             handleJoinError(ctx, channelName, ie.getCode());
             return false;
         } catch (const std::exception &e) {
-            ctx.services.sendResponse(ctx, "475", channelName + " :Cannot join channel");
+            ctx.services.sendResponse(ctx, ERR_BADCHANNELKEY(ctx.sender->getNickname(), channelName));
             return false;
         }
     }
@@ -74,10 +77,7 @@ static bool joinSingleChannel(RequestContext &ctx, const std::string &channelNam
 
 static void sendJoinMessage(RequestContext &ctx, Channel *channel)
 {
-    std::string serverName = ctx.services.getServerName();
-    std::string uname = ctx.sender->getUsername();
-    if (uname.empty()) uname = "~";
-    std::string joinMsg = ":" + ctx.sender->getNickname() + "!" + uname + "@" + serverName + " JOIN " + channel->getName() + "\r\n";
+    std::string joinMsg = RPL_JOIN(ctx.services.getUserPrefix(ctx.sender), channel->getName());
     ctx.services.sendToChannel(channel, joinMsg, NULL);
 }
 
@@ -89,7 +89,7 @@ void CmdJoin::execute(RequestContext &ctx)
 
     std::vector<std::string> parts = split(ctx.rawLine, ' ');
     if (parts.size() < 1) {
-        ctx.services.sendResponse(ctx, "461", "JOIN :Not enough parameters");
+        ctx.services.sendResponse(ctx, ERR_NEEDMOREPARAMS(ctx.sender->getNickname(), "JOIN"));
         return;
     }
     channelNames = split(trim(parts[0], " "), ',');
@@ -104,7 +104,7 @@ void CmdJoin::execute(RequestContext &ctx)
         Channel *channel = ctx.services.channels().getChannel(channelName);
         if (joined && channel && channel->hasUser(ctx.sender)) {
             sendJoinMessage(ctx, channel);
-            ctx.services.getServer()->sendNamesList(ctx.sender, channel);
+            ctx.services.sendNamesList(ctx, ctx.sender, channel);
         }
     }
 }

@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include "replies/Replies.hpp"
 
 static bool validateKick(
     RequestContext &ctx,
@@ -17,31 +18,26 @@ static bool validateKick(
     outChannel = ctx.services.channels().getChannel(channelName);
     if (!outChannel)
     {
-        ctx.services.sendToUser(ctx.sender,
-            "403 " + channelName + " :No such channel");
+        ctx.services.sendResponse(ctx, ERR_NOSUCHCHANNEL(ctx.sender->getNickname(), channelName));
         return false;
     }
 
     outTarget = ctx.services.users().findByNick(targetNick);
     if (!outTarget)
     {
-        ctx.services.sendToUser(ctx.sender,
-            "401 " + targetNick + " :No such nick/channel");
+        ctx.services.sendResponse(ctx, ERR_NOSUCHNICK(ctx.sender->getNickname(), targetNick));
         return false;
     }
 
     if (!outChannel->isUserOperator(ctx.sender))
     {
-        ctx.services.sendToUser(ctx.sender,
-            "482 " + channelName + " :You're not channel operator");
+        ctx.services.sendResponse(ctx, ERR_CHANOPRIVSNEEDED(ctx.sender->getNickname(), channelName));
         return false;
     }
 
     if (!outChannel->hasUser(outTarget))
     {
-        ctx.services.sendToUser(ctx.sender,
-            "441 " + targetNick + " " + channelName +
-            " :They aren't on that channel");
+        ctx.services.sendResponse(ctx, ERR_USERNOTINCHANNEL(ctx.sender->getNickname(), targetNick, channelName));
         return false;
     }
 
@@ -55,10 +51,7 @@ static void doKick(RequestContext &ctx, Channel *channel, User *target, const st
     if (uname.empty())
         uname = "~";
 
-    std::string msg =
-        ":" + ctx.sender->getNickname() + "!" + uname + "@" + serverName +
-        " KICK " + channel->getName() + " " + target->getNickname() + " :" + reason + "\r\n";
-
+    std::string msg = RPL_KICK(ctx.services.getUserPrefix(ctx.sender), channel->getName(), target->getNickname(), reason.empty() ? "No reason" : reason);
     ctx.services.sendToChannel(channel, msg, NULL);
     target->leaveChannel(channel);
 }
@@ -109,8 +102,7 @@ void CmdKick::execute(RequestContext &ctx)
     std::vector<std::string> parts = split(trim(ctx.rawLine, " \r"), ' ');
     if (parts.size() < 2)
     {
-        ctx.services.sendToUser(ctx.sender,
-            "461 KICK :Not enough parameters");
+        ctx.services.sendResponse(ctx, ERR_NEEDMOREPARAMS(ctx.sender->getNickname(), "KICK"));
         return;
     }
 
@@ -124,8 +116,7 @@ void CmdKick::execute(RequestContext &ctx)
 
     if (channels.empty() || users.empty())
     {
-        ctx.services.sendToUser(ctx.sender,
-            "461 KICK :Not enough parameters");
+        ctx.services.sendResponse(ctx, ERR_NEEDMOREPARAMS(ctx.sender->getNickname(), "KICK"));
         return;
     }
 
@@ -134,7 +125,6 @@ void CmdKick::execute(RequestContext &ctx)
     else if(users.size() == 1)
         handleKickN1(ctx, channels, users[0], reason);
     else
-        ctx.services.sendToUser(ctx.sender,
-            "461 KICK :Not enough parameters");
+        ctx.services.sendResponse(ctx, ERR_NEEDMOREPARAMS(ctx.sender->getNickname(), "KICK"));
 
 }

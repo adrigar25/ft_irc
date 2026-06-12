@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 12:37:53 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/08 12:16:54 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/12 14:42:26 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include "replies/Replies.hpp"
 
 static void parseChannelList(const std::string &channelsPart, std::vector<std::string> &out, RequestContext &ctx)
 {
@@ -28,7 +29,7 @@ static void parseChannelList(const std::string &channelsPart, std::vector<std::s
         if (!value.empty() && value[0] == ' ') value.erase(0, 1);
         while (!value.empty() && (value[value.size() - 1] == '\r' || value[value.size() - 1] == ' '))
             value.erase(value.size() - 1, 1);
-        if (!value.empty() && (value[0] == '#' || value[0] == '&' || value[0] == '+' || value[0] == '!'))
+        if (!value.empty() && value[0] == '#')
             out.push_back(value);
         else if (!value.empty())
             ctx.services.sendToUser(ctx.sender, std::string("Invalid channel name: ") + value);
@@ -40,11 +41,11 @@ static void partFromChannel(RequestContext &ctx, const std::string &channelName,
 {
     Channel *channel = ctx.services.channels().getChannel(channelName);
     if (!channel) {
-        ctx.services.sendResponse(ctx, "403", channelName + " :No such channel");
+        ctx.services.sendResponse(ctx, ERR_NOSUCHCHANNEL(ctx.sender->getNickname(), channelName));
         return;
     }
     if (!channel->hasUser(ctx.sender)) {
-        ctx.services.sendResponse(ctx, "442", channelName + " :You're not on that channel");
+        ctx.services.sendResponse(ctx, ERR_NOTONCHANNEL(ctx.sender->getNickname(), channelName));
         return;
     }
 
@@ -92,13 +93,13 @@ void CmdPart::execute(RequestContext &ctx)
 
     if(channelsPart.empty())
     {
-        ctx.services.sendToUser(ctx.sender, "461 PART :Not enough parameters");
+        ctx.services.sendResponse(ctx, ERR_NEEDMOREPARAMS(ctx.sender->getNickname(), "PART"));
         return ;
     }
 
     if(msgPart.size() > 0 && msgPart[0] != ':')
     {
-        ctx.services.sendToUser(ctx.sender, "461 PART :Not enough parameters");
+        ctx.services.sendResponse(ctx, ERR_NEEDMOREPARAMS(ctx.sender->getNickname(), "PART"));
         return ;
     }
 

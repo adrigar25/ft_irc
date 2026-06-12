@@ -15,12 +15,13 @@
 #include "Services.hpp"
 #include "Server.hpp"
 #include <sstream>
+#include "replies/Replies.hpp"
 
 static void sendChannelsList(RequestContext &ctx)
 {
     const std::map<std::string, Channel*>& channels = ctx.services.channels().getAll();
     std::string serverName = ctx.services.getServerName();
-    ctx.services.sendToUser(ctx.sender, ":" + serverName + " 321 " + ctx.sender->getNickname() + " Channel :Users Name");
+    ctx.services.sendToUser(ctx.sender, RPL_LISTSTART(ctx.sender->getNickname()));
     for (std::map<std::string, Channel*>::const_iterator it = channels.begin(); it != channels.end(); ++it) {
         Channel *channel = it->second;
         if(channel->getIsInviteOnly() || channel->getIsSecret())
@@ -28,9 +29,9 @@ static void sendChannelsList(RequestContext &ctx)
         std::ostringstream oss;
         oss << it->second->getUserCount();
         std::string topic = channel->getTopic().empty() ? "-" : channel->getTopic();
-        ctx.services.sendToUser(ctx.sender, ":" + serverName + " 322 " + ctx.sender->getNickname() + " " + it->first + " " + oss.str() + " :" + topic);
+        ctx.services.sendToUser(ctx.sender, RPL_LIST(ctx.sender->getNickname(), it->first, oss.str(), topic));
     }
-    ctx.services.sendToUser(ctx.sender, ":" + serverName + " 323 " + ctx.sender->getNickname() + " :End of /LIST");
+    ctx.services.sendToUser(ctx.sender, RPL_ENDOFLIST(ctx.sender->getNickname()));
 }
 
 void CmdList::execute(RequestContext &ctx)

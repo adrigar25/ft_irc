@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 12:38:45 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/09 17:35:49 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/12 14:46:58 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@
 #include "commands/CmdCap.hpp"
 #include "commands/CmdNames.hpp"
 #include "RequestContext.hpp"
+#include "replies/Replies.hpp"
 
 static CommandDispatcher& getDispatcher()
 {
@@ -65,8 +66,10 @@ static void checkAuthentication(RequestContext &ctx)
     if (ctx.sender->isPassSet() && ctx.sender->isNickSet() && ctx.sender->isUserSet()) {
         ctx.sender->setAuthenticated(true);
         std::string serverName = ctx.services.getServerName();
-        std::string welcome = "Welcome to " + serverName + ", " + ctx.sender->getRealName() + "!";
-        ctx.services.sendResponse(ctx, "001", welcome);
+        ctx.services.sendResponse(ctx, RPL_WELCOME(ctx.sender->getNickname(), ctx.sender->getNickname(), ctx.sender->getUsername(), serverName));
+        ctx.services.sendResponse(ctx, RPL_YOURHOST(ctx.sender->getNickname(), serverName));
+        ctx.services.sendResponse(ctx, RPL_CREATED(ctx.sender->getNickname(), serverName));
+        ctx.services.sendResponse(ctx, RPL_MYINFO(ctx.sender->getNickname(), serverName));
     }
 }
 void Server::handleClientCommand(User *user, const std::string &commandLine)
@@ -108,7 +111,7 @@ void Server::executeCommand(User *user, const std::string &command, const std::s
     {
         if (command != "PASS" && command != "NICK" && command != "USER" && command != "CAP" && command != "PING" && command != "PONG")
         {
-            sendToUser(user, std::string(":") + this->services.getServerName() + " 451 " + user->getNickname() + " :You have not registered");
+            sendToUser(user, ERR_NOTREGISTERED(user->getNickname()));
             return;
         }
     }

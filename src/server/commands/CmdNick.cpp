@@ -16,6 +16,7 @@
 #include "User.hpp"
 #include "LineUtils.hpp"
 #include "managers/UserManager.hpp"
+#include "replies/Replies.hpp"
 #include <string>
 #include <cstring>
 
@@ -34,7 +35,7 @@ static bool nickAvailable(RequestContext &ctx, const std::string &nick)
 {
     User* existing = ctx.services.users().findByNick(nick);
     if (existing && existing != ctx.sender) {
-        ctx.services.sendToUser(ctx.sender, std::string("433 NICK :Nickname is already in use"));
+        ctx.services.sendResponse(ctx, ERR_NICKNAMEINUSE(ctx.sender->getNickname(), nick));
         return false;
     }
     return true;
@@ -47,7 +48,12 @@ void CmdNick::execute(RequestContext &ctx)
     std::string nick = extractNick(ctx.rawLine);
 
     if (nick.empty()) {
-        ctx.services.sendToUser(ctx.sender, std::string("431 NICK :No nickname given"));
+        ctx.services.sendResponse(ctx, ERR_NONICKNAMEGIVEN(ctx.sender->getNickname()));
+        return;
+    }
+
+    if (!validateNickFormat(nick)) {
+        ctx.services.sendResponse(ctx, ERR_ERRONEUSNICKNAME(ctx.sender->getNickname(), nick));
         return;
     }
 

@@ -17,11 +17,12 @@
 #include <string>
 
 #include "LineUtils.hpp"
+#include "replies/Replies.hpp"
 
 void CmdPing::execute(RequestContext &ctx)
 {
     if (!ctx.sender) return;
     std::string token = trim(ctx.rawLine, " \r");
     if (token.empty()) return;
-    ctx.services.sendToUser(ctx.sender, std::string("PONG ") + token);
+    ctx.services.sendToUser(ctx.sender, RPL_PONG(token));
 }

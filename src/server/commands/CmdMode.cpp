@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/09 17:52:57 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/09 17:57:32 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/12 16:32:42 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "RequestContext.hpp"
 #include "Services.hpp"
 #include "LineUtils.hpp"
+#include "replies/Replies.hpp"
 
 #include <vector>
 #include <string>
@@ -28,24 +29,14 @@ static bool isNumber(const std::string &s)
     return !s.empty();
 }
 
-static void sendMode(RequestContext &ctx, Channel *ch, const std::string &channelName,
+static void sendMode(RequestContext &ctx, const std::string &channelName,
                      char sign, char mode, const std::string &param)
 {
-    std::string msg = ":"
-        + ctx.sender->getNickname()
-        + " MODE "
-        + channelName
-        + " ";
-
-    msg += sign;
-    msg += mode;
-
+    std::string modes(1, sign);
+    modes += mode;
     if (!param.empty())
-        msg += " " + param;
-
-    msg += "\r\n";
-
-    ctx.services.sendToChannel(ch, msg);
+        modes += " " + param;
+    ctx.services.sendResponse(ctx, RPL_CHANNELMODEIS(ctx.sender->getNickname(), channelName, modes));
 }
 
 /* ===================== HANDLERS ===================== */
@@ -135,21 +126,21 @@ void CmdMode::execute(RequestContext &ctx)
     if (!ctx.sender || ctx.rawLine.empty())
         return;
 
-    std::vector<std::string> t = split(ctx.rawLine, ' ');
+    std::vector<std::string> parts = split(ctx.rawLine, ' ');
 
-    if (t.size() < 2)
+    if (parts.size() < 1)
     {
-        ctx.services.sendResponse(ctx, "461", "Not enough parameters");
+        ctx.services.sendResponse(ctx, ERR_NEEDMOREPARAMS(ctx.sender->getNickname(), "MODE"));
         return;
     }
 
-    std::string channelName = t[0];
-    std::string modes = t[1];
+    std::string channelName = parts[0];
+    std::string modes = parts[1];
 
     Channel *ch = ctx.services.channels().getChannel(channelName);
     if (!ch)
     {
-        ctx.services.sendResponse(ctx, "403", channelName + " :No such channel");
+        ctx.services.sendResponse(ctx, ERR_NOSUCHCHANNEL(ctx.sender->getNickname(), channelName));
         return;
     }
 
@@ -166,8 +157,8 @@ void CmdMode::execute(RequestContext &ctx)
     }
 
     std::vector<std::string> params;
-    for (size_t i = 2; i < t.size(); ++i)
-        params.push_back(t[i]);
+    for (size_t i = 2; i < parts.size(); ++i)
+        params.push_back(parts[i]);
 
     size_t p = 0;
     bool add = true;
@@ -185,17 +176,17 @@ void CmdMode::execute(RequestContext &ctx)
         {
             case 'i':
                 modeI(ch, add);
-                sendMode(ctx, ch, channelName, add ? '+' : '-', 'i', "");
+                sendMode(ctx, channelName, add ? '+' : '-', 'i', "");
                 break;
 
             case 't':
                 modeT(ch, add);
-                sendMode(ctx, ch, channelName, add ? '+' : '-', 't', "");
+                sendMode(ctx, channelName, add ? '+' : '-', 't', "");
                 break;
 
             case 'm':
                 modeM(ch, add);
-                sendMode(ctx, ch, channelName, add ? '+' : '-', 'm', "");
+                sendMode(ctx, channelName, add ? '+' : '-', 'm', "");
                 break;
 
             case 'k':
@@ -203,13 +194,13 @@ void CmdMode::execute(RequestContext &ctx)
                 {
                     if (p >= params.size())
                     {
-                        ctx.services.sendResponse(ctx, "461", "MODE :Not enough parameters");
+                        ctx.services.sendResponse(ctx, ERR_NEEDMOREPARAMS(ctx.sender->getNickname(), "MODE"));
                         return;
                     }
                     param = params[p++];
                 }
                 modeK(ch, add, param);
-                sendMode(ctx, ch, channelName, add ? '+' : '-', 'k', param);
+                sendMode(ctx, channelName, add ? '+' : '-', 'k', param);
                 break;
 
             case 'l':
@@ -217,22 +208,22 @@ void CmdMode::execute(RequestContext &ctx)
                 {
                     if (p >= params.size())
                     {
-                        ctx.services.sendResponse(ctx, "696", channelName + " :Invalid limit");
+                        ctx.services.sendToUser(ctx.sender, ERR_INVALIDMODEPARAM(ctx.sender->getNickname(), channelName));
                         return;
                     }
                     if (!isNumber(params[p]))
                     {
-                        ctx.services.sendResponse(ctx, "696", channelName + " :Invalid limit");
+                        ctx.services.sendResponse(ctx, ERR_INVALIDMODEPARAM(ctx.sender->getNickname(), channelName));
                         return;
                     }
                     int limit = std::atoi(params[p++].c_str());
                     modeL(ch, add, limit);
-                    sendMode(ctx, ch, channelName, '+', 'l', params[p - 1]);
+                    sendMode(ctx, channelName, '+', 'l', params[p - 1]);
                 }
                 else
                 {
                     modeL(ch, add, -1);
-                    sendMode(ctx, ch, channelName, '-', 'l', "");
+                    sendMode(ctx, channelName, '-', 'l', "");
                 }
                 break;
 
@@ -242,14 +233,14 @@ void CmdMode::execute(RequestContext &ctx)
             {
                 if (p >= params.size())
                 {
-                    ctx.services.sendResponse(ctx, "461", "MODE :Not enough parameters");
+                    ctx.services.sendResponse(ctx, ERR_NEEDMOREPARAMS(ctx.sender->getNickname(), "MODE"));
                     return;
                 }
 
                 User *u = ctx.services.users().findByNick(params[p++]);
                 if (!u)
                 {
-                    ctx.services.sendResponse(ctx, "401", params[p - 1] + " :No such user");
+                    ctx.services.sendResponse(ctx, ERR_NOSUCHNICK(ctx.sender->getNickname(), params[p - 1]));
                     continue;
                 }
 
@@ -258,12 +249,12 @@ void CmdMode::execute(RequestContext &ctx)
                 if (m == 'b') modeB(ch, add, u);
 
                 std::string nick = u->getNickname();
-                sendMode(ctx, ch, channelName, add ? '+' : '-', m, nick);
+                sendMode(ctx, channelName, add ? '+' : '-', m, nick);
                 break;
             }
 
             default:
-                ctx.services.sendResponse(ctx, "472", std::string(1, m) + " :Unknown mode");
+                ctx.services.sendResponse(ctx, ERR_UNKNOWNMODE(ctx.sender->getNickname(), std::string(1, m)));
                 break;
         }
     }
