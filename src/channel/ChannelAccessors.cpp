@@ -150,11 +150,6 @@ const std::map<int, User*>& Channel::getBannedUsers() const
     return this->bannedUsers;
 }
 
-const std::map<int, User*>& Channel::getExceptedUsers() const
-{
-    return this->exceptedUsers;
-}
-
 bool Channel::getIsModerated() const
 {
     return this->isModerated;

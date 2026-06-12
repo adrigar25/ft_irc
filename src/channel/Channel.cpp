@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 12:37:17 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/07 12:37:17 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/12 14:55:54 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
  * @param creator Usuario que crea el canal.
  */
 Channel::Channel(std::string name, User *creator)
-: name(name), topic(), key(), users(), voiceUsers(), operators(), invitedUsers(), bannedUsers(), exceptedUsers(), userCount(0), topicProtected(false), keyRequired(false), isInviteOnly(false), isSecret(false), userLimit(-1)
+: name(name), topic(), key(), users(), voiceUsers(), operators(), invitedUsers(), bannedUsers(), userCount(0), topicProtected(false), keyRequired(false), isInviteOnly(false), isSecret(false), userLimit(-1)
 {
     (void)creator;
 }
