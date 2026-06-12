@@ -32,7 +32,7 @@ class Channel
         std::map<int, User*>    operators;
         std::map<int, User*>    invitedUsers;
         std::map<int, User*>    bannedUsers;
-                int                     userCount;
+        int                     userCount;
         bool                    topicProtected;
         bool                    keyRequired;
         bool                    isInviteOnly;
