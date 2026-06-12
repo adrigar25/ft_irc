@@ -38,6 +38,6 @@ void CmdNames::execute(RequestContext &ctx)
         Channel *channel = ctx.services.channels().getChannel(name);
         if (!channel)
             continue;
-        ctx.services.getServer()->sendNamesList(ctx.sender, channel);
+        ctx.services.sendNamesList(ctx, ctx.sender, channel);
     }
 }

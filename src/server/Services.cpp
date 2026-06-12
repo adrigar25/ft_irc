@@ -6,12 +6,14 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 12:39:01 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/08 12:47:27 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/12 17:58:53 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Services.hpp"
 #include "Server.hpp"
+#include "RequestContext.hpp"
+#include "replies/Replies.hpp"
 
 Services::Services(Server* srv): server(srv), userManager(), channelManager() {}
 
@@ -74,6 +76,18 @@ void Services::sendResponse(RequestContext &ctx, const std::string &reply)
 void Services::sendNamesList(RequestContext &ctx, User *target, Channel *channel)
 {
     std::string serverName = ctx.services.getServerName();
-    std::string response = std::string(":") + serverName + " " + code + " " + ctx.sender->getNickname() + " " + message;
-    ctx.services.sendToUser(ctx.sender, response);
+    const std::map<int, User*>& usersMap = channel->getUsers();
+    std::string namesList;
+    for (std::map<int, User*>::const_iterator uit = usersMap.begin(); uit != usersMap.end(); ++uit) {
+        if (!namesList.empty()) 
+            namesList += " ";
+        if (channel->isUserOperator(uit->second))
+            namesList += "@";
+        if(channel->isUserVoice(uit->second))
+            namesList += "+";
+        namesList += uit->second->getNickname();
+    }
+
+    sendResponse(ctx, RPL_NAMREPLY(target->getNickname(), "=", channel->getName(), namesList));
+    sendResponse(ctx, RPL_ENDOFNAMES(target->getNickname(), channel->getName()));
 }
