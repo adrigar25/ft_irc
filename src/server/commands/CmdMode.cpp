@@ -111,6 +111,23 @@ static void modeB(Channel *ch, bool add, User *u)
         ch->unbanUser(u);
 }
 
+static void sendChannelModes(RequestContext &ctx, Channel *ch)
+{
+    std::string modes = "+";
+    std::vector<std::string> params;
+    std::string paramStr;
+    ch->getChannelModes(modes, params);
+    if(modes[1] == '\0')
+        modes.clear();
+    for (size_t i = 0; i < params.size(); ++i)
+    {
+        if (!paramStr.empty())
+            paramStr += " ";
+        paramStr += params[i];
+    }
+    ctx.services.sendResponse(ctx, RPL_CHANNELMODEIS(ctx.sender->getNickname(), ch->getName(), modes + (paramStr.empty() ? "" : " " + paramStr)));
+}
+
 /* ===================== EXEC ===================== */
 
 void CmdMode::execute(RequestContext &ctx)
@@ -138,7 +155,13 @@ void CmdMode::execute(RequestContext &ctx)
 
     if (!ch->isUserOperator(ctx.sender))
     {
-        ctx.services.sendResponse(ctx, "482", channelName + " :You're not channel operator");
+        ctx.services.sendResponse(ctx, ERR_CHANOPRIVSNEEDED(ctx.sender->getNickname(), channelName));
+        return;
+    }
+
+    if(modes.empty() || (modes[0] != '+' && modes[0] != '-'))
+    {
+        sendChannelModes(ctx, ch);
         return;
     }
 

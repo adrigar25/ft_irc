@@ -154,3 +154,25 @@ bool Channel::getIsModerated() const
 {
     return this->isModerated;
 }
+
+void Channel::getChannelModes(std::string &outModes, std::vector<std::string> &outParams) const
+{
+    if (this->getIsInviteOnly())
+        outModes += 'i';
+    if (this->getTopicProtected())
+        outModes += 't';
+    if (this->getIsModerated())
+        outModes += 'm';
+    if (this->getKeyRequired())
+    {
+        outModes += 'k';
+        outParams.push_back(this->getKey());
+    }
+    if (this->getUserLimit() != -1)
+    {
+        std::stringstream ss;
+        ss << this->getUserLimit();
+        outModes += 'l';
+        outParams.push_back(ss.str());
+    }
+}
