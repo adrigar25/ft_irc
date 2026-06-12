@@ -23,7 +23,8 @@ void popLines(std::string &buffer, std::vector<std::string> &out)
         std::string line = buffer.substr(0, pos);
         if (!line.empty() && line[line.size() - 1] == '\r')
             line.erase(line.size() - 1);
-        out.push_back(line);
+        if (!line.empty())
+            out.push_back(line);
         buffer.erase(0, pos + 1);
     }
 }
