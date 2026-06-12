@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 12:38:03 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/09 18:18:01 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/12 15:38:29 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,18 +20,20 @@
 #include <cstring>
 #include <iostream>
 #include <string>
+#include "replies/Replies.hpp"
 
-static bool parsePrivmsgParams(const std::string &params, std::vector<std::string> &outTargets, std::string &outMsg)
+static bool parsePrivmsgParams(const std::vector<std::string> &parts, std::vector<std::string> &outTargets, std::string &outMsg)
 {
-    std::vector<std::string> parts = split(params, ' ');
-    if (parts.size() < 2) return false;
-
     outTargets = split(parts[0], ',');
     
-    if(params.find(" :") != std::string::npos) {
-        outMsg = params.substr(params.find(" :") + 2);
+    if(parts.size() > 1) {
+        if(parts[1][0] == ':') {
+            outMsg = parts[1].substr(1);
+        } else {
+            outMsg = parts[1];
+        }
     } else {
-        outMsg = parts[1];
+        outMsg = "";
     }
     
     return true;
@@ -41,7 +43,7 @@ static void dispatchPrivmsg(RequestContext &ctx, const std::string &target, cons
 {
 
     if(target.empty()) {
-        ctx.services.sendToUser(ctx.sender, std::string("411 PRIVMSG :No recipient given"));
+        ctx.services.sendResponse(ctx, ERR_NORECIPIENT(ctx.sender->getNickname(), "PRIVMSG"));
         return;
     }
 
@@ -75,7 +77,7 @@ static void dispatchPrivmsg(RequestContext &ctx, const std::string &target, cons
 void CmdPrivmsg::execute(RequestContext &ctx)
 {
     if (!ctx.sender) return;
-    const std::string &params = ctx.rawLine;
+    const std::vector<std::string> parts = split(ctx.rawLine, ' ');
     std::vector<std::string> targets;
     std::string msg;
     
@@ -86,17 +88,11 @@ void CmdPrivmsg::execute(RequestContext &ctx)
         ctx.services.sendResponse(ctx, ERR_NOTEXTTOSEND(ctx.sender->getNickname(), "PRIVMSG"));
         return;
     }
+    
+    parsePrivmsgParams(parts, targets, msg);
+    
     for (size_t i = 0; i < targets.size(); ++i) {
         const std::string &target = targets[i];
-        if(target.empty()) {
-            ctx.services.sendToUser(ctx.sender, std::string("411 PRIVMSG :No recipient given"));
-            return;
-        }
-        if(msg.empty()) {
-            ctx.services.sendToUser(ctx.sender, std::string("412 PRIVMSG :No text to send"));
-            return;
-        }
-        std::string out = buildPrivmsgOut(ctx, target, msg);
-        dispatchPrivmsg(ctx, target, out);
+        dispatchPrivmsg(ctx, target, msg);
     }
 }
