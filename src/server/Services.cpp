@@ -50,7 +50,28 @@ std::string Services::getServerName() const {
     return std::string("localhost");
 }
 
-void Services::sendResponse(RequestContext &ctx, const std::string &code, const std::string &message)
+std::string Services::getUserPrefix(User* user) const
+{
+       return user->getNickname() + "!" + user->getUsername() + "@" + getServerName();
+}
+
+std::string Services::getServerPrefix() const
+{
+    std::string prefix = ":";
+    if (server)
+        prefix += server->getHostname();
+    else
+        prefix += "localhost";
+    return prefix;
+}
+
+void Services::sendResponse(RequestContext &ctx, const std::string &reply)
+{
+    std::string response = getServerPrefix() + " " + reply;
+    ctx.services.sendToUser(ctx.sender, response);
+}
+
+void Services::sendNamesList(RequestContext &ctx, User *target, Channel *channel)
 {
     std::string serverName = ctx.services.getServerName();
     std::string response = std::string(":") + serverName + " " + code + " " + ctx.sender->getNickname() + " " + message;
