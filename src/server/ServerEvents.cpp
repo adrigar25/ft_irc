@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 12:38:49 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/07 14:31:54 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/11 17:54:17 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,9 +40,7 @@ void Server::handleClientEvents()
 }
 
 void Server::handleEvents()
-
 {
-
     int ready = 0;
 
     while (this->running)

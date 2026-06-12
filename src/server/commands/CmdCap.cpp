@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 12:37:33 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/08 21:20:56 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/11 19:32:32 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,15 +32,13 @@ void CmdCap::execute(RequestContext &ctx)
         ctx.services.sendToUser(ctx.sender, std::string("CAP * LS : multi-prefix"));
         return;
     }
-    if (sub == "LIST") {
-        ctx.services.sendToUser(ctx.sender, std::string("CAP * LIST :"));
-        return;
-    }
     if (sub == "REQ") {
         std::string rest;
         std::getline(iss, rest);
-        if (!rest.empty() && rest[0] == ' ') rest.erase(0,1);
-        if (rest.empty()) return;
+        if (!rest.empty() && rest[0] == ' ')
+            rest.erase(0,1);
+        if (rest.empty())
+            return;
         ctx.services.sendToUser(ctx.sender, std::string("CAP * ACK ") + rest);
         return;
     }
