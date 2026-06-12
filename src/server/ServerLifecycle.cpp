@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 12:38:54 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/07 14:40:31 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/11 16:20:22 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,11 @@ Server::~Server()
 	this->services.users().clear();
 	this->services.channels().clear();
 }
-/** @brief Crea el socket de escucha del servidor. */
+/** @brief Crea el socket de escucha del servidor.
+ * - Usa `socket(AF_INET, SOCK_STREAM, 0)` para crear un socket TCP.
+ * - Si falla, lanza una excepción con el mensaje de error.
+ * - Configura el socket como no bloqueante y con la bandera CLOEXEC.
+ */
 void Server::createServerSocket()
 {
 	this->serverSocket = socket(AF_INET, SOCK_STREAM, 0);
