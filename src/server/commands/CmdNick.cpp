@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 12:37:50 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/08 21:20:41 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/12 11:03:40 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,20 @@
 #include <string>
 #include <cstring>
 
+static bool validateNickFormat(const std::string &nick)
+{
+    if (nick.empty())
+        return false;
+    if (std::isdigit((unsigned char)nick[0]))
+        return false;
+    for (size_t i = 0; i < nick.size(); ++i) {
+        char c = nick[i];
+        if (!std::isalnum((unsigned char)c) && c != '-' && c != '_' && c != '[' && c != ']' && c != '\\' && c != '`' && c != '{' && c != '}')
+            return false;
+    }
+    return true;
+}
+
 static std::string extractNick(const std::string &raw)
 {
     std::string nick = trim(raw, " \r");
@@ -28,7 +42,7 @@ static std::string extractNick(const std::string &raw)
     size_t spacePos = nick.find(' ');
     if (spacePos != std::string::npos)
         nick = nick.substr(0, spacePos);
-    return nick;
+    return trim(nick, " \r");
 }
 
 static bool nickAvailable(RequestContext &ctx, const std::string &nick)
