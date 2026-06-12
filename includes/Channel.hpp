@@ -84,6 +84,7 @@ class Channel
             bool    getIsSecret() const;
             bool    getKeyRequired() const;
             bool    getIsModerated() const;
+            void   getChannelModes(std::string &modes, std::vector<std::string> &params) const;
 
             std::string                 getTopic() const;
             std::string                 getKey() const;
