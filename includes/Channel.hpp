@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 00:08:03 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/05 22:09:52 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/12 16:08:46 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,7 @@ class Channel
         std::map<int, User*>    operators;
         std::map<int, User*>    invitedUsers;
         std::map<int, User*>    bannedUsers;
-        std::map<int, User*>    exceptedUsers;
-        int                     userCount;
+                int                     userCount;
         bool                    topicProtected;
         bool                    keyRequired;
         bool                    isInviteOnly;
@@ -68,7 +67,7 @@ class Channel
             void    setModerated(bool val);
 
             /* Consultas */
-            bool    canUserJoin(User *user) const;
+            void    canUserJoin(User *user, const std::string &key) const;
             bool    hasUser(User *user) const;
             bool    isUserOperator(User *user) const;
             bool    isUserVoice(User *user) const;
