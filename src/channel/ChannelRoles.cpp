@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 12:37:27 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/07 15:45:52 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/12 14:56:25 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,6 @@ void Channel::changeRole(User *user, std::string role)
     roles.insert(std::make_pair(std::string("voice"), &this->voiceUsers));
     roles.insert(std::make_pair(std::string("invited"), &this->invitedUsers));
     roles.insert(std::make_pair(std::string("banned"), &this->bannedUsers));
-    roles.insert(std::make_pair(std::string("excepted"), &this->exceptedUsers));
-
     if(roles.find(role) == roles.end())
         throw IrcException(IRC_ERR_ROLE_NOT_FOUND, "Role not found");
     roles[role]->insert(std::make_pair(fd, user));
@@ -57,8 +55,6 @@ void Channel::removeRole(User *user, std::string role)
     roles.insert(std::make_pair(std::string("voice"), &this->voiceUsers));
     roles.insert(std::make_pair(std::string("invited"), &this->invitedUsers));
     roles.insert(std::make_pair(std::string("banned"), &this->bannedUsers));
-    roles.insert(std::make_pair(std::string("excepted"), &this->exceptedUsers));
-
     if(roles.find(role) == roles.end())
         throw IrcException(IRC_ERR_ROLE_NOT_FOUND, "Role not found");
     

@@ -63,16 +63,6 @@ bool Channel::isUserBanned(User *user) const
     return this->bannedUsers.find(fd) != this->bannedUsers.end();
 }
 
-
-/**
- * @brief Comprueba si `user` está en la lista de excepciones del canal.
- */
-bool Channel::isUserExcepted(User *user) const
-{
-    int fd = user->getSocket();
-    return this->exceptedUsers.find(fd) != this->exceptedUsers.end();
-}
-
 /**
  * @brief Comprueba si el canal no tiene usuarios.
  */
