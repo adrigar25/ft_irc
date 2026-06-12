@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 12:38:35 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/07 12:38:36 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/12 11:01:56 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,7 @@ void Server::handleNewConnection()
     setSocketCloexec(newSocket);
     pushPollFd(newSocket, POLLIN);
 
-    std::stringstream ss;
-    ss << "Guest" << newSocket;
-    User* newUser = new User(newSocket, ss.str());
+    User* newUser = new User(newSocket, "*");
     addUser(newUser);
 
 }
