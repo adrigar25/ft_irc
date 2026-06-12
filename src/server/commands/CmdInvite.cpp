@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 12:37:35 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/08 21:21:37 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/12 18:04:21 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,9 @@ void CmdInvite::execute(RequestContext &ctx)
     User* targetUser = ctx.services.users().findByNick(targetNick);
     Channel* channel = ctx.services.channels().getChannel(channelName);
 
-    if (!canInvite(ctx, targetUser, channel)) return;
+    if (!canInvite(ctx, targetUser, channel))
+        return;
+        
     channel->inviteUser(targetUser);
 
     std::string serverName = ctx.services.getServerName();

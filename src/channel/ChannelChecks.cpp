@@ -6,12 +6,14 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 12:37:24 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/07 15:22:12 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/12 14:56:09 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Channel.hpp"
 #include "User.hpp"
+#include "Exceptions.hpp"
+#include "replies/Replies.hpp"
 #include <map>
 
 /**
@@ -75,13 +77,14 @@ bool Channel::isEmpty() const
 /**
  * @brief Comprueba si `user` puede unirse al canal según límites, privacy y baneos.
  */
-bool Channel::canUserJoin(User *user) const
+void Channel::canUserJoin(User *user, const std::string &key) const
 {
     if (this->getUserLimit() != -1 && this->getUserCount() >= this->getUserLimit())
-        return false;
+        throw IrcException(IRC_ERR_CHANNEL_FULL, "Channel is full");
     if(this->getIsInviteOnly() && !this->isUserInvited(user))
-        return false;
+        throw IrcException(IRC_ERR_ISINVITEONLYCHAN, "Channel is invite only");
     if(this->isUserBanned(user))
-        return false;
-    return true;
+        throw IrcException(IRC_ERR_BANNEDFROMCHAN, "You are banned from this channel");
+    if(this->getKeyRequired() && this->getKey() != key)
+        throw IrcException(IRC_ERR_INCORRECT_CHANNEL_KEY, "Incorrect channel key");
 }
