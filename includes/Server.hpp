@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 00:08:09 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/08 12:21:47 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/12 17:59:31 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,6 @@ class Server
                 ~Server();
         void    sendMessageToUser(User *user, const std::string &message) { sendToUser(user, message); }
         void    sendMessageToChannel(Channel *channel, const std::string &message, User *exclude) { sendToChannel(channel, message, exclude); }
-        void    sendNamesList(User *target, Channel *channel);
         void    startServer();
         void    stopServer();
         int     getPort() const;

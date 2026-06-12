@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 12:36:56 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/08 12:47:19 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/12 17:59:10 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,10 @@ public:
     std::string getServerName() const;
     void sendToUser(User* user, const std::string &message);
     void sendToChannel(Channel* channel, const std::string &message, User* exclude = NULL);
-    void sendResponse(RequestContext &ctx, const std::string &code, const std::string &message);
+    void sendResponse(RequestContext &ctx, const std::string &reply);
+    void sendNamesList(RequestContext &ctx, User *target, Channel *channel);
+    std::string getUserPrefix(User* user) const;
+    std::string getServerPrefix() const;
 
 };
 
