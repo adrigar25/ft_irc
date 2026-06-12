@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 12:39:06 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/07 14:49:02 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/12 13:55:56 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,11 +189,7 @@ bool User::joinChannel(Channel *channel, const std::string &key)
     if(this->channels.find(channel->getName()) != this->channels.end())
         throw IrcException(IRC_ERR_USER_ALREADY_IN_CHANNEL, "User already in channel");
 
-    if(!channel->canUserJoin(this))
-        throw IrcException(IRC_ERR_CANNOT_JOIN_CHANNEL, "User cannot join channel");
-
-    if(channel->getKeyRequired() && channel->getKey() != key)
-        throw IrcException(IRC_ERR_INCORRECT_CHANNEL_KEY, "Incorrect channel key");
+    channel->canUserJoin(this, key);
 
     this->channels.insert(std::make_pair(channel->getName(), channel));
     channel->addUser(this);
