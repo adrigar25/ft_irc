@@ -78,6 +78,8 @@ void Server::handleClientCommand(User *user, const std::string &commandLine)
         std::cerr << "handleClientCommand: null user for command: " << commandLine << std::endl;
         return;
     }
+    if (commandLine.empty())
+        return;
     size_t sp = commandLine.find(' ');
     std::string cmd = commandLine;
     std::string args = "";
@@ -103,6 +105,8 @@ void Server::executeCommand(User *user, const std::string &command, const std::s
 
     if (!dispatcher.hasHandler(command))
     {
+        if (command.empty())
+            return;
         handleUnknownCommand(user, command);
         return;
     }
