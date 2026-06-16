@@ -1,17 +1,18 @@
 /* ************************************************************************** */
-/*																			*/
-/*														:::	  ::::::::   */
-/*   Server.hpp										 :+:	  :+:	:+:   */
-/*													+:+ +:+		 +:+	 */
-/*   By: agarcia <agarcia@student.42.fr>			+#+  +:+	   +#+		*/
-/*												+#+#+#+#+#+   +#+		   */
-/*   Created: 2026/05/15 00:08:09 by agarcia		   #+#	#+#			 */
-/*   Updated: 2026/06/15 16:38:25 by agarcia		  ###   ########.fr	   */
-/*																			*/
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Server.hpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/06/16 17:11:52 by adriescr          #+#    #+#             */
+/*   Updated: 2026/06/16 17:18:06 by adriescr         ###   ########.fr       */
+/*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SERVER_HPP
 #define SERVER_HPP
+
 #include "User.hpp"
 #include "Channel.hpp"
 #include "Exceptions.hpp"
@@ -30,17 +31,17 @@
 class Server
 {
 	private:
-		int							 serverSocket;
+		int								serverSocket;
 		unsigned int					port;
-		std::string					 password;
+		std::string						password;
 		Services						services;
-		std::string					 hostname;
-		std::vector<struct pollfd>	  fds;
-		static Server*				  instance;
+		std::string						hostname;
+		std::vector<struct pollfd>		fds;
+		static Server*					instance;
 		bool							running;
 
 		void		handleEvents();
-		int		 performPoll();
+		int			performPoll();
 		void		handleClientEvents();
 		void		processClientBuffer(User *user);
 		bool		handleClientRead(int idx);
@@ -58,7 +59,7 @@ class Server
 		void		setupPollFds();
 		void		pushPollFd(int fd, short events = POLLIN);
 		void		enablePollOutForFd(int fd);
-		ssize_t	 sendNonBlockingOnce(int fd, const char *buf, size_t len);
+		ssize_t		sendNonBlockingOnce(int fd, const char *buf, size_t len);
 		void		enqueuePending(User *user, const char *buf, size_t len);
 		void		handleClientCommand(User *user, const std::string &commandLine);
 		bool		handleUnknownCommand(User *user, const std::string &command);
@@ -70,19 +71,19 @@ class Server
 		void		initSignals();
 		void		cleanup();
 	public:
-				Server(unsigned int port, std::string password);
-				~Server();
+		Server(unsigned int port, std::string password);
+		~Server();
 		void	sendMessageToUser(User *user, const std::string &message) { sendToUser(user, message); }
 		void	sendMessageToChannel(Channel *channel, const std::string &message, User *exclude) { sendToChannel(channel, message, exclude); }
 		void	startServer();
 		void	stopServer();
 		unsigned int getPort() const;
 		const std::string& getPassword() const;
-		int	 getServerSocket() const;
+		int		getServerSocket() const;
 		bool	validatePassword(const std::string &p) const { return this->password == p; }
-		const std::string& getHostname() const;
-		int	 startBot();
-		static Server* getInstance();
+		const	std::string& getHostname() const;
+		int		startBot();
+		static Server*	getInstance();
 
 };
 

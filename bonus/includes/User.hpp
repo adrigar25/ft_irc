@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*																			*/
-/*														:::	  ::::::::   */
-/*   User.hpp										   :+:	  :+:	:+:   */
-/*													+:+ +:+		 +:+	 */
-/*   By: agarcia <agarcia@student.42.fr>			+#+  +:+	   +#+		*/
-/*												+#+#+#+#+#+   +#+		   */
-/*   Created: 2026/05/15 00:08:12 by agarcia		   #+#	#+#			 */
-/*   Updated: 2026/06/07 14:48:41 by agarcia		  ###   ########.fr	   */
-/*																			*/
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   User.hpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/06/16 17:12:18 by adriescr          #+#    #+#             */
+/*   Updated: 2026/06/16 17:13:16 by adriescr         ###   ########.fr       */
+/*                                                                            */
 /* ************************************************************************** */
 
 #ifndef USER_HPP
@@ -21,28 +21,28 @@ class Channel;
 class User
 {
 	private:
-		int								 socket;
-		std::string						 nickname;
-		std::string						 username;
-		std::string						 realname;
-		std::string						 inBuffer;
-		std::string						 outBuffer;
-		size_t							  outOffset;
-		bool								nickSet;
-		bool								userSet;
-		bool								passGiven;
-		bool								authenticated;
+		int								socket;
+		std::string						nickname;
+		std::string						username;
+		std::string						realname;
+		std::string						inBuffer;
+		std::string						outBuffer;
+		size_t							outOffset;
+		bool							nickSet;
+		bool							userSet;
+		bool							passGiven;
+		bool							authenticated;
 		std::map<std::string, Channel*>	 channels;
 	public:
-					User(int socket, const std::string &name);
-					~User();
+		User(int socket, const std::string &name);
+		~User();
 		bool		joinChannel(Channel *channel, const std::string &key);
 		void		leaveChannel(Channel *channel);
 		std::string getNickname() const;
 		std::string getRealName() const;
 		int		 getSocket() const;
 		const std::map<std::string, Channel*>& getChannels() const;
-		
+
 		// Authentication / identity helpers
 		void setNickname(const std::string &name);
 		void setUsername(const std::string &name);

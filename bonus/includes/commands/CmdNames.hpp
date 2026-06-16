@@ -1,16 +1,14 @@
 /* ************************************************************************** */
-/*																			*/
-/*														:::	  ::::::::   */
-/*   CmdNames.hpp									  :+:	  :+:	:+:   */
-/*													+:+ +:+		 +:+	 */
-/*   By: agarcia <agarcia@student.42.fr>			+#+  +:+	   +#+		*/
-/*												+#+#+#+#+#+   +#+		   */
-/*   Created: 2026/06/07 12:34:57 by agarcia		   #+#	#+#			 */
-/*   Updated: 2026/06/07 12:34:57 by agarcia		  ###   ########.fr	   */
-/*																			*/
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   CmdNames.hpp                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/06/16 17:10:04 by adriescr          #+#    #+#             */
+/*   Updated: 2026/06/16 17:16:12 by adriescr         ###   ########.fr       */
+/*                                                                            */
 /* ************************************************************************** */
-
-
 
 #ifndef CMD_NAMES_HPP
 #define CMD_NAMES_HPP
@@ -20,10 +18,10 @@
 #include <string>
 
 class CmdNames : public ICommand {
-public:
-	CmdNames() {}
-	virtual ~CmdNames() {}
-	virtual void execute(RequestContext &ctx);
+	public:
+		CmdNames() {}
+		virtual ~CmdNames() {}
+		virtual void execute(RequestContext &ctx);
 };
 
 #endif

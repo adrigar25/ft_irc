@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*																			*/
-/*														:::	  ::::::::   */
-/*   CmdUser.cpp										:+:	  :+:	:+:   */
-/*													+:+ +:+		 +:+	 */
-/*   By: agarcia <agarcia@student.42.fr>			+#+  +:+	   +#+		*/
-/*												+#+#+#+#+#+   +#+		   */
-/*   Created: 2026/06/07 12:38:11 by agarcia		   #+#	#+#			 */
-/*   Updated: 2026/06/12 13:50:07 by agarcia		  ###   ########.fr	   */
-/*																			*/
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   CmdUser.cpp                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/06/16 17:20:57 by adriescr          #+#    #+#             */
+/*   Updated: 2026/06/16 17:20:58 by adriescr         ###   ########.fr       */
+/*                                                                            */
 /* ************************************************************************** */
 
 #include "commands/CmdUser.hpp"
@@ -48,7 +48,7 @@ void CmdUser::execute(RequestContext &ctx)
 		ctx.services.sendResponse(ctx, ERR_ALREADYREGISTERED(ctx.sender->getNickname()));
 		return;
 	}
-	
+
 	if (ctx.rawLine.empty()) {
 		ctx.services.sendResponse(ctx, ERR_NEEDMOREPARAMS(ctx.sender->getNickname(), "USER"));
 		return;

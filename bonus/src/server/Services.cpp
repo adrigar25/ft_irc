@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*																			*/
-/*														:::	  ::::::::   */
-/*   Services.cpp									   :+:	  :+:	:+:   */
-/*													+:+ +:+		 +:+	 */
-/*   By: agarcia <agarcia@student.42.fr>			+#+  +:+	   +#+		*/
-/*												+#+#+#+#+#+   +#+		   */
-/*   Created: 2026/06/07 12:39:01 by agarcia		   #+#	#+#			 */
-/*   Updated: 2026/06/12 17:58:53 by agarcia		  ###   ########.fr	   */
-/*																			*/
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Services.cpp                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/06/16 17:22:25 by adriescr          #+#    #+#             */
+/*   Updated: 2026/06/16 17:22:25 by adriescr         ###   ########.fr       */
+/*                                                                            */
 /* ************************************************************************** */
 
 #include "Services.hpp"
@@ -79,7 +79,7 @@ void Services::sendNamesList(RequestContext &ctx, User *target, Channel *channel
 	const std::map<int, User*>& usersMap = channel->getUsers();
 	std::string namesList;
 	for (std::map<int, User*>::const_iterator uit = usersMap.begin(); uit != usersMap.end(); ++uit) {
-		if (!namesList.empty()) 
+		if (!namesList.empty())
 			namesList += " ";
 		if (channel->isUserOperator(uit->second))
 			namesList += "@";

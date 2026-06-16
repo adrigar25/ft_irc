@@ -1,16 +1,14 @@
 /* ************************************************************************** */
-/*																			*/
-/*														:::	  ::::::::   */
-/*   CmdKick.hpp										:+:	  :+:	:+:   */
-/*													+:+ +:+		 +:+	 */
-/*   By: agarcia <agarcia@student.42.fr>			+#+  +:+	   +#+		*/
-/*												+#+#+#+#+#+   +#+		   */
-/*   Created: 2026/06/07 12:35:04 by agarcia		   #+#	#+#			 */
-/*   Updated: 2026/06/07 16:33:33 by agarcia		  ###   ########.fr	   */
-/*																			*/
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   CmdKick.hpp                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/06/16 17:09:51 by adriescr          #+#    #+#             */
+/*   Updated: 2026/06/16 17:16:22 by adriescr         ###   ########.fr       */
+/*                                                                            */
 /* ************************************************************************** */
-
-
 
 #ifndef CMD_KICK_HPP
 #define CMD_KICK_HPP
@@ -20,10 +18,10 @@
 #include <string>
 
 class CmdKick : public ICommand {
-public:
-	CmdKick() {}
-	virtual ~CmdKick() {}
-	virtual void execute(RequestContext &ctx);
+	public:
+		CmdKick() {}
+		virtual ~CmdKick() {}
+		virtual void execute(RequestContext &ctx);
 };
 
 #endif

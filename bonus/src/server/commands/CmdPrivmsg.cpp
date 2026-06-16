@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*																			*/
-/*														:::	  ::::::::   */
-/*   CmdPrivmsg.cpp									 :+:	  :+:	:+:   */
-/*													+:+ +:+		 +:+	 */
-/*   By: agarcia <agarcia@student.42.fr>			+#+  +:+	   +#+		*/
-/*												+#+#+#+#+#+   +#+		   */
-/*   Created: 2026/06/07 12:38:03 by agarcia		   #+#	#+#			 */
-/*   Updated: 2026/06/12 15:38:29 by agarcia		  ###   ########.fr	   */
-/*																			*/
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   CmdPrivmsg.cpp                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/06/16 17:20:40 by adriescr          #+#    #+#             */
+/*   Updated: 2026/06/16 17:20:41 by adriescr         ###   ########.fr       */
+/*                                                                            */
 /* ************************************************************************** */
 
 #include "commands/CmdPrivmsg.hpp"
@@ -25,7 +25,7 @@
 static bool parsePrivmsgParams(const std::vector<std::string> &parts, std::vector<std::string> &outTargets, std::string &outMsg)
 {
 	outTargets = split(parts[0], ',');
-	
+
 	if(parts.size() > 1) {
 		if(parts[1][0] == ':') {
 			outMsg = parts[1].substr(1);
@@ -35,7 +35,7 @@ static bool parsePrivmsgParams(const std::vector<std::string> &parts, std::vecto
 	} else {
 		outMsg = "";
 	}
-	
+
 	return true;
 }
 
@@ -80,7 +80,7 @@ void CmdPrivmsg::execute(RequestContext &ctx)
 	const std::vector<std::string> parts = split(ctx.rawLine, ' ');
 	std::vector<std::string> targets;
 	std::string msg;
-	
+
 	if(parts.empty()) {
 		ctx.services.sendResponse(ctx, ERR_NORECIPIENT(ctx.sender->getNickname(), "PRIVMSG"));
 		return;
@@ -88,9 +88,9 @@ void CmdPrivmsg::execute(RequestContext &ctx)
 		ctx.services.sendResponse(ctx, ERR_NOTEXTTOSEND(ctx.sender->getNickname(), "PRIVMSG"));
 		return;
 	}
-	
+
 	parsePrivmsgParams(parts, targets, msg);
-	
+
 	for (size_t i = 0; i < targets.size(); ++i) {
 		const std::string &target = targets[i];
 		dispatchPrivmsg(ctx, target, msg);

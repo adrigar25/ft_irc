@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*																			*/
-/*														:::	  ::::::::   */
-/*   CmdNick.cpp										:+:	  :+:	:+:   */
-/*													+:+ +:+		 +:+	 */
-/*   By: agarcia <agarcia@student.42.fr>			+#+  +:+	   +#+		*/
-/*												+#+#+#+#+#+   +#+		   */
-/*   Created: 2026/06/07 12:37:50 by agarcia		   #+#	#+#			 */
-/*   Updated: 2026/06/12 11:03:40 by agarcia		  ###   ########.fr	   */
-/*																			*/
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   CmdNick.cpp                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/06/16 17:20:20 by adriescr          #+#    #+#             */
+/*   Updated: 2026/06/16 17:20:21 by adriescr         ###   ########.fr       */
+/*                                                                            */
 /* ************************************************************************** */
 
 #include "commands/CmdNick.hpp"
@@ -71,6 +71,6 @@ void CmdNick::execute(RequestContext &ctx)
 		return;
 	}
 
-	if (!nickAvailable(ctx, nick)) return; 
+	if (!nickAvailable(ctx, nick)) return;
 		ctx.sender->setNickname(nick);
 }

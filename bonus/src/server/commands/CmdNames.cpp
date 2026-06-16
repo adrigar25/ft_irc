@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*																			*/
-/*														:::	  ::::::::   */
-/*   CmdNames.cpp										:+:	  :+:	:+:   */
-/*													+:+ +:+		 +:+	 */
-/*   By: agarcia <agarcia@student.42.fr>			+#+  +:+	   +#+		*/
-/*												+#+#+#+#+#+   +#+		   */
-/*   Created: 2026/06/07 12:37:53 by agarcia		   #+#	#+#			 */
-/*   Updated: 2026/06/07 12:37:54 by agarcia		  ###   ########.fr	   */
-/*																			*/
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   CmdNames.cpp                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/06/16 17:20:15 by adriescr          #+#    #+#             */
+/*   Updated: 2026/06/16 17:20:16 by adriescr         ###   ########.fr       */
+/*                                                                            */
 /* ************************************************************************** */
 
 #include "commands/CmdNames.hpp"
@@ -30,7 +30,7 @@ void CmdNames::execute(RequestContext &ctx)
 	}
 	if(channelNames.empty())
 		return;
-	
+
 	for(size_t i = 0; i < channelNames.size(); ++i) {
 		std::string &name = channelNames[i];
 		if (name.empty() || name[0] != '#')

@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*																			*/
-/*														:::	  ::::::::   */
-/*   ChannelRoles.cpp								   :+:	  :+:	:+:   */
-/*													+:+ +:+		 +:+	 */
-/*   By: agarcia <agarcia@student.42.fr>			+#+  +:+	   +#+		*/
-/*												+#+#+#+#+#+   +#+		   */
-/*   Created: 2026/06/07 12:37:27 by agarcia		   #+#	#+#			 */
-/*   Updated: 2026/06/12 14:56:25 by agarcia		  ###   ########.fr	   */
-/*																			*/
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ChannelRoles.cpp                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/06/16 17:19:22 by adriescr          #+#    #+#             */
+/*   Updated: 2026/06/16 17:19:22 by adriescr         ###   ########.fr       */
+/*                                                                            */
 /* ************************************************************************** */
 
 #include "Channel.hpp"
@@ -39,7 +39,7 @@ void Channel::changeRole(User *user, std::string role)
 }
 
 /**
- * @brief Quita el rol de un `user` 
+ * @brief Quita el rol de un `user`
  *
  * Soporta roles: "operator", "voice", "invited", "banned", "excepted".
  * Lanza `roleNotFoundException` si el rol es inválido.
@@ -49,7 +49,7 @@ void Channel::removeRole(User *user, std::string role)
 	int fd = user->getSocket();
 	if(this->users.find(fd) == this->users.end())
 		throw IrcException(IRC_ERR_USER_NOT_FOUND, "User not found in channel");
-	
+
 	std::map<std::string, std::map<int, User*>*> roles;
 	roles.insert(std::make_pair(std::string("operator"), &this->operators));
 	roles.insert(std::make_pair(std::string("voice"), &this->voiceUsers));
@@ -57,6 +57,6 @@ void Channel::removeRole(User *user, std::string role)
 	roles.insert(std::make_pair(std::string("banned"), &this->bannedUsers));
 	if(roles.find(role) == roles.end())
 		throw IrcException(IRC_ERR_ROLE_NOT_FOUND, "Role not found");
-	
+
 	roles[role]->erase(fd);
 }

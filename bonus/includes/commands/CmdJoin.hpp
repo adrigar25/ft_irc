@@ -1,15 +1,14 @@
 /* ************************************************************************** */
-/*																			*/
-/*														:::	  ::::::::   */
-/*   CmdJoin.hpp										:+:	  :+:	:+:   */
-/*													+:+ +:+		 +:+	 */
-/*   By: agarcia <agarcia@student.42.fr>			+#+  +:+	   +#+		*/
-/*												+#+#+#+#+#+   +#+		   */
-/*   Created: 2026/06/07 12:35:00 by agarcia		   #+#	#+#			 */
-/*   Updated: 2026/06/07 12:35:01 by agarcia		  ###   ########.fr	   */
-/*																			*/
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   CmdJoin.hpp                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/06/16 17:09:41 by adriescr          #+#    #+#             */
+/*   Updated: 2026/06/16 17:16:27 by adriescr         ###   ########.fr       */
+/*                                                                            */
 /* ************************************************************************** */
-	
 
 #ifndef CMD_JOIN_HPP
 #define CMD_JOIN_HPP
@@ -19,10 +18,10 @@
 #include <string>
 
 class CmdJoin : public ICommand {
-public:
-	CmdJoin() {}
-	virtual ~CmdJoin() {}
-	virtual void execute(RequestContext &ctx);
+	public:
+		CmdJoin() {}
+		virtual ~CmdJoin() {}
+		virtual void execute(RequestContext &ctx);
 };
 
 #endif

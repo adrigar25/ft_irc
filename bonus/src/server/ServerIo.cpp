@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*																			*/
-/*														:::	  ::::::::   */
-/*   ServerIo.cpp									   :+:	  :+:	:+:   */
-/*													+:+ +:+		 +:+	 */
-/*   By: agarcia <agarcia@student.42.fr>			+#+  +:+	   +#+		*/
-/*												+#+#+#+#+#+   +#+		   */
-/*   Created: 2026/06/07 12:38:51 by agarcia		   #+#	#+#			 */
-/*   Updated: 2026/06/15 17:13:43 by agarcia		  ###   ########.fr	   */
-/*																			*/
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ServerIo.cpp                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/06/16 17:21:59 by adriescr          #+#    #+#             */
+/*   Updated: 2026/06/16 17:22:00 by adriescr         ###   ########.fr       */
+/*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
@@ -147,7 +147,7 @@ void Server::sendToUser(User *user, const std::string &message)
 {
 	std::string msg = prepareOutMessage(user, message);
 	msg = formatMessage(msg);
-	
+
 	int fd = user->getSocket();
 
 	std::string escaped = escapeForLog(msg);
@@ -165,12 +165,12 @@ void Server::sendToUser(User *user, const std::string &message)
 	size_t len = msg.size();
 
 	ssize_t sent = performSend(fd, buf, len);
-	
+
 	if (sent < 0) {
 		std::cerr << "send failed: " << strerror(errno) << " fd=" << fd << std::endl;
 		return;
 	}
-	
+
 	if(sent < static_cast<ssize_t>(len))
 		enqueuePending(user, buf + sent, len - sent);
 }

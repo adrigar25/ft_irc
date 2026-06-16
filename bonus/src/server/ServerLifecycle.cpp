@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*																			*/
-/*														:::	  ::::::::   */
-/*   ServerLifecycle.cpp								:+:	  :+:	:+:   */
-/*													+:+ +:+		 +:+	 */
-/*   By: agarcia <agarcia@student.42.fr>			+#+  +:+	   +#+		*/
-/*												+#+#+#+#+#+   +#+		   */
-/*   Created: 2026/06/07 12:38:54 by agarcia		   #+#	#+#			 */
-/*   Updated: 2026/06/15 16:59:57 by agarcia		  ###   ########.fr	   */
-/*																			*/
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ServerLifecycle.cpp                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/06/16 17:22:04 by adriescr          #+#    #+#             */
+/*   Updated: 2026/06/16 17:22:05 by adriescr         ###   ########.fr       */
+/*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
@@ -123,7 +123,7 @@ int	Server::startBot()
 		std::cerr << "Bot executable not found or not executable: " << botCommand << std::endl;
 		return -1;
 	}
-	
+
 	int pid = fork();
 	if (pid < 0) {
 		std::cerr << "Failed to fork bot process: " << strerror(errno) << std::endl;

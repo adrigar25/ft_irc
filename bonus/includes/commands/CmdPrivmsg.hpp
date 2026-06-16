@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*																			*/
-/*														:::	  ::::::::   */
-/*   CmdPrivmsg.hpp									 :+:	  :+:	:+:   */
-/*													+:+ +:+		 +:+	 */
-/*   By: agarcia <agarcia@student.42.fr>			+#+  +:+	   +#+		*/
-/*												+#+#+#+#+#+   +#+		   */
-/*   Created: 2026/06/07 12:35:39 by agarcia		   #+#	#+#			 */
-/*   Updated: 2026/06/07 12:35:41 by agarcia		  ###   ########.fr	   */
-/*																			*/
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   CmdPrivmsg.hpp                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/06/16 17:10:28 by adriescr          #+#    #+#             */
+/*   Updated: 2026/06/16 17:15:54 by adriescr         ###   ########.fr       */
+/*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CMD_PRIVMSG_HPP
@@ -18,10 +18,10 @@
 #include <string>
 
 class CmdPrivmsg : public ICommand {
-public:
-	CmdPrivmsg() {}
-	virtual ~CmdPrivmsg() {}
-	virtual void execute(RequestContext &ctx);
+	public:
+		CmdPrivmsg() {}
+		virtual ~CmdPrivmsg() {}
+		virtual void execute(RequestContext &ctx);
 };
 
 #endif
