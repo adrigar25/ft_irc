@@ -23,6 +23,7 @@ public:
 	ChannelManager(IRCConnection *conn);
 	~ChannelManager();
 
+	bool checkUserOP(const std::string &channel, const std::string &user);
 	void deleteChannel(const std::string &channel);
 	void joinChannel(const std::string &channel);
 	void partChannel(const std::string &channel);

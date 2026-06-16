@@ -131,6 +131,13 @@ void RequestHandler::handleLine(const std::string &line)
 
 		if (!this->cm->isInChannel(target))
 			return;
+		
+		if(reply.isOp && this->cm->checkUserOP(target, prefix.substr(0, prefix.find('!'))) == false)
+		{
+			this->irc->sendRaw("PRIVMSG " + target + " :Not authorized.");
+			return;
+		}
+		
 		handlePRIVMSG(this->irc, target, reply, params);
 		return;
 	}

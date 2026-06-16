@@ -36,6 +36,22 @@ void ChannelManager::partChannel(const std::string &channel)
 	deleteChannel(channel);
 }
 
+bool ChannelManager::checkUserOP(const std::string &channel, const std::string &user)
+{
+	if (!this->isInChannel(channel))
+		return false;
+	if (this->irc)
+	{
+		std::string m = "NAMES " + channel;
+		this->irc->sendRaw(m);
+		std::string response = this->irc->recvLine();
+
+		if(response.find("@" + user) != std::string::npos || response.find("@+" + user) != std::string::npos)
+			return true;
+	}
+	return false;
+}
+
 bool ChannelManager::isInChannel(const std::string &channel) const
 {
 	return (std::find(this->joined.begin(), this->joined.end(), channel) != this->joined.end());
