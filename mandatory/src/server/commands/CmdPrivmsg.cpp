@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/16 17:02:20 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/16 17:40:25 by agarcia          ###   ########.fr       */
+/*   Created: 2026/06/16 17:20:40 by adriescr          #+#    #+#             */
+/*   Updated: 2026/06/16 20:00:34 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,48 +25,62 @@
 static bool parsePrivmsgParams(const std::vector<std::string> &parts, std::vector<std::string> &outTargets, std::string &outMsg)
 {
 	outTargets = split(parts[0], ',');
-	
-	if(parts.size() > 1) {
-		if(parts[1][0] == ':') {
-			outMsg = parts[1].substr(1);
-		} else {
-			outMsg = parts[1];
+
+	bool found = false;
+	for (size_t i = 1; i < parts.size(); ++i)
+	{
+		if (!found && parts[i][0] == ':')
+		{
+			found = true;
+			outMsg = parts[i].substr(1);
 		}
-	} else {
-		outMsg = "";
+		else if (found)
+		{
+			outMsg += " " + parts[i];
+		}
 	}
-	
+
 	return true;
 }
 
 static void dispatchPrivmsg(RequestContext &ctx, const std::string &target, const std::string &msg)
 {
 
-	if(target.empty()) {
+	if (target.empty())
+	{
 		ctx.services.sendResponse(ctx, ERR_NORECIPIENT(ctx.sender->getNickname(), "PRIVMSG"));
 		return;
 	}
 
+	std::cout << "Dispatching PRIVMSG to target: " << target << " with message: " << msg << std::endl;
 	std::string out = ":" + ctx.services.getUserPrefix(ctx.sender) + " " + RPL_PRIVMSG(target, msg);
+	std::cout << "OUT: " << out << std::endl;
 
-	if(target[0] == '#') {
+	if (target[0] == '#')
+	{
 		Channel *channel = ctx.services.channels().getChannel(target);
-		if (!channel) {
+		if (!channel)
+		{
 			ctx.services.sendResponse(ctx, ERR_NOSUCHNICK(ctx.sender->getNickname(), target));
 			return;
 		}
-		if(!channel->hasUser(ctx.sender)) {
+		if (!channel->hasUser(ctx.sender))
+		{
 			ctx.services.sendResponse(ctx, ERR_CANNOTSENDTOCHAN(ctx.sender->getNickname(), target));
 			return;
 		}
-		if(channel->getIsModerated() && !channel->isUserVoice(ctx.sender) && !channel->isUserOperator(ctx.sender)) {
+		if (channel->getIsModerated() && !channel->isUserVoice(ctx.sender) && !channel->isUserOperator(ctx.sender))
+		{
 			ctx.services.sendResponse(ctx, ERR_CANNOTSENDTOCHAN(ctx.sender->getNickname(), target));
 			return;
 		}
 		ctx.services.sendToChannel(channel, out, ctx.sender);
-	} else {
+	}
+	else
+	{
 		User *dest = ctx.services.users().findByNick(target);
-		if (!dest) {
+		if (!dest)
+		{
 			ctx.services.sendResponse(ctx, ERR_NOSUCHNICK(ctx.sender->getNickname(), target));
 			return;
 		}
@@ -76,22 +90,28 @@ static void dispatchPrivmsg(RequestContext &ctx, const std::string &target, cons
 
 void CmdPrivmsg::execute(RequestContext &ctx)
 {
-	if (!ctx.sender) return;
+	if (!ctx.sender)
+		return;
 	const std::vector<std::string> parts = split(ctx.rawLine, ' ');
 	std::vector<std::string> targets;
-	std::string msg;
-	
-	if(parts.empty()) {
+	std::string msg = "";
+
+	if (parts.empty())
+	{
 		ctx.services.sendResponse(ctx, ERR_NORECIPIENT(ctx.sender->getNickname(), "PRIVMSG"));
 		return;
-	}else if(parts.size() == 1 || (parts.size() > 1 && parts[1][0] != ':')) {
+	}
+	else if (parts.size() == 1 || (parts.size() > 1 && parts[1][0] != ':'))
+	{
 		ctx.services.sendResponse(ctx, ERR_NOTEXTTOSEND(ctx.sender->getNickname(), "PRIVMSG"));
 		return;
 	}
-	
+
 	parsePrivmsgParams(parts, targets, msg);
-	
-	for (size_t i = 0; i < targets.size(); ++i) {
+	std::cout << "Executing PRIVMSG command from user: " << ctx.sender->getNickname() << " with raw line: " << ctx.rawLine << " msg: " << msg << std::endl;
+
+	for (size_t i = 0; i < targets.size(); ++i)
+	{
 		const std::string &target = targets[i];
 		dispatchPrivmsg(ctx, target, msg);
 	}

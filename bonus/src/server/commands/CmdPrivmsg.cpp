@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:20:40 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:43:18 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/16 19:57:33 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,14 +26,18 @@ static bool parsePrivmsgParams(const std::vector<std::string> &parts, std::vecto
 {
 	outTargets = split(parts[0], ',');
 
-	if(parts.size() > 1) {
-		if(parts[1][0] == ':') {
-			outMsg = parts[1].substr(1);
-		} else {
-			outMsg = parts[1];
+	bool found = false;
+	for (size_t i = 1; i < parts.size(); ++i)
+	{
+		if (!found && parts[i][0] == ':')
+		{
+			found = true;
+			outMsg = parts[i].substr(1);
 		}
-	} else {
-		outMsg = "";
+		else if (found)
+		{
+			outMsg += " " + parts[i];
+		}
 	}
 
 	return true;
@@ -47,7 +51,9 @@ static void dispatchPrivmsg(RequestContext &ctx, const std::string &target, cons
 		return;
 	}
 
+	std::cout << "Dispatching PRIVMSG to target: " << target << " with message: " << msg << std::endl;
 	std::string out = ":" + ctx.services.getUserPrefix(ctx.sender) + " " + RPL_PRIVMSG(target, msg);
+	std::cout << "OUT: " << out << std::endl;
 
 	if(target[0] == '#') {
 		Channel *channel = ctx.services.channels().getChannel(target);
@@ -79,7 +85,8 @@ void CmdPrivmsg::execute(RequestContext &ctx)
 	if (!ctx.sender) return;
 	const std::vector<std::string> parts = split(ctx.rawLine, ' ');
 	std::vector<std::string> targets;
-	std::string msg;
+	std::string msg = "";
+
 
 	if(parts.empty()) {
 		ctx.services.sendResponse(ctx, ERR_NORECIPIENT(ctx.sender->getNickname(), "PRIVMSG"));
@@ -90,6 +97,7 @@ void CmdPrivmsg::execute(RequestContext &ctx)
 	}
 
 	parsePrivmsgParams(parts, targets, msg);
+	std::cout << "Executing PRIVMSG command from user: " << ctx.sender->getNickname() << " with raw line: " << ctx.rawLine << " msg: " << msg << std::endl;
 
 	for (size_t i = 0; i < targets.size(); ++i) {
 		const std::string &target = targets[i];
