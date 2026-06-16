@@ -146,4 +146,6 @@ void RequestHandler::handleLine(const std::string &line)
 		if (kickedUser == this->nick && this->cm->isInChannel(channel))
 			this->cm->deleteChannel(channel);
 	}
+
+	/*if(si recibe un PART o un QUIT de quien sea que envíe un comando NAMES a ese canal y mire que no esté solo el)*/
 }
