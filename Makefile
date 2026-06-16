@@ -1,90 +1,69 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2026/03/17 11:32:11 by adriescr          #+#    #+#              #
-#    Updated: 2026/06/04 16:53:01 by adriescr         ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
-# NAME OF PROGRAM
 NAME := ircserv
 
-# COMPILER AND FLAGS
 CPP := c++
-CPPFLAGS := -Wall -Wextra -Werror -std=c++98 -I includes
-LDFLAGS :=
+CPPFLAGS := -Wall -Wextra -Werror -std=c++98
 
-# Dirs
+INCLUDES := -I mandatory/includes
+INCLUDES_BONUS := -I bonus/includes
+
 OBJS_DIR := objs
-SRCS_DIR := src
 
-SRCDIR = src
-INCDIR = includes
+MANDATORY_DIR := mandatory
+BONUS_DIR := bonus
+BOT_DIR := bonus/bot
 
-HEADERS := $(wildcard $(INCDIR)/*.hpp)
+# ---------------- SOURCES ----------------
+MANDATORY_SRC := $(shell find $(MANDATORY_DIR)/src -type f -name "*.cpp")
+MANDATORY_MAIN := $(MANDATORY_DIR)/main.cpp
+MANDATORY_ALL := $(MANDATORY_SRC) $(MANDATORY_MAIN)
 
-# Files
-MAIN_FILE := main.cpp
+BONUS_SRC := $(shell find $(BONUS_DIR)/src -type f -name "*.cpp")
+BONUS_MAIN := $(BONUS_DIR)/main.cpp
+BONUS_ALL := $(BONUS_SRC) $(BONUS_MAIN)
 
-# Source files (main + all .cpp files in src/)
-SRC_CPP := $(shell find $(SRCS_DIR) -type f -name "*.cpp")
+# ---------------- OBJECTS ----------------
+MANDATORY_OBJS := $(patsubst $(MANDATORY_DIR)/%.cpp,$(OBJS_DIR)/mandatory/%.o,$(MANDATORY_ALL))
+BONUS_OBJS := $(patsubst $(BONUS_DIR)/%.cpp,$(OBJS_DIR)/bonus/%.o,$(BONUS_ALL))
 
-SRCS := $(MAIN_FILE) $(SRC_CPP)
+# ---------------- DEFAULT ----------------
+all: mandatory
 
-# Convert source paths like ./dir/file.cpp -> objs/dir/file.o
-OBJS := $(patsubst ./%,%,$(SRCS))
-OBJS := $(patsubst %.cpp,$(OBJS_DIR)/%.o,$(OBJS))
+mandatory: $(NAME)
 
-# Ensure object subdirectories exist before compiling each object
-$(OBJS_DIR)/%/.dir:
+bonus: $(NAME)_bonus force_bot
+
+force_bot:
+	$(MAKE) -C $(BOT_DIR)
+
+# ---------------- EXECUTABLES ----------------
+$(NAME): $(MANDATORY_OBJS)
+	$(CPP) $(CPPFLAGS) $(INCLUDES) $^ -o $@
+
+$(NAME)_bonus: $(BONUS_OBJS)
+	$(CPP) $(CPPFLAGS) $(INCLUDES_BONUS) $^ -o $@
+
+# ---------------- BOT ----------------
+$(BOT_DIR)/bot:
+	$(MAKE) -C $(BOT_DIR)
+
+# ---------------- COMPILE RULES ----------------
+$(OBJS_DIR)/mandatory/%.o: mandatory/%.cpp
 	@mkdir -p $(dir $@)
+	$(CPP) $(CPPFLAGS) $(INCLUDES) -c $< -o $@
 
-# Targets
-all: $(NAME)
-
-# Create object directory
-$(OBJS_DIR):
-	@mkdir -p $(OBJS_DIR)
-
-# Compile source files into object files (handles sources in subdirs)
-$(OBJS_DIR)/%.o: ./%.cpp $(HEADERS) | $(OBJS_DIR)/%/.dir
-	@$(CPP) $(CPPFLAGS) -c $< -o $@
-
-# Create per-object directory marker so 'dir' exists
-$(OBJS_DIR)/%/.dir:
+$(OBJS_DIR)/bonus/%.o: bonus/%.cpp
 	@mkdir -p $(dir $@)
-	@touch $@
+	$(CPP) $(CPPFLAGS) $(INCLUDES_BONUS) -c $< -o $@
 
-# Link object files to create the final executable
-$(NAME): $(OBJS)
-	@$(CPP) $(CPPFLAGS) $(OBJS) -o $(NAME)
-	@printf 'Compilación finalizada: ejecutable creado: \033[0;32m%s\033[0m\n' "$(NAME)"
-
-# Clean object files
+# ---------------- CLEAN ----------------
 clean:
-	@printf 'Eliminando directorio de objetos: \033[38;5;208m%s\033[0m\n' "$(OBJS_DIR)"
-	@$(MAKE) -C bot clean
 	@rm -rf $(OBJS_DIR)
+	@$(MAKE) -C $(BOT_DIR) clean
 
-# Clean executable
 fclean: clean
-	@printf 'Eliminando ejecutable:\033[0;32m %s\033[0m\n' "$(NAME)"
-	@$(MAKE) -C bot fclean
-	@rm -f $(NAME)
+	@rm -f $(NAME) $(NAME)_bonus
+	@$(MAKE) -C $(BOT_DIR) fclean
 
-# Rebuild the project
 re: fclean all
 
-# Other targets
-.PHONY: all clean fclean re bot
-
-# Bot target: delega la compilación al Makefile dentro de `bot/`
-bot:
-	@$(MAKE) -C bot
-
-# Prevent make from deleting intermediate marker files (.dir)
-.SECONDARY:
+.PHONY: all mandatory bonus clean fclean re
