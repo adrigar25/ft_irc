@@ -14,7 +14,7 @@
 #include "IrcConnection.hpp"
 #include <algorithm>
 
-ChannelManager::ChannelManager(IRCConnection *conn) : conn(conn) {}
+ChannelManager::ChannelManager(IRCConnection *irc) : irc(irc) {}
 
 ChannelManager::~ChannelManager() {}
 
@@ -22,8 +22,8 @@ void ChannelManager::joinChannel(const std::string &channel)
 {
 	if (this->isInChannel(channel))
 		return;
-	if (this->conn)
-		this->conn->sendRaw("JOIN " + channel);
+	if (this->irc)
+		this->irc->sendRaw("JOIN " + channel);
 	this->joined.push_back(channel);
 }
 
@@ -31,8 +31,8 @@ void ChannelManager::partChannel(const std::string &channel)
 {
 	if (!this->isInChannel(channel))
 		return;
-	if (this->conn)
-		this->conn->sendRaw("PART " + channel + " :Leaving");
+	if (this->irc)
+		this->irc->sendRaw("PART " + channel + " :Leaving");
 	deleteChannel(channel);
 }
 

@@ -21,7 +21,7 @@ class ChannelManager;
 
 class RequestHandler {
 public:
-	RequestHandler(IRCConnection *conn, ChannelManager *cm, const std::string &nick);
+	RequestHandler(IRCConnection *irc, ChannelManager *cm, const std::string &nick);
 	~RequestHandler();
 
 	void handleLine(const std::string &line);

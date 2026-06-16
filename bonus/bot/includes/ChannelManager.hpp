@@ -20,7 +20,7 @@ class IRCConnection;
 
 class ChannelManager {
 public:
-	ChannelManager(IRCConnection *conn);
+	ChannelManager(IRCConnection *irc);
 	~ChannelManager();
 
 	bool checkUserOP(const std::string &channel, const std::string &user);
@@ -30,7 +30,7 @@ public:
 	bool isInChannel(const std::string &channel) const;
 
 private:
-	IRCConnection *conn;
+	IRCConnection *irc;
 	std::vector<std::string> joined;
 };
 
