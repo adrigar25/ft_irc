@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/07 12:37:24 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/12 14:56:09 by agarcia          ###   ########.fr       */
+/*   Created: 2026/06/16 17:03:43 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/16 17:03:53 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@
  */
 bool Channel::hasUser(User *user) const
 {
-    int fd = user->getSocket();
-    return this->users.find(fd) != this->users.end();
+	int fd = user->getSocket();
+	return this->users.find(fd) != this->users.end();
 }
 
 
@@ -31,8 +31,8 @@ bool Channel::hasUser(User *user) const
  */
 bool Channel::isUserOperator(User *user) const
 {
-    int fd = user->getSocket();
-    return this->operators.find(fd) != this->operators.end();
+	int fd = user->getSocket();
+	return this->operators.find(fd) != this->operators.end();
 }
 
 
@@ -41,8 +41,8 @@ bool Channel::isUserOperator(User *user) const
  */
 bool Channel::isUserVoice(User *user) const
 {
-    int fd = user->getSocket();
-    return this->voiceUsers.find(fd) != this->voiceUsers.end();
+	int fd = user->getSocket();
+	return this->voiceUsers.find(fd) != this->voiceUsers.end();
 }
 
 
@@ -51,8 +51,8 @@ bool Channel::isUserVoice(User *user) const
  */
 bool Channel::isUserInvited(User *user) const
 {
-    int fd = user->getSocket();
-    return this->invitedUsers.find(fd) != this->invitedUsers.end();
+	int fd = user->getSocket();
+	return this->invitedUsers.find(fd) != this->invitedUsers.end();
 }
 
 
@@ -61,8 +61,8 @@ bool Channel::isUserInvited(User *user) const
  */
 bool Channel::isUserBanned(User *user) const
 {
-    int fd = user->getSocket();
-    return this->bannedUsers.find(fd) != this->bannedUsers.end();
+	int fd = user->getSocket();
+	return this->bannedUsers.find(fd) != this->bannedUsers.end();
 }
 
 /**
@@ -70,7 +70,7 @@ bool Channel::isUserBanned(User *user) const
  */
 bool Channel::isEmpty() const
 {
-    return this->userCount == 0;
+	return this->userCount == 0;
 }
 
 
@@ -79,12 +79,12 @@ bool Channel::isEmpty() const
  */
 void Channel::canUserJoin(User *user, const std::string &key) const
 {
-    if (this->getUserLimit() != -1 && this->getUserCount() >= this->getUserLimit())
-        throw IrcException(IRC_ERR_CHANNEL_FULL, "Channel is full");
-    if(this->getIsInviteOnly() && !this->isUserInvited(user))
-        throw IrcException(IRC_ERR_ISINVITEONLYCHAN, "Channel is invite only");
-    if(this->isUserBanned(user))
-        throw IrcException(IRC_ERR_BANNEDFROMCHAN, "You are banned from this channel");
-    if(this->getKeyRequired() && this->getKey() != key)
-        throw IrcException(IRC_ERR_INCORRECT_CHANNEL_KEY, "Incorrect channel key");
+	if (this->getUserLimit() != -1 && this->getUserCount() >= this->getUserLimit())
+		throw IrcException(IRC_ERR_CHANNEL_FULL, "Channel is full");
+	if(this->getIsInviteOnly() && !this->isUserInvited(user))
+		throw IrcException(IRC_ERR_ISINVITEONLYCHAN, "Channel is invite only");
+	if(this->isUserBanned(user))
+		throw IrcException(IRC_ERR_BANNEDFROMCHAN, "You are banned from this channel");
+	if(this->getKeyRequired() && this->getKey() != key)
+		throw IrcException(IRC_ERR_INCORRECT_CHANNEL_KEY, "Incorrect channel key");
 }

@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   CmdPass.cpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/07 12:37:57 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/08 21:21:17 by agarcia          ###   ########.fr       */
-/*                                                                            */
+/*																			*/
+/*														:::	  ::::::::   */
+/*   CmdPass.cpp										:+:	  :+:	:+:   */
+/*													+:+ +:+		 +:+	 */
+/*   By: agarcia <agarcia@student.42.fr>			+#+  +:+	   +#+		*/
+/*												+#+#+#+#+#+   +#+		   */
+/*   Created: 2026/06/07 12:37:57 by agarcia		   #+#	#+#			 */
+/*   Updated: 2026/06/08 21:21:17 by agarcia		  ###   ########.fr	   */
+/*																			*/
 /* ************************************************************************** */
 
 #include "commands/CmdPass.hpp"
@@ -22,27 +22,27 @@
 
 static bool applyPassword(RequestContext &ctx, const std::string &pass)
 {
-    if(ctx.sender->isPassSet()) {
-        ctx.services.sendResponse(ctx, ERR_ALREADYREGISTERED(ctx.sender->getNickname()));
-        return false;
-    }
-    Server* srv = ctx.services.getServer();
-    if (srv && srv->validatePassword(pass)) {
-        ctx.sender->setPass(true);
-        return true;
-    }
-    ctx.services.sendResponse(ctx, ERR_PASSWDMISMATCH(ctx.sender->getNickname()));
-    return false;
+	if(ctx.sender->isPassSet()) {
+		ctx.services.sendResponse(ctx, ERR_ALREADYREGISTERED(ctx.sender->getNickname()));
+		return false;
+	}
+	Server* srv = ctx.services.getServer();
+	if (srv && srv->validatePassword(pass)) {
+		ctx.sender->setPass(true);
+		return true;
+	}
+	ctx.services.sendResponse(ctx, ERR_PASSWDMISMATCH(ctx.sender->getNickname()));
+	return false;
 }
 
 void CmdPass::execute(RequestContext &ctx)
 {
-    if (!ctx.sender) return;
-    std::string params = trim(ctx.rawLine, " \r");
+	if (!ctx.sender) return;
+	std::string params = trim(ctx.rawLine, " \r");
 
-    if (params.empty()) {
-        ctx.services.sendResponse(ctx, ERR_NEEDMOREPARAMS(ctx.sender->getNickname(), "PASS"));
-        return;
-    }
-    applyPassword(ctx, params);
+	if (params.empty()) {
+		ctx.services.sendResponse(ctx, ERR_NEEDMOREPARAMS(ctx.sender->getNickname(), "PASS"));
+		return;
+	}
+	applyPassword(ctx, params);
 }

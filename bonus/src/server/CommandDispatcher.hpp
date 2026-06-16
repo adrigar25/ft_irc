@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   CommandDispatcher.hpp                              :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/07 12:38:23 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/07 12:38:24 by agarcia          ###   ########.fr       */
-/*                                                                            */
+/*																			*/
+/*														:::	  ::::::::   */
+/*   CommandDispatcher.hpp							  :+:	  :+:	:+:   */
+/*													+:+ +:+		 +:+	 */
+/*   By: agarcia <agarcia@student.42.fr>			+#+  +:+	   +#+		*/
+/*												+#+#+#+#+#+   +#+		   */
+/*   Created: 2026/06/07 12:38:23 by agarcia		   #+#	#+#			 */
+/*   Updated: 2026/06/07 12:38:24 by agarcia		  ###   ########.fr	   */
+/*																			*/
 /* ************************************************************************** */
 
 
@@ -22,13 +22,13 @@ struct RequestContext;
 
 class CommandDispatcher {
 public:
-    CommandDispatcher();
-    ~CommandDispatcher();
-    void registerHandler(const std::string& cmd, ICommand* handler);
-    bool hasHandler(const std::string& cmd) const;
-    void dispatch(const std::string& cmd, RequestContext &ctx) const;
+	CommandDispatcher();
+	~CommandDispatcher();
+	void registerHandler(const std::string& cmd, ICommand* handler);
+	bool hasHandler(const std::string& cmd) const;
+	void dispatch(const std::string& cmd, RequestContext &ctx) const;
 private:
-    std::map<std::string, ICommand*> handlers;
+	std::map<std::string, ICommand*> handlers;
 };
 
 #endif

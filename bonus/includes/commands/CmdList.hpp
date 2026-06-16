@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   CmdList.hpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/07 12:35:07 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/07 12:35:10 by agarcia          ###   ########.fr       */
-/*                                                                            */
+/*																			*/
+/*														:::	  ::::::::   */
+/*   CmdList.hpp										:+:	  :+:	:+:   */
+/*													+:+ +:+		 +:+	 */
+/*   By: agarcia <agarcia@student.42.fr>			+#+  +:+	   +#+		*/
+/*												+#+#+#+#+#+   +#+		   */
+/*   Created: 2026/06/07 12:35:07 by agarcia		   #+#	#+#			 */
+/*   Updated: 2026/06/07 12:35:10 by agarcia		  ###   ########.fr	   */
+/*																			*/
 /* ************************************************************************** */
 
 #ifndef CMD_LIST_HPP
@@ -19,9 +19,9 @@
 
 class CmdList : public ICommand {
 public:
-    CmdList() {}
-    virtual ~CmdList() {}
-    virtual void execute(RequestContext &ctx);
+	CmdList() {}
+	virtual ~CmdList() {}
+	virtual void execute(RequestContext &ctx);
 };
 
 #endif

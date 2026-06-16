@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/07 12:35:58 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/07 12:36:00 by agarcia          ###   ########.fr       */
+/*   Created: 2026/06/16 17:05:25 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/16 17:05:26 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,9 @@
 
 class CmdUnknown : public ICommand {
 public:
-    CmdUnknown() {}
-    virtual ~CmdUnknown() {}
-    virtual void execute(RequestContext &ctx);
+	CmdUnknown() {}
+	virtual ~CmdUnknown() {}
+	virtual void execute(RequestContext &ctx);
 };
 
 #endif

@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ChannelUsers.cpp                                   :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/07 12:37:29 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/07 12:37:29 by agarcia          ###   ########.fr       */
-/*                                                                            */
+/*																			*/
+/*														:::	  ::::::::   */
+/*   ChannelUsers.cpp								   :+:	  :+:	:+:   */
+/*													+:+ +:+		 +:+	 */
+/*   By: agarcia <agarcia@student.42.fr>			+#+  +:+	   +#+		*/
+/*												+#+#+#+#+#+   +#+		   */
+/*   Created: 2026/06/07 12:37:29 by agarcia		   #+#	#+#			 */
+/*   Updated: 2026/06/07 12:37:29 by agarcia		  ###   ########.fr	   */
+/*																			*/
 /* ************************************************************************** */
 
 #include "Channel.hpp"
@@ -23,17 +23,17 @@
  */
 void Channel::addUser(User *user)
 {
-    int fd = user->getSocket();
-    if (this->isInviteOnly && this->invitedUsers.find(fd) == this->invitedUsers.end())
-        throw IrcException(IRC_ERR_CHANNEL_INVITE_ONLY, "Channel is invite-only, user must be invited to join");
-    if (this->users.find(fd) != this->users.end())
-        throw IrcException(IRC_ERR_USER_ALREADY_EXISTS, "User already exists in channel");
-    if (this->userCount >= this->userLimit && this->userLimit != -1)
-        throw IrcException(IRC_ERR_CHANNEL_FULL, "Channel is full");
-    if (this->bannedUsers.find(fd) != this->bannedUsers.end())
-        throw IrcException(IRC_ERR_USER_BANNED, "User is banned from this channel");
-    this->users.insert(std::make_pair(fd, user));
-    this->userCount++;
+	int fd = user->getSocket();
+	if (this->isInviteOnly && this->invitedUsers.find(fd) == this->invitedUsers.end())
+		throw IrcException(IRC_ERR_CHANNEL_INVITE_ONLY, "Channel is invite-only, user must be invited to join");
+	if (this->users.find(fd) != this->users.end())
+		throw IrcException(IRC_ERR_USER_ALREADY_EXISTS, "User already exists in channel");
+	if (this->userCount >= this->userLimit && this->userLimit != -1)
+		throw IrcException(IRC_ERR_CHANNEL_FULL, "Channel is full");
+	if (this->bannedUsers.find(fd) != this->bannedUsers.end())
+		throw IrcException(IRC_ERR_USER_BANNED, "User is banned from this channel");
+	this->users.insert(std::make_pair(fd, user));
+	this->userCount++;
 }
 
 
@@ -43,11 +43,11 @@ void Channel::addUser(User *user)
  */
 void Channel::deleteUser(User *user)
 {
-    int fd = user->getSocket();
-    if (this->users.find(fd) == this->users.end())
-        throw IrcException(IRC_ERR_USER_NOT_FOUND, "User not found in channel");
-    this->users.erase(fd);
-    this->userCount--;
+	int fd = user->getSocket();
+	if (this->users.find(fd) == this->users.end())
+		throw IrcException(IRC_ERR_USER_NOT_FOUND, "User not found in channel");
+	this->users.erase(fd);
+	this->userCount--;
 }
 
 
@@ -56,10 +56,10 @@ void Channel::deleteUser(User *user)
  */
 void Channel::addUserToMap(std::map<int, User*> &userMap, User *user)
 {
-    int fd = user->getSocket();
-    if(userMap.find(fd) != userMap.end())
-        return;
-    userMap.insert(std::make_pair(fd, user));
+	int fd = user->getSocket();
+	if(userMap.find(fd) != userMap.end())
+		return;
+	userMap.insert(std::make_pair(fd, user));
 }
 
 /**
@@ -67,10 +67,10 @@ void Channel::addUserToMap(std::map<int, User*> &userMap, User *user)
  */
 void Channel::deleteUserFromMap(std::map<int, User*> &userMap, User *user)
 {
-    int fd = user->getSocket();
-    if(userMap.find(fd) == userMap.end())
-        return;
-    userMap.erase(fd);
+	int fd = user->getSocket();
+	if(userMap.find(fd) == userMap.end())
+		return;
+	userMap.erase(fd);
 }
 
 /**
@@ -78,16 +78,16 @@ void Channel::deleteUserFromMap(std::map<int, User*> &userMap, User *user)
  */
 void Channel::inviteUser(User *user)
 {
-    addUserToMap(this->invitedUsers, user);
+	addUserToMap(this->invitedUsers, user);
 }
 
 void Channel::banUser(User *user)
 {
-    addUserToMap(this->bannedUsers, user);
+	addUserToMap(this->bannedUsers, user);
 }
 
 
 void Channel::unbanUser(User *user)
 {
-    deleteUserFromMap(this->bannedUsers, user);
+	deleteUserFromMap(this->bannedUsers, user);
 }

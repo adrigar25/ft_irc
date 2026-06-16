@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Exceptions.hpp                                     :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: copilot <copilot@local>                     +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/05/25 16:30:00 by copilot           #+#    #+#             */
-/*   Updated: 2026/05/25 16:30:00 by copilot          ###   ########.fr       */
-/*                                                                            */
+/*																			*/
+/*														:::	  ::::::::   */
+/*   Exceptions.hpp									 :+:	  :+:	:+:   */
+/*													+:+ +:+		 +:+	 */
+/*   By: copilot <copilot@local>					 +#+  +:+	   +#+		*/
+/*												+#+#+#+#+#+   +#+		   */
+/*   Created: 2026/05/25 16:30:00 by copilot		   #+#	#+#			 */
+/*   Updated: 2026/05/25 16:30:00 by copilot		  ###   ########.fr	   */
+/*																			*/
 /* ************************************************************************** */
 
 #ifndef EXCEPTIONS_HPP
@@ -22,35 +22,35 @@
  * Compatible con C++98.
  */
 enum IrcErrorCode {
-    IRC_ERR_UNKNOWN = 0,
-    IRC_ERR_USER_ALREADY_EXISTS = 1,
-    IRC_ERR_CHANNEL_ALREADY_EXISTS = 2,
-    IRC_ERR_USER_NOT_FOUND = 3,
-    IRC_ERR_STARTING_SERVER = 10,
-    IRC_ERR_ACCEPTING_CONNECTION = 11,
-    IRC_ERR_SETTING_NONBLOCK = 12,
-    IRC_ERR_SETTING_CLOEXEC = 13,
-    IRC_ERR_CHANNEL_FULL = 20,
-    IRC_ERR_CHANNEL_INVITE_ONLY = 21,
-    IRC_ERR_USER_BANNED = 22,
-    IRC_ERR_ROLE_NOT_FOUND = 23,
-    IRC_ERR_USER_ALREADY_IN_CHANNEL = 24,
-    IRC_ERR_CANNOT_JOIN_CHANNEL = 25,
-    IRC_ERR_INCORRECT_CHANNEL_KEY = 26,
-    IRC_ERR_BAD_CHANNEL_NAME = 27,
-    IRC_ERR_BANNEDFROMCHAN = 28,
-    IRC_ERR_ISINVITEONLYCHAN = 29
+	IRC_ERR_UNKNOWN = 0,
+	IRC_ERR_USER_ALREADY_EXISTS = 1,
+	IRC_ERR_CHANNEL_ALREADY_EXISTS = 2,
+	IRC_ERR_USER_NOT_FOUND = 3,
+	IRC_ERR_STARTING_SERVER = 10,
+	IRC_ERR_ACCEPTING_CONNECTION = 11,
+	IRC_ERR_SETTING_NONBLOCK = 12,
+	IRC_ERR_SETTING_CLOEXEC = 13,
+	IRC_ERR_CHANNEL_FULL = 20,
+	IRC_ERR_CHANNEL_INVITE_ONLY = 21,
+	IRC_ERR_USER_BANNED = 22,
+	IRC_ERR_ROLE_NOT_FOUND = 23,
+	IRC_ERR_USER_ALREADY_IN_CHANNEL = 24,
+	IRC_ERR_CANNOT_JOIN_CHANNEL = 25,
+	IRC_ERR_INCORRECT_CHANNEL_KEY = 26,
+	IRC_ERR_BAD_CHANNEL_NAME = 27,
+	IRC_ERR_BANNEDFROMCHAN = 28,
+	IRC_ERR_ISINVITEONLYCHAN = 29
 };
 
 class IrcException : public std::runtime_error
 {
-    private:
-        int code_;
-    public:
-        explicit IrcException(int code = IRC_ERR_UNKNOWN, const std::string &msg = "")
-            : std::runtime_error(msg), code_(code) {}
-        int getCode() const { return code_; }
-        virtual ~IrcException() throw() {}
+	private:
+		int code_;
+	public:
+		explicit IrcException(int code = IRC_ERR_UNKNOWN, const std::string &msg = "")
+			: std::runtime_error(msg), code_(code) {}
+		int getCode() const { return code_; }
+		virtual ~IrcException() throw() {}
 };
 
 #endif

@@ -5,12 +5,10 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/07 12:34:53 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/07 12:34:53 by agarcia          ###   ########.fr       */
+/*   Created: 2026/06/16 17:07:10 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/16 17:07:13 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-
 
 #ifndef CMD_CAP_HPP
 #define CMD_CAP_HPP
@@ -21,9 +19,9 @@
 
 class CmdCap : public ICommand {
 public:
-    CmdCap() {}
-    virtual ~CmdCap() {}
-    virtual void execute(RequestContext &ctx);
+	CmdCap() {}
+	virtual ~CmdCap() {}
+	virtual void execute(RequestContext &ctx);
 };
 
 #endif

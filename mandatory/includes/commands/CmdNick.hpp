@@ -5,12 +5,10 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/07 12:35:21 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/07 12:35:21 by agarcia          ###   ########.fr       */
+/*   Created: 2026/06/16 17:06:00 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/16 17:06:01 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-
 
 #ifndef CMD_NICK_HPP
 #define CMD_NICK_HPP
@@ -21,9 +19,9 @@
 
 class CmdNick : public ICommand {
 public:
-    CmdNick() {}
-    virtual ~CmdNick() {}
-    virtual void execute(RequestContext &ctx);
+	CmdNick() {}
+	virtual ~CmdNick() {}
+	virtual void execute(RequestContext &ctx);
 };
 
 #endif

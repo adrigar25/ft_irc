@@ -1,6 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                  UserManager.hpp           */
+/*                                                        :::      ::::::::   */
+/*   UserManager.hpp                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/06/16 17:04:58 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/16 17:04:59 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,19 +23,19 @@ class User;
 
 class UserManager {
 public:
-    UserManager();
-    ~UserManager();
+	UserManager();
+	~UserManager();
 
-    void add(User* user);
-    void remove(int fd);
-    User* findByNick(const std::string &nick) const;
-    User* findByFd(int fd) const;
-    std::map<int, User*>& getAll();
-    const std::map<int, User*>& getAll() const;
-    void clear();
+	void add(User* user);
+	void remove(int fd);
+	User* findByNick(const std::string &nick) const;
+	User* findByFd(int fd) const;
+	std::map<int, User*>& getAll();
+	const std::map<int, User*>& getAll() const;
+	void clear();
 
 private:
-    std::map<int, User*> users;
+	std::map<int, User*> users;
 };
 
 #endif

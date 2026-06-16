@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   CmdQuit.hpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/07 12:35:44 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/07 12:35:46 by agarcia          ###   ########.fr       */
-/*                                                                            */
+/*																			*/
+/*														:::	  ::::::::   */
+/*   CmdQuit.hpp										:+:	  :+:	:+:   */
+/*													+:+ +:+		 +:+	 */
+/*   By: agarcia <agarcia@student.42.fr>			+#+  +:+	   +#+		*/
+/*												+#+#+#+#+#+   +#+		   */
+/*   Created: 2026/06/07 12:35:44 by agarcia		   #+#	#+#			 */
+/*   Updated: 2026/06/07 12:35:46 by agarcia		  ###   ########.fr	   */
+/*																			*/
 /* ************************************************************************** */
 
 #ifndef CMD_QUIT_HPP
@@ -19,9 +19,9 @@
 
 class CmdQuit : public ICommand {
 public:
-    CmdQuit() {}
-    virtual ~CmdQuit() {}
-    virtual void execute(RequestContext &ctx);
+	CmdQuit() {}
+	virtual ~CmdQuit() {}
+	virtual void execute(RequestContext &ctx);
 };
 
 #endif

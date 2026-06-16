@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   CmdMode.hpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/07 12:35:16 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/07 12:35:17 by agarcia          ###   ########.fr       */
-/*                                                                            */
+/*																			*/
+/*														:::	  ::::::::   */
+/*   CmdMode.hpp										:+:	  :+:	:+:   */
+/*													+:+ +:+		 +:+	 */
+/*   By: agarcia <agarcia@student.42.fr>			+#+  +:+	   +#+		*/
+/*												+#+#+#+#+#+   +#+		   */
+/*   Created: 2026/06/07 12:35:16 by agarcia		   #+#	#+#			 */
+/*   Updated: 2026/06/07 12:35:17 by agarcia		  ###   ########.fr	   */
+/*																			*/
 /* ************************************************************************** */
 
 #ifndef CMD_MODE_HPP
@@ -19,9 +19,9 @@
 
 class CmdMode : public ICommand {
 public:
-    CmdMode() {}
-    virtual ~CmdMode() {}
-    virtual void execute(RequestContext &ctx);
+	CmdMode() {}
+	virtual ~CmdMode() {}
+	virtual void execute(RequestContext &ctx);
 };
 
 #endif

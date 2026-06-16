@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   CmdCap.hpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/07 12:34:53 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/07 12:34:53 by agarcia          ###   ########.fr       */
-/*                                                                            */
+/*																			*/
+/*														:::	  ::::::::   */
+/*   CmdCap.hpp										 :+:	  :+:	:+:   */
+/*													+:+ +:+		 +:+	 */
+/*   By: agarcia <agarcia@student.42.fr>			+#+  +:+	   +#+		*/
+/*												+#+#+#+#+#+   +#+		   */
+/*   Created: 2026/06/07 12:34:53 by agarcia		   #+#	#+#			 */
+/*   Updated: 2026/06/07 12:34:53 by agarcia		  ###   ########.fr	   */
+/*																			*/
 /* ************************************************************************** */
 
 
@@ -21,9 +21,9 @@
 
 class CmdCap : public ICommand {
 public:
-    CmdCap() {}
-    virtual ~CmdCap() {}
-    virtual void execute(RequestContext &ctx);
+	CmdCap() {}
+	virtual ~CmdCap() {}
+	virtual void execute(RequestContext &ctx);
 };
 
 #endif

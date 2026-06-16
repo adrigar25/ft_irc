@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/07 12:39:01 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/12 17:58:53 by agarcia          ###   ########.fr       */
+/*   Created: 2026/06/16 16:59:53 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/16 16:59:54 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,47 +47,47 @@ void Services::sendToChannel(Channel* channel, const std::string &message, User*
 	if (server) server->sendMessageToChannel(channel, message, exclude);
 }
 std::string Services::getServerName() const {
-    if (server)
-        return server->getHostname();
-    return std::string("localhost");
+	if (server)
+		return server->getHostname();
+	return std::string("localhost");
 }
 
 std::string Services::getUserPrefix(User* user) const
 {
-       return user->getNickname() + "!" + user->getUsername() + "@" + getServerName();
+	   return user->getNickname() + "!" + user->getUsername() + "@" + getServerName();
 }
 
 std::string Services::getServerPrefix() const
 {
-    std::string prefix = ":";
-    if (server)
-        prefix += server->getHostname();
-    else
-        prefix += "localhost";
-    return prefix;
+	std::string prefix = ":";
+	if (server)
+		prefix += server->getHostname();
+	else
+		prefix += "localhost";
+	return prefix;
 }
 
 void Services::sendResponse(RequestContext &ctx, const std::string &reply)
 {
-    std::string response = getServerPrefix() + " " + reply;
-    ctx.services.sendToUser(ctx.sender, response);
+	std::string response = getServerPrefix() + " " + reply;
+	ctx.services.sendToUser(ctx.sender, response);
 }
 
 void Services::sendNamesList(RequestContext &ctx, User *target, Channel *channel)
 {
-    std::string serverName = ctx.services.getServerName();
-    const std::map<int, User*>& usersMap = channel->getUsers();
-    std::string namesList;
-    for (std::map<int, User*>::const_iterator uit = usersMap.begin(); uit != usersMap.end(); ++uit) {
-        if (!namesList.empty()) 
-            namesList += " ";
-        if (channel->isUserOperator(uit->second))
-            namesList += "@";
-        if(channel->isUserVoice(uit->second))
-            namesList += "+";
-        namesList += uit->second->getNickname();
-    }
+	std::string serverName = ctx.services.getServerName();
+	const std::map<int, User*>& usersMap = channel->getUsers();
+	std::string namesList;
+	for (std::map<int, User*>::const_iterator uit = usersMap.begin(); uit != usersMap.end(); ++uit) {
+		if (!namesList.empty()) 
+			namesList += " ";
+		if (channel->isUserOperator(uit->second))
+			namesList += "@";
+		if(channel->isUserVoice(uit->second))
+			namesList += "+";
+		namesList += uit->second->getNickname();
+	}
 
-    sendResponse(ctx, RPL_NAMREPLY(target->getNickname(), "=", channel->getName(), namesList));
-    sendResponse(ctx, RPL_ENDOFNAMES(target->getNickname(), channel->getName()));
+	sendResponse(ctx, RPL_NAMREPLY(target->getNickname(), "=", channel->getName(), namesList));
+	sendResponse(ctx, RPL_ENDOFNAMES(target->getNickname(), channel->getName()));
 }

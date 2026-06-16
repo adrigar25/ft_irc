@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   CmdNick.cpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/07 12:37:50 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/12 11:03:40 by agarcia          ###   ########.fr       */
-/*                                                                            */
+/*																			*/
+/*														:::	  ::::::::   */
+/*   CmdNick.cpp										:+:	  :+:	:+:   */
+/*													+:+ +:+		 +:+	 */
+/*   By: agarcia <agarcia@student.42.fr>			+#+  +:+	   +#+		*/
+/*												+#+#+#+#+#+   +#+		   */
+/*   Created: 2026/06/07 12:37:50 by agarcia		   #+#	#+#			 */
+/*   Updated: 2026/06/12 11:03:40 by agarcia		  ###   ########.fr	   */
+/*																			*/
 /* ************************************************************************** */
 
 #include "commands/CmdNick.hpp"
@@ -22,55 +22,55 @@
 
 static bool validateNickFormat(const std::string &nick)
 {
-    if (nick.empty())
-        return false;
-    if (std::isdigit((unsigned char)nick[0]))
-        return false;
-    for (size_t i = 0; i < nick.size(); ++i) {
-        char c = nick[i];
-        if (!std::isalnum((unsigned char)c) && c != '-' && c != '_' && c != '[' && c != ']' && c != '\\' && c != '`' && c != '{' && c != '}')
-            return false;
-    }
-    return true;
+	if (nick.empty())
+		return false;
+	if (std::isdigit((unsigned char)nick[0]))
+		return false;
+	for (size_t i = 0; i < nick.size(); ++i) {
+		char c = nick[i];
+		if (!std::isalnum((unsigned char)c) && c != '-' && c != '_' && c != '[' && c != ']' && c != '\\' && c != '`' && c != '{' && c != '}')
+			return false;
+	}
+	return true;
 }
 
 static std::string extractNick(const std::string &raw)
 {
-    std::string nick = trim(raw, " \r");
-    if (nick.empty())
-        return "";
-    size_t spacePos = nick.find(' ');
-    if (spacePos != std::string::npos)
-        nick = nick.substr(0, spacePos);
-    return trim(nick, " \r");
+	std::string nick = trim(raw, " \r");
+	if (nick.empty())
+		return "";
+	size_t spacePos = nick.find(' ');
+	if (spacePos != std::string::npos)
+		nick = nick.substr(0, spacePos);
+	return trim(nick, " \r");
 }
 
 static bool nickAvailable(RequestContext &ctx, const std::string &nick)
 {
-    User* existing = ctx.services.users().findByNick(nick);
-    if (existing && existing != ctx.sender) {
-        ctx.services.sendResponse(ctx, ERR_NICKNAMEINUSE(ctx.sender->getNickname(), nick));
-        return false;
-    }
-    return true;
+	User* existing = ctx.services.users().findByNick(nick);
+	if (existing && existing != ctx.sender) {
+		ctx.services.sendResponse(ctx, ERR_NICKNAMEINUSE(ctx.sender->getNickname(), nick));
+		return false;
+	}
+	return true;
 }
 
 
 void CmdNick::execute(RequestContext &ctx)
 {
-    if (!ctx.sender) return;
-    std::string nick = extractNick(ctx.rawLine);
+	if (!ctx.sender) return;
+	std::string nick = extractNick(ctx.rawLine);
 
-    if (nick.empty()) {
-        ctx.services.sendResponse(ctx, ERR_NONICKNAMEGIVEN(ctx.sender->getNickname()));
-        return;
-    }
+	if (nick.empty()) {
+		ctx.services.sendResponse(ctx, ERR_NONICKNAMEGIVEN(ctx.sender->getNickname()));
+		return;
+	}
 
-    if (!validateNickFormat(nick)) {
-        ctx.services.sendResponse(ctx, ERR_ERRONEUSNICKNAME(ctx.sender->getNickname(), nick));
-        return;
-    }
+	if (!validateNickFormat(nick)) {
+		ctx.services.sendResponse(ctx, ERR_ERRONEUSNICKNAME(ctx.sender->getNickname(), nick));
+		return;
+	}
 
-    if (!nickAvailable(ctx, nick)) return; 
-        ctx.sender->setNickname(nick);
+	if (!nickAvailable(ctx, nick)) return; 
+		ctx.sender->setNickname(nick);
 }

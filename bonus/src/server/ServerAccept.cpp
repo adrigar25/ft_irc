@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ServerAccept.cpp                                   :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/07 12:38:35 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/12 11:01:56 by agarcia          ###   ########.fr       */
-/*                                                                            */
+/*																			*/
+/*														:::	  ::::::::   */
+/*   ServerAccept.cpp								   :+:	  :+:	:+:   */
+/*													+:+ +:+		 +:+	 */
+/*   By: agarcia <agarcia@student.42.fr>			+#+  +:+	   +#+		*/
+/*												+#+#+#+#+#+   +#+		   */
+/*   Created: 2026/06/07 12:38:35 by agarcia		   #+#	#+#			 */
+/*   Updated: 2026/06/12 11:01:56 by agarcia		  ###   ########.fr	   */
+/*																			*/
 /* ************************************************************************** */
 
 #include "Server.hpp"
@@ -22,42 +22,42 @@
 
 void Server::handleNewConnection()
 {
-    struct sockaddr_in clientAddress;
-    socklen_t clientAddressLen = sizeof(clientAddress);
-    int newSocket = accept(this->serverSocket, (struct sockaddr*)&clientAddress, &clientAddressLen);
-    if (newSocket < 0)
-        throw IrcException(IRC_ERR_ACCEPTING_CONNECTION, std::string("accept failed: ") + strerror(errno));
+	struct sockaddr_in clientAddress;
+	socklen_t clientAddressLen = sizeof(clientAddress);
+	int newSocket = accept(this->serverSocket, (struct sockaddr*)&clientAddress, &clientAddressLen);
+	if (newSocket < 0)
+		throw IrcException(IRC_ERR_ACCEPTING_CONNECTION, std::string("accept failed: ") + strerror(errno));
 
-    setSocketNonBlocking(newSocket);
-    setSocketCloexec(newSocket);
-    pushPollFd(newSocket, POLLIN);
+	setSocketNonBlocking(newSocket);
+	setSocketCloexec(newSocket);
+	pushPollFd(newSocket, POLLIN);
 
-    User* newUser = new User(newSocket, "*");
-    addUser(newUser);
+	User* newUser = new User(newSocket, "*");
+	addUser(newUser);
 
 }
 
 void Server::handleDisconnectionByIndex(int idx)
 {
-    if (idx <= 0 || idx >= (int)this->fds.size()) {
-        std::cerr << "handleDisconnectionByIndex: invalid idx " << idx << std::endl;
-        return;
-    }
+	if (idx <= 0 || idx >= (int)this->fds.size()) {
+		std::cerr << "handleDisconnectionByIndex: invalid idx " << idx << std::endl;
+		return;
+	}
 
-    int fd = this->fds[idx].fd;
+	int fd = this->fds[idx].fd;
 
-    close(fd);
-    this->deleteUser(fd);
-    this->fds.erase(this->fds.begin() + idx);
+	close(fd);
+	this->deleteUser(fd);
+	this->fds.erase(this->fds.begin() + idx);
 }
 
 void Server::handleDisconnectionByFd(int fd)
 {
-    for (size_t i = 1; i < this->fds.size(); ++i) {
-        if (this->fds[i].fd == fd) {
-            handleDisconnectionByIndex(static_cast<int>(i));
-            return;
-        }
-    }
-    std::cerr << "handleDisconnectionByFd: fd not found " << fd << std::endl;
+	for (size_t i = 1; i < this->fds.size(); ++i) {
+		if (this->fds[i].fd == fd) {
+			handleDisconnectionByIndex(static_cast<int>(i));
+			return;
+		}
+	}
+	std::cerr << "handleDisconnectionByFd: fd not found " << fd << std::endl;
 }

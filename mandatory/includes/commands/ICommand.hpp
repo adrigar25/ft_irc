@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/07 12:36:09 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/07 12:36:11 by agarcia          ###   ########.fr       */
+/*   Created: 2026/06/16 17:05:12 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/16 17:05:13 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,8 @@
 
 class ICommand {
 public:
-    virtual ~ICommand() {}
-    virtual void execute(RequestContext &ctx) = 0;
+	virtual ~ICommand() {}
+	virtual void execute(RequestContext &ctx) = 0;
 };
 
 #endif

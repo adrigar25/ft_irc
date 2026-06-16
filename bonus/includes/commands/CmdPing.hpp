@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   CmdPing.hpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/07 12:35:36 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/07 12:35:36 by agarcia          ###   ########.fr       */
-/*                                                                            */
+/*																			*/
+/*														:::	  ::::::::   */
+/*   CmdPing.hpp										:+:	  :+:	:+:   */
+/*													+:+ +:+		 +:+	 */
+/*   By: agarcia <agarcia@student.42.fr>			+#+  +:+	   +#+		*/
+/*												+#+#+#+#+#+   +#+		   */
+/*   Created: 2026/06/07 12:35:36 by agarcia		   #+#	#+#			 */
+/*   Updated: 2026/06/07 12:35:36 by agarcia		  ###   ########.fr	   */
+/*																			*/
 /* ************************************************************************** */
 
 
@@ -21,9 +21,9 @@
 
 class CmdPing : public ICommand {
 public:
-    CmdPing() {}
-    virtual ~CmdPing() {}
-    virtual void execute(RequestContext &ctx);
+	CmdPing() {}
+	virtual ~CmdPing() {}
+	virtual void execute(RequestContext &ctx);
 };
 
 #endif

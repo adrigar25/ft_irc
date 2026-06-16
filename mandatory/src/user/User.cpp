@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/07 12:39:06 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/12 13:55:56 by agarcia          ###   ########.fr       */
+/*   Created: 2026/06/16 16:59:37 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/16 16:59:39 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,9 @@
  * @param name Nickname inicial del usuario.
  */
 User::User(int socket, const std::string &name)
-        : socket(socket), nickname(name), username(""),
-            inBuffer(), outBuffer(), outOffset(0),
-            nickSet(false), userSet(false), passGiven(false), authenticated(false) {}
+		: socket(socket), nickname(name), username(""),
+			inBuffer(), outBuffer(), outOffset(0),
+			nickSet(false), userSet(false), passGiven(false), authenticated(false) {}
 
 
 /**
@@ -43,7 +43,7 @@ User::~User() {}
  */
 std::string User::getNickname() const
 {
-    return this->nickname;
+	return this->nickname;
 }
 
 
@@ -53,7 +53,7 @@ std::string User::getNickname() const
  */
 int User::getSocket() const
 {
-    return this->socket;
+	return this->socket;
 }
 
 
@@ -63,7 +63,7 @@ int User::getSocket() const
  */
 const std::map<std::string, Channel*>& User::getChannels() const
 {
-    return this->channels;
+	return this->channels;
 }
 
 
@@ -73,8 +73,8 @@ const std::map<std::string, Channel*>& User::getChannels() const
  */
 void User::setNickname(const std::string &name)
 {
-    this->nickname = name;
-    this->nickSet = true;
+	this->nickname = name;
+	this->nickSet = true;
 }
 
 
@@ -84,8 +84,8 @@ void User::setNickname(const std::string &name)
  */
 void User::setUsername(const std::string &name)
 {
-    this->username = name;
-    this->userSet = true;
+	this->username = name;
+	this->userSet = true;
 }
 
 /**
@@ -94,7 +94,7 @@ void User::setUsername(const std::string &name)
  */
 void User::setRealName(const std::string &name)
 {
-    this->realname = name;
+	this->realname = name;
 }
 
 
@@ -104,7 +104,7 @@ void User::setRealName(const std::string &name)
  */
 std::string User::getUsername() const
 {
-    return this->username;
+	return this->username;
 }
 
 /**
@@ -113,7 +113,7 @@ std::string User::getUsername() const
  */
 std::string User::getRealName() const
 {
-    return this->realname;
+	return this->realname;
 }
 
 
@@ -123,7 +123,7 @@ std::string User::getRealName() const
  */
 void User::setPass(bool val)
 {
-    this->passGiven = val;
+	this->passGiven = val;
 }
 
 
@@ -133,7 +133,7 @@ void User::setPass(bool val)
  */
 bool User::isPassSet() const
 {
-    return this->passGiven;
+	return this->passGiven;
 }
 
 
@@ -143,7 +143,7 @@ bool User::isPassSet() const
  */
 bool User::isNickSet() const
 {
-    return this->nickSet;
+	return this->nickSet;
 }
 
 
@@ -153,7 +153,7 @@ bool User::isNickSet() const
  */
 bool User::isUserSet() const
 {
-    return this->userSet;
+	return this->userSet;
 }
 
 
@@ -163,7 +163,7 @@ bool User::isUserSet() const
  */
 void User::setAuthenticated(bool val)
 {
-    this->authenticated = val;
+	this->authenticated = val;
 }
 
 
@@ -173,7 +173,7 @@ void User::setAuthenticated(bool val)
  */
 bool User::isAuthenticated() const
 {
-    return this->authenticated;
+	return this->authenticated;
 }
 
 
@@ -186,14 +186,14 @@ bool User::isAuthenticated() const
  */
 bool User::joinChannel(Channel *channel, const std::string &key)
 {
-    if(this->channels.find(channel->getName()) != this->channels.end())
-        throw IrcException(IRC_ERR_USER_ALREADY_IN_CHANNEL, "User already in channel");
+	if(this->channels.find(channel->getName()) != this->channels.end())
+		throw IrcException(IRC_ERR_USER_ALREADY_IN_CHANNEL, "User already in channel");
 
-    channel->canUserJoin(this, key);
+	channel->canUserJoin(this, key);
 
-    this->channels.insert(std::make_pair(channel->getName(), channel));
-    channel->addUser(this);
-    return true;
+	this->channels.insert(std::make_pair(channel->getName(), channel));
+	channel->addUser(this);
+	return true;
 }
 
 
@@ -203,33 +203,33 @@ bool User::joinChannel(Channel *channel, const std::string &key)
  */
 void User::leaveChannel(Channel *channel)
 {
-    if (!channel) return;
-    // remove channel from user's map first
-    std::map<std::string, Channel*>::iterator it = this->channels.find(channel->getName());
-    if (it != this->channels.end())
-        this->channels.erase(it);
-    // then remove user from channel
-    channel->deleteUser(this);
+	if (!channel) return;
+	// remove channel from user's map first
+	std::map<std::string, Channel*>::iterator it = this->channels.find(channel->getName());
+	if (it != this->channels.end())
+		this->channels.erase(it);
+	// then remove user from channel
+	channel->deleteUser(this);
 }
 
 
 /* Buffer accessors */
 std::string& User::getInBuffer()
 {
-    return this->inBuffer;
+	return this->inBuffer;
 }
 
 std::string& User::getOutBuffer()
 {
-    return this->outBuffer;
+	return this->outBuffer;
 }
 
 size_t& User::getOutOffset()
 {
-    return this->outOffset;
+	return this->outOffset;
 }
 
 void User::appendToOutBuffer(const std::string &data)
 {
-    this->outBuffer.append(data);
+	this->outBuffer.append(data);
 }

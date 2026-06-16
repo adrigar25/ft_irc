@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ServerClientRead.cpp                               :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/07 12:38:40 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/07 15:47:36 by agarcia          ###   ########.fr       */
-/*                                                                            */
+/*																			*/
+/*														:::	  ::::::::   */
+/*   ServerClientRead.cpp							   :+:	  :+:	:+:   */
+/*													+:+ +:+		 +:+	 */
+/*   By: agarcia <agarcia@student.42.fr>			+#+  +:+	   +#+		*/
+/*												+#+#+#+#+#+   +#+		   */
+/*   Created: 2026/06/07 12:38:40 by agarcia		   #+#	#+#			 */
+/*   Updated: 2026/06/07 15:47:36 by agarcia		  ###   ########.fr	   */
+/*																			*/
 /* ************************************************************************** */
 
 #include "Server.hpp"
@@ -19,64 +19,64 @@
 
 static ssize_t recvFromFd(int fd, char *buffer, size_t buflen)
 {
-    ssize_t n;
-    while (true) {
-        n = recv(fd, buffer, buflen, 0);
-        if (n < 0 && errno == EINTR)
-            continue;
-        break;
-    }
-    return n;
+	ssize_t n;
+	while (true) {
+		n = recv(fd, buffer, buflen, 0);
+		if (n < 0 && errno == EINTR)
+			continue;
+		break;
+	}
+	return n;
 }
 
 bool Server::handleClientRead(int idx)
 
 {
-    if (idx < 0 || idx >= (int)this->fds.size())
-        return false;
-    if (!(this->fds[idx].revents & POLLIN))
-        return false;
+	if (idx < 0 || idx >= (int)this->fds.size())
+		return false;
+	if (!(this->fds[idx].revents & POLLIN))
+		return false;
 
-    int fd = this->fds[idx].fd;
-    char buffer[1024];
+	int fd = this->fds[idx].fd;
+	char buffer[1024];
 
-    ssize_t n = recvFromFd(fd, buffer, sizeof(buffer) - 1);
+	ssize_t n = recvFromFd(fd, buffer, sizeof(buffer) - 1);
 
-    if (n <= 0)
-    {
-        handleDisconnectionByIndex(idx);
-        return true;
-    }
-    buffer[n] = '\0';
+	if (n <= 0)
+	{
+		handleDisconnectionByIndex(idx);
+		return true;
+	}
+	buffer[n] = '\0';
 
-    User *user = getUserByFd(fd);
-    if (!user) {
-        handleDisconnectionByIndex(idx);
-        return true;
-    }
+	User *user = getUserByFd(fd);
+	if (!user) {
+		handleDisconnectionByIndex(idx);
+		return true;
+	}
 
-    user->getInBuffer().append(buffer, n);
-    Server::processClientBuffer(user);
-    return false;
+	user->getInBuffer().append(buffer, n);
+	Server::processClientBuffer(user);
+	return false;
 }
 
 
 void Server::processClientBuffer(User *user)
 {
-    if (!user)
-        return;
+	if (!user)
+		return;
 
-    std::string &buffer = user->getInBuffer();
-    std::vector<std::string> lines;
-    popLines(buffer, lines);
+	std::string &buffer = user->getInBuffer();
+	std::vector<std::string> lines;
+	popLines(buffer, lines);
 
-    for (std::vector<std::string>::iterator it = lines.begin(); it != lines.end(); ++it) {
-        try {
-            this->handleClientCommand(user, *it);
-        } catch (const std::exception &e) {
-            std::cerr << "Client error fd " << user->getSocket() << ": " << e.what() << std::endl;
-            this->handleDisconnectionByFd(user->getSocket());
-            break;
-        }
-    }
+	for (std::vector<std::string>::iterator it = lines.begin(); it != lines.end(); ++it) {
+		try {
+			this->handleClientCommand(user, *it);
+		} catch (const std::exception &e) {
+			std::cerr << "Client error fd " << user->getSocket() << ": " << e.what() << std::endl;
+			this->handleDisconnectionByFd(user->getSocket());
+			break;
+		}
+	}
 }

@@ -1,20 +1,20 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ChannelManager.cpp                                 :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/02 23:12:59 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/08 01:56:21 by agarcia          ###   ########.fr       */
-/*                                                                            */
+/*																			*/
+/*														:::	  ::::::::   */
+/*   ChannelManager.cpp								 :+:	  :+:	:+:   */
+/*													+:+ +:+		 +:+	 */
+/*   By: agarcia <agarcia@student.42.fr>			+#+  +:+	   +#+		*/
+/*												+#+#+#+#+#+   +#+		   */
+/*   Created: 2026/06/02 23:12:59 by adriescr		  #+#	#+#			 */
+/*   Updated: 2026/06/08 01:56:21 by agarcia		  ###   ########.fr	   */
+/*																			*/
 /* ************************************************************************** */
 
 #include "ChannelManager.hpp"
 #include "IrcConnection.hpp"
 #include <algorithm>
 
-ChannelManager::ChannelManager(IRCConnection *conn): conn(conn) {}
+ChannelManager::ChannelManager(IRCConnection *conn) : conn(conn) {}
 
 ChannelManager::~ChannelManager() {}
 

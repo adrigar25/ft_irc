@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/07 12:37:17 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/12 14:55:54 by agarcia          ###   ########.fr       */
+/*   Created: 2026/06/16 17:03:58 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/16 17:03:59 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@
 Channel::Channel(std::string name, User *creator)
 : name(name), topic(), key(), users(), voiceUsers(), operators(), invitedUsers(), bannedUsers(), userCount(0), topicProtected(false), keyRequired(false), isInviteOnly(false), isSecret(false), userLimit(-1)
 {
-    (void)creator;
+	(void)creator;
 }
 
 

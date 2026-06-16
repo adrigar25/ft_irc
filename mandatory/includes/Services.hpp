@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/07 12:36:56 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/12 17:59:10 by agarcia          ###   ########.fr       */
+/*   Created: 2026/06/16 17:04:19 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/16 17:04:20 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,27 +23,27 @@ class User;
 
 class Services {
 public:
-    Services(Server* srv);
-    ~Services();
+	Services(Server* srv);
+	~Services();
 
-    Server* getServer() const;
+	Server* getServer() const;
 
 private:
-    Server* server;
-    UserManager userManager;
-    ChannelManager channelManager;
+	Server* server;
+	UserManager userManager;
+	ChannelManager channelManager;
 public:
-    UserManager& users();
-    ChannelManager& channels() ;
-    const UserManager& users() const;
-    const ChannelManager& channels() const;
-    std::string getServerName() const;
-    void sendToUser(User* user, const std::string &message);
-    void sendToChannel(Channel* channel, const std::string &message, User* exclude = NULL);
-    void sendResponse(RequestContext &ctx, const std::string &reply);
-    void sendNamesList(RequestContext &ctx, User *target, Channel *channel);
-    std::string getUserPrefix(User* user) const;
-    std::string getServerPrefix() const;
+	UserManager& users();
+	ChannelManager& channels() ;
+	const UserManager& users() const;
+	const ChannelManager& channels() const;
+	std::string getServerName() const;
+	void sendToUser(User* user, const std::string &message);
+	void sendToChannel(Channel* channel, const std::string &message, User* exclude = NULL);
+	void sendResponse(RequestContext &ctx, const std::string &reply);
+	void sendNamesList(RequestContext &ctx, User *target, Channel *channel);
+	std::string getUserPrefix(User* user) const;
+	std::string getServerPrefix() const;
 
 };
 

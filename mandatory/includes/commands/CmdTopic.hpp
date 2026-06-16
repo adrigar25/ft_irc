@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/07 12:35:51 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/07 12:35:52 by agarcia          ###   ########.fr       */
+/*   Created: 2026/06/16 17:05:29 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/16 17:05:30 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,9 @@
 
 class CmdTopic : public ICommand {
 public:
-    CmdTopic() {}
-    virtual ~CmdTopic() {}
-    virtual void execute(RequestContext &ctx);
+	CmdTopic() {}
+	virtual ~CmdTopic() {}
+	virtual void execute(RequestContext &ctx);
 };
 
 #endif

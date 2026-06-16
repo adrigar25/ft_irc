@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ServerLifecycle.cpp                                :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/07 12:38:54 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/15 16:59:57 by agarcia          ###   ########.fr       */
-/*                                                                            */
+/*																			*/
+/*														:::	  ::::::::   */
+/*   ServerLifecycle.cpp								:+:	  :+:	:+:   */
+/*													+:+ +:+		 +:+	 */
+/*   By: agarcia <agarcia@student.42.fr>			+#+  +:+	   +#+		*/
+/*												+#+#+#+#+#+   +#+		   */
+/*   Created: 2026/06/07 12:38:54 by agarcia		   #+#	#+#			 */
+/*   Updated: 2026/06/15 16:59:57 by agarcia		  ###   ########.fr	   */
+/*																			*/
 /* ************************************************************************** */
 
 #include "Server.hpp"
@@ -188,16 +188,16 @@ void Server::stopServer()
 
 void Server::cleanup()
 {
-    for (size_t i = 0; i < this->fds.size(); ++i)
-    {
-        if (this->fds[i].fd >= 0)
-            close(this->fds[i].fd);
-    }
+	for (size_t i = 0; i < this->fds.size(); ++i)
+	{
+		if (this->fds[i].fd >= 0)
+			close(this->fds[i].fd);
+	}
 
-    this->fds.clear();
-    this->services.users().clear();
-    this->services.channels().clear();
-    this->serverSocket = -1;
+	this->fds.clear();
+	this->services.users().clear();
+	this->services.channels().clear();
+	this->serverSocket = -1;
 }
 
 Server* Server::getInstance()

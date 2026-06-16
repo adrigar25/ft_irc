@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ChannelAccessors.cpp                               :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/07 12:37:19 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/12 18:16:09 by agarcia          ###   ########.fr       */
-/*                                                                            */
+/*																			*/
+/*														:::	  ::::::::   */
+/*   ChannelAccessors.cpp							   :+:	  :+:	:+:   */
+/*													+:+ +:+		 +:+	 */
+/*   By: agarcia <agarcia@student.42.fr>			+#+  +:+	   +#+		*/
+/*												+#+#+#+#+#+   +#+		   */
+/*   Created: 2026/06/07 12:37:19 by agarcia		   #+#	#+#			 */
+/*   Updated: 2026/06/12 18:16:09 by agarcia		  ###   ########.fr	   */
+/*																			*/
 /* ************************************************************************** */
 
 #include "Channel.hpp"
@@ -18,41 +18,41 @@
 
 void Channel::setIsInviteOnly(bool val)
 {
-    this->isInviteOnly = val;
+	this->isInviteOnly = val;
 }
 
 void Channel::setUserLimit(int limit)
 {
-    this->userLimit = limit;
+	this->userLimit = limit;
 }
 
 void Channel::setTopic(const std::string &t)
 {
-    this->topic = t;
+	this->topic = t;
 }
 
 void Channel::setKey(const std::string &k)
 {
-    this->key = k;
+	this->key = k;
 }
 
 void Channel::setKeyRequired(bool val)
 {
-    this->keyRequired = val;
+	this->keyRequired = val;
 }
 
 void Channel::setIsSecret(bool val)
 {
-    this->isSecret = val;
+	this->isSecret = val;
 }
 
 void Channel::setTopicProtected(bool val)
 {
-    this->topicProtected = val;
+	this->topicProtected = val;
 }
 void Channel::setModerated(bool val)
 {
-    this->isModerated = val;
+	this->isModerated = val;
 }
 
 /**
@@ -60,7 +60,7 @@ void Channel::setModerated(bool val)
  */
 int Channel::getUserCount() const
 {
-    return this->userCount;
+	return this->userCount;
 }
 
 
@@ -69,7 +69,7 @@ int Channel::getUserCount() const
  */
 int Channel::getUserLimit() const
 {
-    return this->userLimit;
+	return this->userLimit;
 }
 
 
@@ -78,7 +78,7 @@ int Channel::getUserLimit() const
  */
 bool Channel::getIsInviteOnly() const
 {
-    return this->isInviteOnly;
+	return this->isInviteOnly;
 }
 
 
@@ -87,7 +87,7 @@ bool Channel::getIsInviteOnly() const
  */
 std::string Channel::getName() const
 {
-    return this->name;
+	return this->name;
 }
 
 
@@ -96,7 +96,7 @@ std::string Channel::getName() const
  */
 const std::map<int, User*>& Channel::getUsers() const
 {
-    return this->users;
+	return this->users;
 }
 
 
@@ -105,7 +105,7 @@ const std::map<int, User*>& Channel::getUsers() const
  */
 std::string Channel::getKey() const
 {
-    return this->key;
+	return this->key;
 }
 
 /**
@@ -113,67 +113,67 @@ std::string Channel::getKey() const
  */
 bool Channel::getKeyRequired() const
 {
-    return this->keyRequired;
+	return this->keyRequired;
 }
 
 bool Channel::getIsSecret() const
 {
-    return this->isSecret;
+	return this->isSecret;
 }
 
 bool Channel::getTopicProtected() const
 {
-    return this->topicProtected;
+	return this->topicProtected;
 }
 
 std::string Channel::getTopic() const
 {
-    return this->topic;
+	return this->topic;
 }
 
 const std::map<int, User*>& Channel::getOperators() const
 {
-    return this->operators;
+	return this->operators;
 }
 
 const std::map<int, User*>& Channel::getVoiceUsers() const
 {
-    return this->voiceUsers;
+	return this->voiceUsers;
 }
 
 const std::map<int, User*>& Channel::getInvitedUsers() const
 {
-    return this->invitedUsers;
+	return this->invitedUsers;
 }
 
 const std::map<int, User*>& Channel::getBannedUsers() const
 {
-    return this->bannedUsers;
+	return this->bannedUsers;
 }
 
 bool Channel::getIsModerated() const
 {
-    return this->isModerated;
+	return this->isModerated;
 }
 
 void Channel::getChannelModes(std::string &outModes, std::vector<std::string> &outParams) const
 {
-    if (this->getIsInviteOnly())
-        outModes += 'i';
-    if (this->getTopicProtected())
-        outModes += 't';
-    if (this->getIsModerated())
-        outModes += 'm';
-    if (this->getKeyRequired())
-    {
-        outModes += 'k';
-        outParams.push_back(this->getKey());
-    }
-    if (this->getUserLimit() != -1)
-    {
-        std::stringstream ss;
-        ss << this->getUserLimit();
-        outModes += 'l';
-        outParams.push_back(ss.str());
-    }
+	if (this->getIsInviteOnly())
+		outModes += 'i';
+	if (this->getTopicProtected())
+		outModes += 't';
+	if (this->getIsModerated())
+		outModes += 'm';
+	if (this->getKeyRequired())
+	{
+		outModes += 'k';
+		outParams.push_back(this->getKey());
+	}
+	if (this->getUserLimit() != -1)
+	{
+		std::stringstream ss;
+		ss << this->getUserLimit();
+		outModes += 'l';
+		outParams.push_back(ss.str());
+	}
 }

@@ -57,7 +57,7 @@ Este programa tiene dos formas de ejecución:
 Ejemplo:
 
 ```bash
-./ircserv 6667 mysecret    # especificando puerto
+./ircserv 6667 mysecret	# especificando puerto
 ```
 
 El servidor imprimirá mensajes de estado en stdout (p. ej. `Server is listening on port 6667...`).
@@ -65,7 +65,7 @@ El servidor imprimirá mensajes de estado en stdout (p. ej. `Server is listening
 ### La ejecución automatica es:
 
 ```bash
-./ircserv <password>       # usa puerto por defecto 6667
+./ircserv <password>	   # usa puerto por defecto 6667
 ```
 
 - `<password>`: contraseña que deben enviar los clientes con `PASS`.
@@ -73,7 +73,7 @@ El servidor imprimirá mensajes de estado en stdout (p. ej. `Server is listening
 Ejemplo:
 
 ```bash
-./ircserv mysecret         # usa puerto por defecto 6667
+./ircserv mysecret		 # usa puerto por defecto 6667
 ```
 
 El servidor imprimirá mensajes de estado en stdout (p. ej. `Server is listening on port 6667...`).

@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   CmdInvite.hpp                                      :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/07 12:34:57 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/07 12:34:57 by agarcia          ###   ########.fr       */
-/*                                                                            */
+/*																			*/
+/*														:::	  ::::::::   */
+/*   CmdInvite.hpp									  :+:	  :+:	:+:   */
+/*													+:+ +:+		 +:+	 */
+/*   By: agarcia <agarcia@student.42.fr>			+#+  +:+	   +#+		*/
+/*												+#+#+#+#+#+   +#+		   */
+/*   Created: 2026/06/07 12:34:57 by agarcia		   #+#	#+#			 */
+/*   Updated: 2026/06/07 12:34:57 by agarcia		  ###   ########.fr	   */
+/*																			*/
 /* ************************************************************************** */
 
 
@@ -21,9 +21,9 @@
 
 class CmdInvite : public ICommand {
 public:
-    CmdInvite() {}
-    virtual ~CmdInvite() {}
-    virtual void execute(RequestContext &ctx);
+	CmdInvite() {}
+	virtual ~CmdInvite() {}
+	virtual void execute(RequestContext &ctx);
 };
 
 #endif

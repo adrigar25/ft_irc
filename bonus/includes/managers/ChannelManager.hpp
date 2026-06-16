@@ -1,7 +1,7 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                ChannelManager.hpp          */
-/*                                                                            */
+/*																			*/
+/*												ChannelManager.hpp		  */
+/*																			*/
 /* ************************************************************************** */
 
 #ifndef CHANNELMANAGER_HPP
@@ -16,20 +16,20 @@
 
 class ChannelManager {
 public:
-    ChannelManager();
-    ~ChannelManager();
+	ChannelManager();
+	~ChannelManager();
 
-    Channel* getChannel(const std::string &name) const;
-    void createChannel(const std::string &name, User* creator);
-    void deleteChannel(const std::string &name);
-    void removeUserFromChannel(const std::string &channelName, User* user);
-    void removeUserFromAllChannels(User* user);
-    std::map<std::string, Channel*>& getAll();
-    const std::map<std::string, Channel*>& getAll() const;
-    void clear();
+	Channel* getChannel(const std::string &name) const;
+	void createChannel(const std::string &name, User* creator);
+	void deleteChannel(const std::string &name);
+	void removeUserFromChannel(const std::string &channelName, User* user);
+	void removeUserFromAllChannels(User* user);
+	std::map<std::string, Channel*>& getAll();
+	const std::map<std::string, Channel*>& getAll() const;
+	void clear();
 
 private:
-    std::map<std::string, Channel*> channels;
+	std::map<std::string, Channel*> channels;
 };
 
 #endif
