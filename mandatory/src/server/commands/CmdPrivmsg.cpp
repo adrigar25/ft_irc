@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:02:20 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/16 17:02:21 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/16 17:40:25 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ static void dispatchPrivmsg(RequestContext &ctx, const std::string &target, cons
 		return;
 	}
 
-	std::string out = ctx.services.getUserPrefix(ctx.sender) + RPL_PRIVMSG(target, msg);
+	std::string out = ":" + ctx.services.getUserPrefix(ctx.sender) + " " + RPL_PRIVMSG(target, msg);
 
 	if(target[0] == '#') {
 		Channel *channel = ctx.services.channels().getChannel(target);

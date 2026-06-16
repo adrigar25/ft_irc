@@ -3,13 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   Replies.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:11:18 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:11:21 by adriescr         ###   ########.fr       */
+/*   Updated: 2026/06/16 17:48:05 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#ifndef REPLIES_HPP
 #define REPLIES_HPP
 
 #include <string>
