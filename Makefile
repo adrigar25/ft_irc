@@ -61,7 +61,7 @@ clean:
 	@$(MAKE) -C $(BOT_DIR) clean
 
 fclean: clean
-	@rm -f $(NAME) $(NAME)
+	@rm -f $(NAME) $(NAME)_bonus
 	@$(MAKE) -C $(BOT_DIR) fclean
 
 re: fclean all
