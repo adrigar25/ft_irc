@@ -131,13 +131,13 @@ void RequestHandler::handleLine(const std::string &line)
 
 		if (!this->cm->isInChannel(target))
 			return;
-		
+
 		if(reply.isOp && this->cm->checkUserOP(target, prefix.substr(0, prefix.find('!'))) == false)
 		{
 			this->irc->sendRaw("PRIVMSG " + target + " :Not authorized.");
 			return;
 		}
-		
+
 		handlePRIVMSG(this->irc, target, reply, params);
 		return;
 	}
@@ -154,5 +154,21 @@ void RequestHandler::handleLine(const std::string &line)
 			this->cm->deleteChannel(channel);
 	}
 
+	if (cmd == "PART" || cmd == "QUIT")
+	{
+		if (params.size() < 1)
+			return;
+
+		std::string channel = cleanIrcParam(params[0]);
+		std::string user = prefix.substr(0, prefix.find('!'));
+
+		if (this->cm->isInChannel(channel) && user != this->nick)
+		{
+			this->irc->sendRaw("NAMES " + channel);
+			std::string response = this->irc->recvLine();
+			if (response.find(":" + this->nick) == std::string::npos)
+				this->cm->deleteChannel(channel);
+		}
+	}
 	/*if(si recibe un PART o un QUIT de quien sea que envíe un comando NAMES a ese canal y mire que no esté solo el)*/
 }
