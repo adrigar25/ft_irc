@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:00:10 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/16 17:00:12 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/18 01:55:11 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include "User.hpp"
 #include <iostream>
 #include <sstream>
+#include <unistd.h>
 
 void Server::addUser(User* user)
 {
@@ -23,18 +24,20 @@ void Server::addUser(User* user)
 
 void Server::deleteUser(int fd)
 {
-	User* user = this->services.users().findByFd(fd);
-	if (!user) return;
-	const std::map<std::string, Channel*>& channels = this->services.channels().getAll();
-	for (std::map<std::string, Channel*>::const_iterator cit = channels.begin(); cit != channels.end(); ++cit) {
-		try {
-			if (cit->second && cit->second->hasUser(user))
-				cit->second->deleteUser(user);
-		} catch (const std::exception &e) {
-			std::cerr << "ERROR: error removing user from channel " << cit->first << ": " << e.what() << std::endl;
-		}
+	User *user = this->services.users().findByFd(fd);
+	if (!user)
+		return;
+
+	for (std::map<std::string, Channel *>::const_iterator it = user->getChannels().begin(); it != user->getChannels().end(); ++it)
+	{
+		Channel *channel = it->second;
+		if (channel)
+			channel->deleteUser(user);
+		if (channel->isEmpty())
+			this->services.channels().deleteChannel(channel->getName());
 	}
 	this->services.users().remove(fd);
+	close(fd);
 }
 
 User* Server::getUserByFd(int fd)
