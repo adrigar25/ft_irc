@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:11:52 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:18:06 by adriescr         ###   ########.fr       */
+/*   Updated: 2026/06/18 01:41:58 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ class Server
 		void		handleClientEvents();
 		void		processClientBuffer(User *user);
 		bool		handleClientRead(int idx);
-		User*	   getUserByFd(int fd);
+		User*	   	getUserByFd(int fd);
 		void		appendToUserInBuffer(User *user, const char *buffer, ssize_t n);
 		bool		handleClientError(int idx);
 		bool		handleClientWrite(int idx);
