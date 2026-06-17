@@ -160,10 +160,14 @@ void RequestHandler::handleLine(const std::string &line)
 		if (params.size() < 1)
 			return;
 
-		std::string partingUser = cleanIrcParam(params[0]);
+		std::string channel = cleanIrcParam(params[0]);
 
-		if (this->isOnlyUserInChannel(partingUser))
-			this->cm->deleteChannel(partingUser);
+		if (this->isOnlyUserInChannel(channel))
+		{
+			this->irc->sendRaw("PART " + channel + " :I am the only user left in this channel.");
+			this->cm->deleteChannel(channel);
+			return;
+		}
 	}
 	/*if(si recibe un PART o un QUIT de quien sea que envíe un comando NAMES a ese canal y mire que no esté solo el)*/
 }
