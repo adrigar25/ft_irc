@@ -154,21 +154,25 @@ void RequestHandler::handleLine(const std::string &line)
 			this->cm->deleteChannel(channel);
 	}
 
-	if (cmd == "PART" || cmd == "QUIT")
+	if (cmd == "PART")
 	{
 		if (params.size() < 1)
 			return;
 
 		std::string channel = cleanIrcParam(params[0]);
-		std::string user = prefix.substr(0, prefix.find('!'));
 
-		if (this->cm->isInChannel(channel) && user != this->nick)
-		{
-			this->irc->sendRaw("NAMES " + channel);
-			std::string response = this->irc->recvLine();
-			if (response.find(":" + this->nick) == std::string::npos)
-				this->cm->deleteChannel(channel);
-		}
+		if (this->cm->isInChannel(channel))
+			this->cm->deleteChannel(channel);
+	}
+
+	if (cmd == "QUIT")
+	{
+		if (params.size() < 1)
+			return;
+
+		std::string quittingUser = cleanIrcParam(params[0]);
+
+		this->cm->removeUserFromAllChannels(quittingUser);
 	}
 	/*if(si recibe un PART o un QUIT de quien sea que envíe un comando NAMES a ese canal y mire que no esté solo el)*/
 }
