@@ -162,7 +162,7 @@ void RequestHandler::handleLine(const std::string &line)
 
 		std::string channel = cleanIrcParam(params[0]);
 
-		if (this->isOnlyUserInChannel(channel))
+		if (this->cm->isOnlyUserInChannel(channel))
 		{
 			this->irc->sendRaw("PART " + channel + " :I am the only user left in this channel.");
 			this->cm->deleteChannel(channel);
