@@ -16,19 +16,19 @@
 #include <string>
 
 class IRCConnection {
-public:
-	IRCConnection();
-	~IRCConnection();
+	public:
+		IRCConnection();
+		~IRCConnection();
 
-	int connectTo(const std::string &host, int port);
-	ssize_t sendRaw(const std::string &s);
-	std::string recvLine();
-	void closeConn();
-	bool isConnected() const;
-	int getFd() const;
+		int			connectTo(const std::string &host, int port);
+		ssize_t		sendRaw(const std::string &s);
+		std::string	recvLine();
+		void		closeConn();
+		bool		isConnected() const;
+		int			getFd() const;
 
-private:
-	int sockfd;
+	private:
+		int sockfd;
 };
 
 #endif

@@ -20,18 +20,18 @@ class IRCConnection;
 class ChannelManager;
 
 class RequestHandler {
-public:
-	RequestHandler(IRCConnection *irc, ChannelManager *cm, const std::string &nick);
-	~RequestHandler();
+	public:
+		RequestHandler(IRCConnection *irc, ChannelManager *cm, const std::string &nick);
+		~RequestHandler();
 
-	void handleLine(const std::string &line);
+		void handleLine(const std::string &line);
 
-private:
-	IRCConnection *irc;
-	ChannelManager *cm;
-	std::string nick;
+	private:
+		IRCConnection *irc;
+		ChannelManager *cm;
+		std::string nick;
 
-	const BotCmd &chooseReply(const std::string &text) const;
+		const BotCmd &chooseReply(const std::string &text) const;
 };
 
 #endif

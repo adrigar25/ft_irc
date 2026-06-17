@@ -43,6 +43,7 @@ const BotCmd &RequestHandler::chooseReply(const std::string &text) const
 	}
 	return (BOT_COMMANDS[0]);
 }
+
 static void parseMessage(const std::string &line, std::string &prefix, std::string &cmd, std::vector<std::string> &params)
 {
 	std::string raw = line.substr(0, line.find("\r\n"));
@@ -154,25 +155,15 @@ void RequestHandler::handleLine(const std::string &line)
 			this->cm->deleteChannel(channel);
 	}
 
-	if (cmd == "PART")
+	if (cmd == "PART" || cmd == "QUIT")
 	{
 		if (params.size() < 1)
 			return;
 
-		std::string channel = cleanIrcParam(params[0]);
+		std::string partingUser = cleanIrcParam(params[0]);
 
-		if (this->cm->isInChannel(channel))
-			this->cm->deleteChannel(channel);
-	}
-
-	if (cmd == "QUIT")
-	{
-		if (params.size() < 1)
-			return;
-
-		std::string quittingUser = cleanIrcParam(params[0]);
-
-		this->cm->removeUserFromAllChannels(quittingUser);
+		if (this->isOnlyUserInChannel(partingUser))
+			this->cm->deleteChannel(partingUser);
 	}
 	/*if(si recibe un PART o un QUIT de quien sea que envíe un comando NAMES a ese canal y mire que no esté solo el)*/
 }

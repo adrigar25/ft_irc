@@ -19,19 +19,20 @@
 class IRCConnection;
 
 class ChannelManager {
-public:
-	ChannelManager(IRCConnection *irc);
-	~ChannelManager();
+	public:
+		ChannelManager(IRCConnection *irc);
+		~ChannelManager();
 
-	bool checkUserOP(const std::string &channel, const std::string &user);
-	void deleteChannel(const std::string &channel);
-	void joinChannel(const std::string &channel);
-	void partChannel(const std::string &channel);
-	bool isInChannel(const std::string &channel) const;
+		bool checkUserOP(const std::string &channel, const std::string &user);
+		bool isOnlyUserInChannel(const std::string &channel);
+		void deleteChannel(const std::string &channel);
+		void joinChannel(const std::string &channel);
+		void partChannel(const std::string &channel);
+		bool isInChannel(const std::string &channel) const;
 
-private:
-	IRCConnection *irc;
-	std::vector<std::string> joined;
+	private:
+		IRCConnection *irc;
+		std::vector<std::string> joined;
 };
 
 #endif

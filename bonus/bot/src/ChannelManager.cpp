@@ -52,6 +52,27 @@ bool ChannelManager::checkUserOP(const std::string &channel, const std::string &
 	return false;
 }
 
+bool ChannelManager::isOnlyUserInChannel(const std::string &channel)
+{
+	if (!this->isInChannel(channel))
+		return false;
+	if (this->irc)
+	{
+		std::string m = "NAMES " + channel;
+		this->irc->sendRaw(m);
+		std::string response = this->irc->recvLine();
+
+		size_t pos = response.find(" :");
+		if (pos != std::string::npos)
+		{
+			std::string users = response.substr(pos + 2);
+			size_t count = std::count(users.begin(), users.end(), ' ') + 1;
+			return count == 1;
+		}
+	}
+	return false;
+}
+
 bool ChannelManager::isInChannel(const std::string &channel) const
 {
 	return (std::find(this->joined.begin(), this->joined.end(), channel) != this->joined.end());
