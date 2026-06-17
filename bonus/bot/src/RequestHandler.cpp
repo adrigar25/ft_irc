@@ -19,15 +19,6 @@
 #include <cctype>
 #include <iostream>
 
-
-static std::string cleanIrcParam(const std::string &s)
-{
-	std::string value = s;
-	if (!value.empty() && value[0] == ':')
-		value.erase(0, 1);
-	return (value);
-}
-
 RequestHandler::RequestHandler(IRCConnection *irc, ChannelManager *cm, const std::string &nick)
 	: irc(irc), cm(cm), nick(nick) {}
 
@@ -36,6 +27,8 @@ RequestHandler::~RequestHandler() {}
 const BotCmd &RequestHandler::chooseReply(const std::string &text) const
 {
 	std::string cmd = text.substr(1);
+	if (cmd.empty())
+		return (BOT_COMMANDS[0]);
 	std::transform(cmd.begin(), cmd.end(), cmd.begin(), ::tolower);
 	for (size_t i = 0; BOT_COMMANDS[i].trigger != ""; ++i)
 	{
@@ -47,26 +40,27 @@ const BotCmd &RequestHandler::chooseReply(const std::string &text) const
 
 static Message parseMessage(const std::string &line)
 {
+
+	if (line.empty())
+		return Message();
+
 	Message m;
 
 	std::string raw = line.substr(0, line.find("\r\n"));
 
-	std::string rest = raw;
-
-	// prefix
-	if (!rest.empty() && rest[0] == ':')
+	if (!raw.empty() && raw[0] == ':')
 	{
-		size_t sp = rest.find(' ');
-		std::string prefix = rest.substr(1, sp - 1);
+		size_t sp = raw.find(' ');
+		std::string prefix = raw.substr(1, sp - 1);
 
 		size_t bang = prefix.find('!');
 		if (bang != std::string::npos)
 			m.user = prefix.substr(0, bang);
 
-		rest = rest.substr(sp + 1);
+		raw = raw.substr(sp + 1);
 	}
 
-	std::istringstream iss(rest);
+	std::istringstream iss(raw);
 	iss >> m.cmd;
 
 	std::string param;
@@ -88,7 +82,6 @@ static Message parseMessage(const std::string &line)
 	return m;
 }
 
-
 static std::string getCommandList()
 {
 	std::string list;
@@ -101,6 +94,9 @@ static std::string getCommandList()
 
 static void handleKick(ChannelManager *cm, const std::string &channel, const std::string &kickedUser, const std::string &botNick)
 {
+
+	if (kickedUser.empty() || channel.empty() || botNick.empty())
+		return;
 
 	if (kickedUser == botNick && cm->isInChannel(channel))
 		cm->deleteChannel(channel);
@@ -119,7 +115,7 @@ void RequestHandler::handlePRIVMSG(
 	iss >> trigger;
 
 	const BotCmd &reply = this->chooseReply(trigger);
-	
+
 	if (reply.trigger.empty())
 		return;
 
@@ -160,15 +156,15 @@ void RequestHandler::handlePRIVMSG(
 
 static void handleInvite(ChannelManager *cm, const std::string &channel)
 {
+	if (channel.empty() || !cm->isInChannel(channel))
+		return;
 	cm->joinChannel(channel);
 }
 
-static void handleUserPartOrQuit(IRCConnection *irc, ChannelManager *cm, const std::vector<std::string> &params)
+static void handleUserPartOrQuit(IRCConnection *irc, ChannelManager *cm, const std::string &channel)
 {
-	if (params.size() < 1)
+	if (channel.empty() || !cm->isInChannel(channel))
 		return;
-
-	std::string channel = cleanIrcParam(params[0]);
 
 	if (cm->isOnlyUserInChannel(channel))
 	{
@@ -176,7 +172,6 @@ static void handleUserPartOrQuit(IRCConnection *irc, ChannelManager *cm, const s
 		cm->deleteChannel(channel);
 	}
 }
-
 
 static int getCommandType(const std::string &cmd)
 {
@@ -197,42 +192,26 @@ static int getCommandType(const std::string &cmd)
 
 void RequestHandler::handleLine(const std::string &line)
 {
-	this->irc->isConnected();
-
 	Message m = parseMessage(line);
-
-	std::cout << "Parsed line: user=" << m.user
-			  << ", cmd=" << m.cmd
-			  << ", trailing=" << m.trailing << std::endl;
-	std::cout << "Params: ";
-	for (size_t i = 0; i < m.params.size(); ++i)
-		std::cout << m.params[i] << " ";
-	std::cout << std::endl;
 
 	switch (getCommandType(m.cmd))
 	{
 	case CMD_PING:
 		this->irc->sendRaw("PONG :" + m.trailing);
 		break;
-
 	case CMD_INVITE:
 		handleInvite(this->cm, m.trailing);
 		break;
-
 	case CMD_KICK:
 		handleKick(this->cm, m.params[0], m.params[1], this->nick);
 		break;
-
 	case CMD_PART:
 	case CMD_QUIT:
-		handleUserPartOrQuit(this->irc, this->cm, m.params);
+		handleUserPartOrQuit(this->irc, this->cm, m.params[0]);
 		break;
-
 	case CMD_PRIVMSG:
-		if (m.params.size() >= 1)
-			this->handlePRIVMSG(m.user, m.params[0], m.trailing);
+		handlePRIVMSG(m.user, m.params[0], m.trailing);
 		break;
-
 	default:
 		break;
 	}
