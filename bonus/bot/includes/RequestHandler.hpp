@@ -14,10 +14,30 @@
 #define REQUEST_HANDLER_HPP
 
 #include "BotOptions.hpp"
+#include <vector>
 #include <string>
 
 class IRCConnection;
 class ChannelManager;
+
+enum e_command
+{
+	CMD_PING,
+	CMD_INVITE,
+	CMD_KICK,
+	CMD_PART,
+	CMD_QUIT,
+	CMD_PRIVMSG,
+	CMD_UNKNOWN
+};
+
+struct Message
+{
+	std::string user;
+	std::string cmd;
+	std::vector<std::string> params;
+	std::string trailing;
+};
 
 class RequestHandler {
 	public:
@@ -25,9 +45,9 @@ class RequestHandler {
 		~RequestHandler();
 
 		void handleLine(const std::string &line);
+		void handlePRIVMSG(const std::string &user, const std::string &channel, const std::string &msg);
 
-	private:
-		IRCConnection *irc;
+		private : IRCConnection *irc;
 		ChannelManager *cm;
 		std::string nick;
 
