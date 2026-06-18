@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:22:17 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/18 01:41:47 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/18 02:04:35 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include "User.hpp"
 #include <iostream>
 #include <sstream>
+#include <unistd.h>
 
 void Server::addUser(User* user)
 {
