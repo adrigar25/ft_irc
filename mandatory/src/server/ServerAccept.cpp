@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:01:09 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/16 17:01:10 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/18 01:52:23 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,11 +43,9 @@ void Server::handleDisconnectionByIndex(int idx)
 		std::cerr << "handleDisconnectionByIndex: invalid idx " << idx << std::endl;
 		return;
 	}
-
 	int fd = this->fds[idx].fd;
 
-	close(fd);
-	this->deleteUser(fd);
+	deleteUser(fd);
 	this->fds.erase(this->fds.begin() + idx);
 }
 

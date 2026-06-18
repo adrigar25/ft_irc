@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerAccept.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:21:24 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:21:25 by adriescr         ###   ########.fr       */
+/*   Updated: 2026/06/18 02:00:01 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,15 +39,14 @@ void Server::handleNewConnection()
 
 void Server::handleDisconnectionByIndex(int idx)
 {
-	if (idx <= 0 || idx >= (int)this->fds.size()) {
+	if (idx <= 0 || idx >= (int)this->fds.size())
+	{
 		std::cerr << "handleDisconnectionByIndex: invalid idx " << idx << std::endl;
 		return;
 	}
-
 	int fd = this->fds[idx].fd;
 
-	close(fd);
-	this->deleteUser(fd);
+	deleteUser(fd);
 	this->fds.erase(this->fds.begin() + idx);
 }
 
