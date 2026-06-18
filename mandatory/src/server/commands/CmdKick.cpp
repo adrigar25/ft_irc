@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:03:10 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/16 17:03:12 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/18 01:17:44 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ static void doKick(RequestContext &ctx, Channel *channel, User *target, const st
 
 	std::string msg = RPL_KICK(ctx.services.getUserPrefix(ctx.sender), channel->getName(), target->getNickname(), reason.empty() ? "No reason" : reason);
 	ctx.services.sendToChannel(channel, msg, NULL);
-	target->leaveChannel(channel);
+	ctx.services.channels().removeUserFromChannel(channel->getName(), target);
 }
 
 static void handleKick1N(RequestContext &ctx, const std::string &channelName, const std::vector<std::string> &users, const std::string &reason)
