@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:01:49 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/16 17:01:50 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/18 01:15:13 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,27 +56,16 @@ void ChannelManager::removeUserFromChannel(const std::string &channelName, User*
 {
 	Channel* ch = getChannel(channelName);
 	if (!ch) return;
-	ch->deleteUser(user);
-	if (ch->isEmpty()) {
+	user->leaveChannel(ch);
+	if (ch->isEmpty())
 		deleteChannel(channelName);
-	}
 }
 
 void ChannelManager::removeUserFromAllChannels(User* user)
 {
-	for (std::map<std::string, Channel*>::iterator it = channels.begin(); it != channels.end(); ) {
-		Channel* ch = it->second;
-		if (ch->hasUser(user)) {
-			ch->deleteUser(user);
-			if (ch->isEmpty()) {
-				std::map<std::string, Channel*>::iterator toErase = it++;
-				delete toErase->second;
-				channels.erase(toErase);
-				continue;
-			}
-		}
-		++it;
-	}
+	std::map<std::string, Channel*> userChannels = user->getChannels();
+	for (std::map<std::string, Channel*>::iterator it = userChannels.begin(); it != userChannels.end(); ++it)
+		removeUserFromChannel(it->first, user);
 }
 
 Channel* ChannelManager::getChannel(const std::string &name) const
