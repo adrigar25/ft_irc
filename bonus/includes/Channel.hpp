@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:11:26 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:15:02 by adriescr         ###   ########.fr       */
+/*   Updated: 2026/06/18 22:31:20 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ class Channel
 		void	addUserToMap(std::map<int, User*> &userMap, User *user);
 		void	deleteUserFromMap(std::map<int, User*> &userMap, User *user);
 		void	inviteUser(User *user);
+		void	removeInvitedUser(User *user);
 		void	banUser(User *user);
 		void	unbanUser(User *user);
 

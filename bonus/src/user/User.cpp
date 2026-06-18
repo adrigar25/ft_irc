@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   User.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:22:37 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:22:39 by adriescr         ###   ########.fr       */
+/*   Updated: 2026/06/18 23:02:03 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,8 +191,13 @@ bool User::joinChannel(Channel *channel, const std::string &key)
 
 	channel->canUserJoin(this, key);
 
+	if (channel->getIsInviteOnly() && !channel->isUserInvited(this))
+		throw IrcException(IRC_ERR_ISINVITEONLYCHAN, "Channel is invite only");
+
+
 	this->channels.insert(std::make_pair(channel->getName(), channel));
 	channel->addUser(this);
+	channel->removeInvitedUser(this);
 	return true;
 }
 

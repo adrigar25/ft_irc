@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:04:46 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/16 17:04:47 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/18 23:09:29 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,21 +24,21 @@ class User;
 class Channel
 {
 	private:
-		std::string			 name;
-		std::string			 topic;
-		std::string			 key;
+		std::string			 	name;
+		std::string			 	topic;
+		std::string			 	key;
 		std::map<int, User*>	users;
 		std::map<int, User*>	voiceUsers;
 		std::map<int, User*>	operators;
 		std::map<int, User*>	invitedUsers;
 		std::map<int, User*>	bannedUsers;
-		int					 userCount;
+		int					 	userCount;
 		bool					topicProtected;
 		bool					keyRequired;
 		bool					isInviteOnly;
 		bool					isSecret;
-		bool				   isModerated;
-		int					 userLimit;
+		bool				   	isModerated;
+		int					 	userLimit;
 	public:
 				Channel(std::string name, User *creator);
 				~Channel();
@@ -48,7 +48,8 @@ class Channel
 			void	deleteUser(User *user);
 			void	addUserToMap(std::map<int, User*> &userMap, User *user);
 			void	deleteUserFromMap(std::map<int, User*> &userMap, User *user);
-			void	inviteUser(User *user);
+			void 	inviteUser(User *user);
+			void 	removeInvitedUser(User *user);
 			void	banUser(User *user);
 			void	unbanUser(User *user);
 

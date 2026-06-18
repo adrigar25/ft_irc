@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:59:37 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/16 16:59:39 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/18 23:10:09 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,11 +191,14 @@ bool User::joinChannel(Channel *channel, const std::string &key)
 
 	channel->canUserJoin(this, key);
 
+	if (channel->getIsInviteOnly() && !channel->isUserInvited(this))
+		throw IrcException(IRC_ERR_ISINVITEONLYCHAN, "Channel is invite only");
+
 	this->channels.insert(std::make_pair(channel->getName(), channel));
 	channel->addUser(this);
+	channel->removeInvitedUser(this);
 	return true;
 }
-
 
 /**
  * @brief Abandona el `channel` llamando a `Channel::deleteUser`.

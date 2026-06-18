@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ChannelUsers.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:19:25 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:19:26 by adriescr         ###   ########.fr       */
+/*   Updated: 2026/06/18 22:31:40 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,11 @@ void Channel::deleteUserFromMap(std::map<int, User*> &userMap, User *user)
 void Channel::inviteUser(User *user)
 {
 	addUserToMap(this->invitedUsers, user);
+}
+
+void Channel::removeInvitedUser(User *user)
+{
+	deleteUserFromMap(this->invitedUsers, user);
 }
 
 void Channel::banUser(User *user)
