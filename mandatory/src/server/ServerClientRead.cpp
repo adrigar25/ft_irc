@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:00:48 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/16 17:00:49 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/18 01:53:16 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,22 +38,22 @@ bool Server::handleClientRead(int idx)
 		return false;
 
 	int fd = this->fds[idx].fd;
+	User *user = getUserByFd(fd);
+
+	if (!user)
+	{
+		handleDisconnectionByIndex(idx);
+		return true;
+	}
+
 	char buffer[1024];
-
 	ssize_t n = recvFromFd(fd, buffer, sizeof(buffer) - 1);
-
 	if (n <= 0)
 	{
 		handleDisconnectionByIndex(idx);
 		return true;
 	}
 	buffer[n] = '\0';
-
-	User *user = getUserByFd(fd);
-	if (!user) {
-		handleDisconnectionByIndex(idx);
-		return true;
-	}
 
 	user->getInBuffer().append(buffer, n);
 	Server::processClientBuffer(user);
