@@ -23,8 +23,10 @@ void ChannelManager::joinChannel(const std::string &channel)
 	if (this->isInChannel(channel))
 		return;
 	if (this->irc)
+	{
 		this->irc->sendRaw("JOIN " + channel);
-	this->joined.push_back(channel);
+		this->joined.push_back(channel);
+	}
 }
 
 void ChannelManager::partChannel(const std::string &channel)
