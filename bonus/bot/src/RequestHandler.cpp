@@ -156,7 +156,7 @@ void RequestHandler::handlePRIVMSG(
 
 static void handleInvite(ChannelManager *cm, const std::string &channel)
 {
-	if (channel.empty() || !cm->isInChannel(channel))
+	if (channel.empty() || cm->isInChannel(channel))
 		return;
 	cm->joinChannel(channel);
 }
@@ -204,7 +204,6 @@ void RequestHandler::handleLine(const std::string &line)
 		break;
 	case CMD_KICK:
 		handleKick(this->cm, m.params[0], m.params[1], this->nick);
-		break;
 	case CMD_PART:
 	case CMD_QUIT:
 		handleUserPartOrQuit(this->irc, this->cm, m.params[0]);
