@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerClientError.cpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/16 17:21:29 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:21:31 by adriescr         ###   ########.fr       */
+/*   Created: 2026/06/16 17:00:54 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/19 01:02:35 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,13 @@ bool Server::handleClientError(int idx)
 {
 	if (idx < 0 || idx >= (int)this->fds.size())
 		return false;
+
 	if (this->fds[idx].revents & (POLLHUP | POLLERR | POLLNVAL))
 	{
 		handleDisconnectionByIndex(idx);
 		return true;
 	}
+
 	return false;
 }
+

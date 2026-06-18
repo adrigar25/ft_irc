@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:00:48 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/18 01:53:16 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/19 00:57:29 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,29 +17,16 @@
 #include <sys/socket.h>
 #include <vector>
 
-static ssize_t recvFromFd(int fd, char *buffer, size_t buflen)
-{
-	ssize_t n;
-	while (true) {
-		n = recv(fd, buffer, buflen, 0);
-		if (n < 0 && errno == EINTR)
-			continue;
-		break;
-	}
-	return n;
-}
-
 bool Server::handleClientRead(int idx)
-
 {
 	if (idx < 0 || idx >= (int)this->fds.size())
 		return false;
+
 	if (!(this->fds[idx].revents & POLLIN))
 		return false;
 
 	int fd = this->fds[idx].fd;
 	User *user = getUserByFd(fd);
-
 	if (!user)
 	{
 		handleDisconnectionByIndex(idx);
@@ -47,19 +34,20 @@ bool Server::handleClientRead(int idx)
 	}
 
 	char buffer[1024];
-	ssize_t n = recvFromFd(fd, buffer, sizeof(buffer) - 1);
+	ssize_t n = recv(fd, buffer, sizeof(buffer) - 1, 0);
+
 	if (n <= 0)
 	{
 		handleDisconnectionByIndex(idx);
 		return true;
 	}
-	buffer[n] = '\0';
 
+	buffer[n] = '\0';
 	user->getInBuffer().append(buffer, n);
-	Server::processClientBuffer(user);
+	processClientBuffer(user);
+
 	return false;
 }
-
 
 void Server::processClientBuffer(User *user)
 {

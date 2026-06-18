@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   SocketUtils.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/16 17:22:28 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:22:29 by adriescr         ###   ########.fr       */
+/*   Created: 2026/06/16 16:59:46 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/19 01:04:34 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,35 +25,12 @@
  *
  * @param fd Descriptor del socket a modificar.
  * @throws std::runtime_error Si `fcntl` falla al obtener o establecer las flags.
-*/
+ */
 void setSocketNonBlocking(int fd)
 {
-	int flags = fcntl(fd, F_GETFL, 0);
-	if (flags == -1) {
-		throw std::runtime_error(std::string("fcntl F_GETFL: ") + strerror(errno));
-	}
-	if (fcntl(fd, F_SETFL, flags | O_NONBLOCK) == -1) {
-		throw std::runtime_error(std::string("fcntl F_SETFL: ") + strerror(errno));
-	}
-}
-
-/**
- * @brief Establece la flag FD_CLOEXEC en un descriptor de archivo.
- *
- * Esto asegura que el descriptor se cierre automáticamente si el proceso ejecuta
- * otro programa con `exec`. Usa `fcntl` para modificar las flags del descriptor.
- * Si ocurre un error, lanza una excepción con el mensaje de error correspondiente.
- *
- * @param fd Descriptor del socket a modificar.
- * @throws std::runtime_error Si `fcntl` falla al obtener o establecer las flags.
- */
-void setSocketCloexec(int fd)
-{
-	int flags = fcntl(fd, F_GETFD);
-	if (flags == -1)
-		throw std::runtime_error(std::string("fcntl F_GETFD: ") + strerror(errno));
-	if (fcntl(fd, F_SETFD, flags | FD_CLOEXEC) == -1)
-		throw std::runtime_error(std::string("fcntl F_SETFD: ") + strerror(errno));
+	if (fcntl(fd, F_SETFL, O_NONBLOCK) == -1)
+		throw std::runtime_error(
+			std::string("fcntl F_SETFL: ") + strerror(errno));
 }
 
 /**
@@ -73,3 +50,4 @@ std::string formatMessage(const std::string &message)
 		msg += "\r\n";
 	return msg;
 }
+

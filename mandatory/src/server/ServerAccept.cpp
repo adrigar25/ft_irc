@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:01:09 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/18 01:52:23 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/19 00:45:41 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ void Server::handleNewConnection()
 		throw IrcException(IRC_ERR_ACCEPTING_CONNECTION, std::string("accept failed: ") + strerror(errno));
 
 	setSocketNonBlocking(newSocket);
-	setSocketCloexec(newSocket);
 	pushPollFd(newSocket, POLLIN);
 
 	User* newUser = new User(newSocket, "*");

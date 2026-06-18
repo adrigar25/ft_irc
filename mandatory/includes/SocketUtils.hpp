@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:04:14 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/16 17:04:15 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/19 00:45:39 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 #include <string>
 
 void setSocketNonBlocking(int fd);
-void setSocketCloexec(int fd);
 std::string formatMessage(const std::string &message);
 
 #endif

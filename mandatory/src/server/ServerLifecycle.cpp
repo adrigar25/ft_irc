@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:00:22 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/16 17:00:24 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/19 00:45:44 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,6 @@ void Server::createServerSocket()
 	if (this->serverSocket < 0)
 		throw IrcException(IRC_ERR_STARTING_SERVER, std::string("socket failed: ") + strerror(errno));
 	setSocketNonBlocking(this->serverSocket);
-	setSocketCloexec(this->serverSocket);
 }
 
 void Server::setSocketOptions()

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerLifecycle.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:22:04 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:22:05 by adriescr         ###   ########.fr       */
+/*   Updated: 2026/06/19 01:03:56 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,6 @@ void Server::createServerSocket()
 	if (this->serverSocket < 0)
 		throw IrcException(IRC_ERR_STARTING_SERVER, std::string("socket failed: ") + strerror(errno));
 	setSocketNonBlocking(this->serverSocket);
-	setSocketCloexec(this->serverSocket);
 }
 
 void Server::setSocketOptions()

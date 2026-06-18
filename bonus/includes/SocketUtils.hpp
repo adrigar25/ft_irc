@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   SocketUtils.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:12:13 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:12:14 by adriescr         ###   ########.fr       */
+/*   Updated: 2026/06/19 01:01:57 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 #include <string>
 
 void setSocketNonBlocking(int fd);
-void setSocketCloexec(int fd);
 std::string formatMessage(const std::string &message);
 
 #endif

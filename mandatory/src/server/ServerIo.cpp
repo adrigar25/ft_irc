@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:00:28 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/16 17:00:29 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/19 00:57:47 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,28 +66,6 @@ static std::string escapeForLog(const std::string &msg)
 	return escaped;
 }
 
-static ssize_t performSend(int fd, const char *buf, size_t len)
-{
-	size_t total = 0;
-	while (total < len) {
-		ssize_t n = send(fd, buf + total, len - total, 0);
-		if (n > 0) {
-			total += static_cast<size_t>(n);
-			continue;
-		}
-		if (n == 0) {
-			return static_cast<ssize_t>(total);
-		}
-		if (errno == EINTR)
-			continue;
-		if (errno == EAGAIN || errno == EWOULDBLOCK) {
-			return static_cast<ssize_t>(total);
-		}
-		return -1;
-	}
-	return static_cast<ssize_t>(total);
-}
-
 void Server::enqueuePending(User *user, const char *buf, size_t len)
 {
 	std::string &pending = user->getOutBuffer();
@@ -99,33 +77,35 @@ void Server::sendToUser(User *user, const std::string &message)
 {
 	std::string msg = prepareOutMessage(user, message);
 	msg = formatMessage(msg);
-	
-	int fd = user->getSocket();
 
-	std::string escaped = escapeForLog(msg);
+	int fd = user->getSocket();
 
 	std::string &pending = user->getOutBuffer();
 	size_t &offset = user->getOutOffset();
 
 	if (!pending.empty() || offset != 0)
 	{
-		enqueuePending(user, msg.c_str(), msg.size());
+		pending.append(msg);
+		enablePollOutForFd(fd);
 		return;
 	}
 
-	const char *buf = msg.c_str();
-	size_t len = msg.size();
+	ssize_t sent = send(fd, msg.c_str(), msg.size(), 0);
 
-	ssize_t sent = performSend(fd, buf, len);
-	
-	if (sent < 0) {
-		std::cerr << "send failed: " << strerror(errno) << " fd=" << fd << std::endl;
+	if (sent <= 0)
+	{
+		handleDisconnectionByFd(fd);
 		return;
 	}
-	
-	if(sent < static_cast<ssize_t>(len))
-		enqueuePending(user, buf + sent, len - sent);
+
+	if (sent < (ssize_t)msg.size())
+	{
+		pending = msg.substr(sent);
+		offset = 0;
+		enablePollOutForFd(fd);
+	}
 }
+
 
 void Server::sendToChannel(Channel *channel, const std::string &message, User *exclude)
 {
