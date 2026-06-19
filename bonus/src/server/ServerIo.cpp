@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:00:28 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/19 01:03:24 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/19 11:02:52 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,29 +51,6 @@ static std::string prepareOutMessage(User *user, const std::string &message)
 		msg.swap(notice);
 	}
 	return msg;
-}
-
-static std::string escapeForLog(const std::string &msg)
-{
-	std::string escaped;
-	escaped.reserve(msg.size() * 3 + 10);
-	for (size_t i = 0; i < msg.size(); ++i)
-	{
-		unsigned char c = static_cast<unsigned char>(msg[i]);
-		if (c == '\r')
-			escaped += "\\r";
-		else if (c == '\n')
-			escaped += "\\n";
-		else if (c >= 32 && c < 127)
-			escaped += msg[i];
-		else
-		{
-			char buf[8];
-			std::snprintf(buf, sizeof(buf), "\\x%02x", c);
-			escaped += buf;
-		}
-	}
-	return escaped;
 }
 
 void Server::enqueuePending(User *user, const char *buf, size_t len)

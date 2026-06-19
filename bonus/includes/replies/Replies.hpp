@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:11:18 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:48:05 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/19 11:35:43 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@
 #define RPL_QUIT(client, reason) (std::string(":") + (client) + " QUIT :" + (reason) + IRC_CRLF)
 #define RPL_PONG(server) (std::string("PONG ") + (server) + IRC_CRLF)
 #define RPL_PRIVMSG(target, msg) (std::string("PRIVMSG ") + (target) + " :" + (msg) + IRC_CRLF)
+#define RPL_NOTICE(target, msg) (std::string("NOTICE ") + (target) + " :" + (msg) + IRC_CRLF)
 #define RPL_KICK(client, channel, target, reason) (std::string(":") + (client) + " KICK " + (channel) + " " + (target) + " :" + (reason) + IRC_CRLF)
 
 // Error replies.

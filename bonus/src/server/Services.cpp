@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Services.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:22:25 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:22:25 by adriescr         ###   ########.fr       */
+/*   Updated: 2026/06/19 11:03:25 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ Server* Services::getServer() const { return server; }
  * @param message Mensaje a enviar.
  */
 void Services::sendToUser(User* user, const std::string &message) {
-	if (server) server->sendMessageToUser(user, message);
+	if (server) server->sendToUser(user, message);
 }
 
 /**
@@ -44,7 +44,7 @@ void Services::sendToUser(User* user, const std::string &message) {
  * @param exclude Usuario a excluir (opcional).
  */
 void Services::sendToChannel(Channel* channel, const std::string &message, User* exclude) {
-	if (server) server->sendMessageToChannel(channel, message, exclude);
+	if (server) server->sendToChannel(channel, message, exclude);
 }
 std::string Services::getServerName() const {
 	if (server)

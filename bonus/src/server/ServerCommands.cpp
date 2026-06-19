@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerCommands.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:21:47 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:21:48 by adriescr         ###   ########.fr       */
+/*   Updated: 2026/06/19 11:08:47 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 #include <sstream>
 #include <utility>
 #include "CommandDispatcher.hpp"
-#include "commands/CmdPrivmsg.hpp"
+#include "commands/CmdMsg.hpp"
 #include "commands/CmdPass.hpp"
 #include "commands/CmdNick.hpp"
 #include "commands/CmdUser.hpp"
@@ -46,7 +46,8 @@ static CommandDispatcher& getDispatcher()
 		dispatcher.registerHandler("USER", new CmdUser());
 		dispatcher.registerHandler("JOIN", new CmdJoin());
 		dispatcher.registerHandler("PART", new CmdPart());
-		dispatcher.registerHandler("PRIVMSG", new CmdPrivmsg());
+		dispatcher.registerHandler("PRIVMSG", new CmdMsg(false));
+		dispatcher.registerHandler("NOTICE", new CmdMsg(true));
 		dispatcher.registerHandler("QUIT", new CmdQuit());
 		dispatcher.registerHandler("PING", new CmdPing());
 		dispatcher.registerHandler("LIST", new CmdList());

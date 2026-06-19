@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/16 17:00:39 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/16 17:00:40 by agarcia          ###   ########.fr       */
+/*   Created: 2026/06/16 17:21:47 by adriescr          #+#    #+#             */
+/*   Updated: 2026/06/19 12:05:24 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 #include <sstream>
 #include <utility>
 #include "CommandDispatcher.hpp"
-#include "commands/CmdPrivmsg.hpp"
+#include "commands/CmdMsg.hpp"
 #include "commands/CmdPass.hpp"
 #include "commands/CmdNick.hpp"
 #include "commands/CmdUser.hpp"
@@ -36,17 +36,19 @@
 #include "RequestContext.hpp"
 #include "replies/Replies.hpp"
 
-static CommandDispatcher& getDispatcher()
+static CommandDispatcher &getDispatcher()
 {
 	static CommandDispatcher dispatcher;
 	static bool inited = false;
-	if (!inited) {
+	if (!inited)
+	{
 		dispatcher.registerHandler("PASS", new CmdPass());
 		dispatcher.registerHandler("NICK", new CmdNick());
 		dispatcher.registerHandler("USER", new CmdUser());
 		dispatcher.registerHandler("JOIN", new CmdJoin());
 		dispatcher.registerHandler("PART", new CmdPart());
-		dispatcher.registerHandler("PRIVMSG", new CmdPrivmsg());
+		dispatcher.registerHandler("PRIVMSG", new CmdMsg(false));
+		dispatcher.registerHandler("NOTICE", new CmdMsg(true));
 		dispatcher.registerHandler("QUIT", new CmdQuit());
 		dispatcher.registerHandler("PING", new CmdPing());
 		dispatcher.registerHandler("LIST", new CmdList());
@@ -63,7 +65,8 @@ static CommandDispatcher& getDispatcher()
 
 static void checkAuthentication(RequestContext &ctx)
 {
-	if (ctx.sender->isPassSet() && ctx.sender->isNickSet() && ctx.sender->isUserSet()) {
+	if (ctx.sender->isPassSet() && ctx.sender->isNickSet() && ctx.sender->isUserSet())
+	{
 		ctx.sender->setAuthenticated(true);
 		std::string serverName = ctx.services.getServerName();
 		ctx.services.sendResponse(ctx, RPL_WELCOME(ctx.sender->getNickname(), ctx.sender->getNickname(), ctx.sender->getUsername(), serverName));
@@ -74,7 +77,8 @@ static void checkAuthentication(RequestContext &ctx)
 }
 void Server::handleClientCommand(User *user, const std::string &commandLine)
 {
-	if (!user) {
+	if (!user)
+	{
 		std::cerr << "handleClientCommand: null user for command: " << commandLine << std::endl;
 		return;
 	}
@@ -83,7 +87,8 @@ void Server::handleClientCommand(User *user, const std::string &commandLine)
 	size_t sp = commandLine.find(' ');
 	std::string cmd = commandLine;
 	std::string args = "";
-	if (sp != std::string::npos) {
+	if (sp != std::string::npos)
+	{
 		cmd = commandLine.substr(0, sp);
 		if (sp + 1 < commandLine.size())
 			args = commandLine.substr(sp + 1);
@@ -98,7 +103,7 @@ void Server::handleClientCommand(User *user, const std::string &commandLine)
 void Server::executeCommand(User *user, const std::string &command, const std::string &args)
 {
 
-	CommandDispatcher& dispatcher = getDispatcher();
+	CommandDispatcher &dispatcher = getDispatcher();
 
 	if (!user)
 		return;
@@ -122,6 +127,6 @@ void Server::executeCommand(User *user, const std::string &command, const std::s
 
 	RequestContext ctx(this->services, user, args);
 	dispatcher.dispatch(command, ctx);
-	if(!user->isAuthenticated())
+	if (!user->isAuthenticated())
 		checkAuthentication(ctx);
 }

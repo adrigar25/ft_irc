@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:11:52 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/18 01:41:58 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/19 11:02:39 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,8 +64,6 @@ class Server
 		void		handleClientCommand(User *user, const std::string &commandLine);
 		bool		handleUnknownCommand(User *user, const std::string &command);
 		void		executeCommand(User *user, const std::string &command, const std::string &args);
-		void		sendToUser(User *user, const std::string &message);
-		void		sendToChannel(Channel *channel, const std::string &message, User *exclude);
 		void		addUser(User* user);
 		void		deleteUser(int fd);
 		void		initSignals();
@@ -73,8 +71,8 @@ class Server
 	public:
 		Server(unsigned int port, std::string password);
 		~Server();
-		void	sendMessageToUser(User *user, const std::string &message) { sendToUser(user, message); }
-		void	sendMessageToChannel(Channel *channel, const std::string &message, User *exclude) { sendToChannel(channel, message, exclude); }
+		void sendToUser(User *user, const std::string &message);
+		void sendToChannel(Channel *channel, const std::string &message, User *exclude);
 		void	startServer();
 		void	stopServer();
 		unsigned int getPort() const;

@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/16 16:59:53 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/16 16:59:54 by agarcia          ###   ########.fr       */
+/*   Created: 2026/06/16 17:22:25 by adriescr          #+#    #+#             */
+/*   Updated: 2026/06/19 12:06:16 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,16 +15,16 @@
 #include "RequestContext.hpp"
 #include "replies/Replies.hpp"
 
-Services::Services(Server* srv): server(srv), userManager(), channelManager() {}
+Services::Services(Server *srv) : server(srv), userManager(), channelManager() {}
 
 Services::~Services() {}
 
-UserManager& Services::users() { return userManager; }
-ChannelManager& Services::channels() { return channelManager; }
-const UserManager& Services::users() const { return userManager; }
-const ChannelManager& Services::channels() const { return channelManager; }
+UserManager &Services::users() { return userManager; }
+ChannelManager &Services::channels() { return channelManager; }
+const UserManager &Services::users() const { return userManager; }
+const ChannelManager &Services::channels() const { return channelManager; }
 
-Server* Services::getServer() const { return server; }
+Server *Services::getServer() const { return server; }
 
 /**
  * @brief Envía `message` a `user` delegando la lógica de I/O al servidor.
@@ -32,8 +32,10 @@ Server* Services::getServer() const { return server; }
  * @param user Puntero al usuario destinatario.
  * @param message Mensaje a enviar.
  */
-void Services::sendToUser(User* user, const std::string &message) {
-	if (server) server->sendMessageToUser(user, message);
+void Services::sendToUser(User *user, const std::string &message)
+{
+	if (server)
+		server->sendToUser(user, message);
 }
 
 /**
@@ -43,18 +45,21 @@ void Services::sendToUser(User* user, const std::string &message) {
  * @param message Mensaje a enviar.
  * @param exclude Usuario a excluir (opcional).
  */
-void Services::sendToChannel(Channel* channel, const std::string &message, User* exclude) {
-	if (server) server->sendMessageToChannel(channel, message, exclude);
+void Services::sendToChannel(Channel *channel, const std::string &message, User *exclude)
+{
+	if (server)
+		server->sendToChannel(channel, message, exclude);
 }
-std::string Services::getServerName() const {
+std::string Services::getServerName() const
+{
 	if (server)
 		return server->getHostname();
 	return std::string("localhost");
 }
 
-std::string Services::getUserPrefix(User* user) const
+std::string Services::getUserPrefix(User *user) const
 {
-	   return user->getNickname() + "!" + user->getUsername() + "@" + getServerName();
+	return user->getNickname() + "!" + user->getUsername() + "@" + getServerName();
 }
 
 std::string Services::getServerPrefix() const
@@ -76,14 +81,15 @@ void Services::sendResponse(RequestContext &ctx, const std::string &reply)
 void Services::sendNamesList(RequestContext &ctx, User *target, Channel *channel)
 {
 	std::string serverName = ctx.services.getServerName();
-	const std::map<int, User*>& usersMap = channel->getUsers();
+	const std::map<int, User *> &usersMap = channel->getUsers();
 	std::string namesList;
-	for (std::map<int, User*>::const_iterator uit = usersMap.begin(); uit != usersMap.end(); ++uit) {
-		if (!namesList.empty()) 
+	for (std::map<int, User *>::const_iterator uit = usersMap.begin(); uit != usersMap.end(); ++uit)
+	{
+		if (!namesList.empty())
 			namesList += " ";
 		if (channel->isUserOperator(uit->second))
 			namesList += "@";
-		if(channel->isUserVoice(uit->second))
+		if (channel->isUserVoice(uit->second))
 			namesList += "+";
 		namesList += uit->second->getNickname();
 	}
@@ -91,3 +97,4 @@ void Services::sendNamesList(RequestContext &ctx, User *target, Channel *channel
 	sendResponse(ctx, RPL_NAMREPLY(target->getNickname(), "=", channel->getName(), namesList));
 	sendResponse(ctx, RPL_ENDOFNAMES(target->getNickname(), channel->getName()));
 }
+
