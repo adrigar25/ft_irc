@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:02:57 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/16 17:02:58 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/19 15:37:48 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,14 +29,14 @@ static bool isNumber(const std::string &s)
 	return !s.empty();
 }
 
-static void sendMode(RequestContext &ctx, const std::string &channelName,
-					 char sign, char mode, const std::string &param)
+static void sendMode(RequestContext &ctx, const std::string &channelName, char sign, char mode, const std::string &param)
 {
 	std::string modes(1, sign);
+	Channel *ch = ctx.services.channels().getChannel(channelName);
 	modes += mode;
 	if (!param.empty())
 		modes += " " + param;
-	ctx.services.sendResponse(ctx, RPL_CHANNELMODEIS(ctx.sender->getNickname(), channelName, modes));
+	ctx.services.sendToChannel(ch, ctx.services.getServerPrefix() + " " + RPL_CHANNELMODEIS(ctx.sender->getNickname(), channelName, modes), nullptr);
 }
 
 /* ===================== HANDLERS ===================== */
@@ -143,6 +143,11 @@ void CmdMode::execute(RequestContext &ctx)
 		ctx.services.sendResponse(ctx, ERR_NOSUCHCHANNEL(ctx.sender->getNickname(), channelName));
 		return;
 	}
+	if(modes.empty() || (modes[0] != '+' && modes[0] != '-'))
+	{
+		sendChannelModes(ctx, ch);
+		return;
+	}
 
 	if (!ch->isUserOperator(ctx.sender))
 	{
@@ -150,11 +155,6 @@ void CmdMode::execute(RequestContext &ctx)
 		return;
 	}
 
-	if(modes.empty() || (modes[0] != '+' && modes[0] != '-'))
-	{
-		sendChannelModes(ctx, ch);
-		return;
-	}
 
 	std::vector<std::string> params;
 	for (size_t i = 2; i < parts.size(); ++i)
