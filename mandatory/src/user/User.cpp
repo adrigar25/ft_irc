@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/16 16:59:37 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/18 23:10:09 by agarcia          ###   ########.fr       */
+/*   Created: 2026/06/16 17:22:37 by adriescr          #+#    #+#             */
+/*   Updated: 2026/06/22 18:31:51 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,17 +25,21 @@
  * @param socket Descriptor de socket del usuario.
  * @param name Nickname inicial del usuario.
  */
-User::User(int socket, const std::string &name)
-		: socket(socket), nickname(name), username(""),
-			inBuffer(), outBuffer(), outOffset(0),
-			nickSet(false), userSet(false), passGiven(false), authenticated(false) {}
-
+User::User(int socket, const std::string &name) : socket(socket),
+												  nickname(name),
+												  username(""),
+												  inBuffer(),
+												  outBuffer(),
+												  outOffset(0),
+												  nickSet(false),
+												  userSet(false),
+												  passGiven(false),
+												  authenticated(false) {}
 
 /**
  * @brief Destructor de `User`.
  */
 User::~User() {}
-
 
 /**
  * @brief Devuelve el nickname del usuario.
@@ -46,7 +50,6 @@ std::string User::getNickname() const
 	return this->nickname;
 }
 
-
 /**
  * @brief Devuelve el descriptor de socket del usuario.
  * @return `int` descriptor de socket.
@@ -56,16 +59,14 @@ int User::getSocket() const
 	return this->socket;
 }
 
-
 /**
  * @brief Devuelve el mapa de canales en los que está el usuario.
  * @return Referencia constante al mapa de `Channel*` indexado por nombre.
  */
-const std::map<std::string, Channel*>& User::getChannels() const
+const std::map<std::string, Channel *> &User::getChannels() const
 {
 	return this->channels;
 }
-
 
 /**
  * @brief Establece el nickname del usuario y marca `nickSet`.
@@ -76,7 +77,6 @@ void User::setNickname(const std::string &name)
 	this->nickname = name;
 	this->nickSet = true;
 }
-
 
 /**
  * @brief Establece el nombre de usuario (username) y marca `userSet`.
@@ -97,7 +97,6 @@ void User::setRealName(const std::string &name)
 	this->realname = name;
 }
 
-
 /**
  * @brief Devuelve el `username` del usuario.
  * @return `std::string` con el username.
@@ -116,7 +115,6 @@ std::string User::getRealName() const
 	return this->realname;
 }
 
-
 /**
  * @brief Marca si el usuario proporcionó la contraseña (PASS).
  * @param val `true` si la contraseña fue proporcionada.
@@ -125,7 +123,6 @@ void User::setPass(bool val)
 {
 	this->passGiven = val;
 }
-
 
 /**
  * @brief Comprueba si el PASS fue establecido.
@@ -136,7 +133,6 @@ bool User::isPassSet() const
 	return this->passGiven;
 }
 
-
 /**
  * @brief Comprueba si el nickname fue establecido.
  * @return `true` si el nick está establecido.
@@ -145,7 +141,6 @@ bool User::isNickSet() const
 {
 	return this->nickSet;
 }
-
 
 /**
  * @brief Comprueba si el username fue establecido.
@@ -156,7 +151,6 @@ bool User::isUserSet() const
 	return this->userSet;
 }
 
-
 /**
  * @brief Marca el estado de autenticación del usuario.
  * @param val `true` si el usuario está autenticado.
@@ -165,7 +159,6 @@ void User::setAuthenticated(bool val)
 {
 	this->authenticated = val;
 }
-
 
 /**
  * @brief Comprueba si el usuario está autenticado.
@@ -176,7 +169,6 @@ bool User::isAuthenticated() const
 	return this->authenticated;
 }
 
-
 /**
  * @brief Añade al usuario al `channel` y actualiza estructuras.
  *
@@ -186,7 +178,7 @@ bool User::isAuthenticated() const
  */
 bool User::joinChannel(Channel *channel, const std::string &key)
 {
-	if(this->channels.find(channel->getName()) != this->channels.end())
+	if (this->channels.find(channel->getName()) != this->channels.end())
 		throw IrcException(IRC_ERR_USER_ALREADY_IN_CHANNEL, "User already in channel");
 
 	channel->canUserJoin(this, key);
@@ -206,28 +198,28 @@ bool User::joinChannel(Channel *channel, const std::string &key)
  */
 void User::leaveChannel(Channel *channel)
 {
-	if (!channel) return;
+	if (!channel)
+		return;
 	// remove channel from user's map first
-	std::map<std::string, Channel*>::iterator it = this->channels.find(channel->getName());
+	std::map<std::string, Channel *>::iterator it = this->channels.find(channel->getName());
 	if (it != this->channels.end())
 		this->channels.erase(it);
 	// then remove user from channel
 	channel->deleteUser(this);
 }
 
-
 /* Buffer accessors */
-std::string& User::getInBuffer()
+std::string &User::getInBuffer()
 {
 	return this->inBuffer;
 }
 
-std::string& User::getOutBuffer()
+std::string &User::getOutBuffer()
 {
 	return this->outBuffer;
 }
 
-size_t& User::getOutOffset()
+size_t &User::getOutOffset()
 {
 	return this->outOffset;
 }

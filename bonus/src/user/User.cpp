@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:22:37 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/18 23:02:03 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/21 20:16:17 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,17 @@
  * @param socket Descriptor de socket del usuario.
  * @param name Nickname inicial del usuario.
  */
-User::User(int socket, const std::string &name)
-		: socket(socket), nickname(name), username(""),
-			inBuffer(), outBuffer(), outOffset(0),
-			nickSet(false), userSet(false), passGiven(false), authenticated(false) {}
-
+User::User(int socket, const std::string &name): 
+	socket(socket), 
+	nickname(name), 
+	username(""),
+	inBuffer(), 
+	outBuffer(), 
+	outOffset(0),
+	nickSet(false),
+	userSet(false),
+	passGiven(false),
+	authenticated(false) {}
 
 /**
  * @brief Destructor de `User`.
