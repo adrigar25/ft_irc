@@ -17,33 +17,38 @@ OBJS := $(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.o,$(SRCS))
 HEADERS := $(wildcard $(INCDIR)/*.hpp)
 
 all: ircbot
+	@echo "\033[35m$(NAME) executable is ready to use!\033[0m"
 
 $(NAME): $(OBJS)
-	$(CXX) $(CXXFLAGS) $(OBJS) -o $(NAME) $(LDFLAGS)
+	@$(CXX) $(CXXFLAGS) $(OBJS) -o $(NAME) $(LDFLAGS)
 
 # Rules
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp $(HEADERS) | $(OBJDIR)
 	@mkdir -p $(dir $@)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	@$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c | $(OBJDIR)
 	@mkdir -p $(dir $@)
-	$(CC) -Wall -Wextra -Werror -c $< -o $@
+	@$(CC) -Wall -Wextra -Werror -c $< -o $@
 
 $(OBJDIR):
 	@mkdir -p $(OBJDIR)
 
 clean:
-	rm -f $(OBJS) ircbot
+	@printf 'Eliminando objetos:\033[0;32m %s\033[0m\n' "$(OBJS)"
+	@rm -f $(OBJS)
 
 fclean: clean
-	rm -f $(NAME) ircbot
-	rm -rf $(OBJDIR)
-
-ircbot:
-	$(CXX) -std=c++11 -Wall -Wextra -I $(INCDIR) main.cpp $(SRCDIR)/Bot.cpp $(SRCDIR)/IRCConnection.cpp $(SRCDIR)/ChannelManager.cpp $(SRCDIR)/RequestHandler.cpp -o ircbot
+	@printf 'Eliminando ejecutable:\033[0;32m %s\033[0m\n' "$(NAME)"
+	@rm -f $(NAME) ircbot
+	@rm -rf $(OBJDIR)
 
 re: fclean all
+	@if [ $$? -eq 0 ]; then \
+		echo "\033[38;5;208m🎉 Recompilation completed successfully!\033[0m"; \
+	else \
+		echo "\033[31m❌ Error during recompilation!\033[0m"; \
+	fi
 
 .PHONY: all clean fclean re ircbot
 
