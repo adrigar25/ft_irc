@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CmdNick.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:20:20 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:20:21 by adriescr         ###   ########.fr       */
+/*   Updated: 2026/06/21 19:40:42 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,10 @@ void CmdNick::execute(RequestContext &ctx)
 {
 	if (!ctx.sender) return;
 	std::string nick = extractNick(ctx.rawLine);
+	std::string oldPrefix = nick + "!" + (ctx.sender->getUsername().empty() ? "user" : ctx.sender->getUsername()) + "@" + ctx.services.getServerName();
+
+	if (ctx.sender->isAuthenticated() && !ctx.sender->getNickname().empty())
+		oldPrefix = ctx.services.getUserPrefix(ctx.sender);
 
 	if (nick.empty()) {
 		ctx.services.sendResponse(ctx, ERR_NONICKNAMEGIVEN(ctx.sender->getNickname()));
@@ -71,6 +75,8 @@ void CmdNick::execute(RequestContext &ctx)
 		return;
 	}
 
-	if (!nickAvailable(ctx, nick)) return;
-		ctx.sender->setNickname(nick);
+	if (!nickAvailable(ctx, nick))
+		return;
+	ctx.sender->setNickname(nick);
+	ctx.services.sendToUser(ctx.sender, ":" + oldPrefix + " " + RPL_NICK(nick));
 }
