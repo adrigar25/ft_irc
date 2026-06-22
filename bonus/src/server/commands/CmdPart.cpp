@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:02:43 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/18 02:02:05 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/21 20:54:35 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ static void partFromChannel(RequestContext &ctx, const std::string &channelName,
 	}
 
 	std::string uname = ctx.sender->getUsername().empty() ? "~" : ctx.sender->getUsername();
-	std::string out = ctx.services.getServerPrefix() + " PART " + channelName + " " + msg + "\r\n";
+	std::string out = ":" + ctx.services.getUserPrefix(ctx.sender) + " PART " + channelName + " " + msg + "\r\n";
 
 	ctx.services.sendToChannel(channel, out, NULL);
 	ctx.sender->leaveChannel(channel);
