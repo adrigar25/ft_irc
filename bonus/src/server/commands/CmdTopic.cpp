@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CmdTopic.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:20:49 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:20:50 by adriescr         ###   ########.fr       */
+/*   Updated: 2026/06/22 18:21:16 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,10 @@
 static void parseTopicParams(const std::string &params, std::string &outChannelName, std::string &outTopic)
 {
 	size_t sp = params.find(' ');
+
 	outChannelName = (sp == std::string::npos) ? params : params.substr(0, sp);
+	
 	outTopic = (sp == std::string::npos) ? "" : params.substr(sp + 1);
-	if (!outTopic.empty() && outTopic[0] == ':') outTopic.erase(0,1);
 }
 
 void CmdTopic::execute(RequestContext &ctx)
@@ -37,6 +38,7 @@ void CmdTopic::execute(RequestContext &ctx)
 	std::string channelName;
 	std::string topic;
 	std::string params;
+	std::string response;
 
 	if (!ctx.sender)
 			return;
@@ -61,6 +63,7 @@ void CmdTopic::execute(RequestContext &ctx)
 		ctx.services.sendResponse(ctx, ERR_NOSUCHCHANNEL(ctx.sender->getNickname(), channelName));
 		return;
 	}
+	
 	if(topic.empty()) {
 		if(targetChannel->getTopic().empty())
 			ctx.services.sendResponse(ctx, RPL_NOTOPIC(ctx.sender->getNickname(), channelName));
@@ -68,15 +71,18 @@ void CmdTopic::execute(RequestContext &ctx)
 			ctx.services.sendResponse(ctx, RPL_TOPIC(ctx.sender->getNickname(), channelName, targetChannel->getTopic()));
 		return;
 	}
-	if(!targetChannel->hasUser(ctx.sender)) {
-		ctx.services.sendResponse(ctx, ERR_NOTONCHANNEL(ctx.sender->getNickname(), channelName));
-		return;
-	}
+
+	if(topic.length() == 1 && topic[0] == ':')
+		topic = "";
+	else if(topic.length() > 1 && topic[0] == ':')
+		topic = topic.substr(1);
+	
+	
 	if(!targetChannel->isUserOperator(ctx.sender) && targetChannel->getTopicProtected()) {
 		ctx.services.sendResponse(ctx, ERR_CHANOPRIVSNEEDED(ctx.sender->getNickname(), channelName));
 		return;
 	}
 	targetChannel->setTopic(topic);
-	std::string response = ":" + ctx.sender->getNickname() + "!" + uname + "@" + serverName + " TOPIC " + channelName + " :" + topic;
+	response = ":" + ctx.sender->getNickname() + "!" + uname + "@" + serverName + " TOPIC " + channelName + " :" + topic;
 	ctx.services.sendToChannel(targetChannel, response);
 }
