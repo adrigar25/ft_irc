@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:11:18 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/19 12:04:58 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/22 18:30:10 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@
 #define RPL_NAMREPLY(client, symbol, channel, names) (std::string("353 ") + (client) + " " + (symbol) + " " + (channel) + " :" + (names) + IRC_CRLF)
 #define RPL_ENDOFNAMES(client, channel) (std::string("366 ") + (client) + " " + (channel) + " :End of /NAMES list" + IRC_CRLF)
 #define RPL_ENDOFLIST(client) (std::string("323 ") + (client) + " :End of /LIST" + IRC_CRLF)
+#define RPL_NICK(newNick) (std::string("NICK ") + (newNick) + IRC_CRLF)
 
 // Common action replies.
 #define RPL_JOIN(client, channel) (std::string(":") + (client) + " JOIN :" + (channel) + IRC_CRLF)
