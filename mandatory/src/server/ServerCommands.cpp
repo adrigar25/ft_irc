@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:21:47 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/19 12:05:24 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/22 18:31:15 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,9 +93,9 @@ void Server::handleClientCommand(User *user, const std::string &commandLine)
 		if (sp + 1 < commandLine.size())
 			args = commandLine.substr(sp + 1);
 	}
-	std::cout << "[" << cmd << "]";
+	std::cout << "[" << cmd << "] - fd: " << user->getSocket();
 	if (!args.empty())
-		std::cout << " " << args;
+		std::cout << " - args: " << args;
 	std::cout << std::endl;
 	executeCommand(user, cmd, args);
 }
