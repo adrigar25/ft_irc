@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:11:52 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/19 12:04:39 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/22 18:29:58 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,9 +79,9 @@ public:
 	unsigned int getPort() const;
 	const std::string &getPassword() const;
 	int getServerSocket() const;
+	Services &getServices();
 	bool validatePassword(const std::string &p) const { return this->password == p; }
 	const std::string &getHostname() const;
-	int startBot();
 	static Server *getInstance();
 };
 
