@@ -34,7 +34,7 @@ IRCConnection &IRCConnection::operator=(const IRCConnection &other)
 
 IRCConnection::~IRCConnection()
 {
-	if (this->sockfd >= 0
+	if (this->sockfd >= 0)
 		close(this->sockfd);
 }
 

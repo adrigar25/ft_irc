@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:00:22 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/24 18:58:34 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 19:41:35 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,9 +54,8 @@ Server::Server(unsigned int port, std::string password): serverSocket(-1), port(
  * @param other Servidor a copiar.
  * @return Copia del servidor `other`.
  */
-Server::Server(const Server &other) : port(other.port), password(other.password), services(this)
+Server::Server(const Server &other) : serverSocket(-1), port(other.port), password(other.password), services(this)
 {
-	this->serverSocket = -1;
 	char buf[256];
 	if (gethostname(buf, sizeof(buf)) != 0)
 		this->hostname = std::string("localhost");
