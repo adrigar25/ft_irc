@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:19:25 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/18 22:31:40 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/18 23:10:43 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ void Channel::addUser(User *user)
 	this->userCount++;
 }
 
-
 /**
  * @brief Elimina un usuario del canal y actualiza el contador.
  * @param user Puntero al `User` a eliminar.
@@ -50,14 +49,13 @@ void Channel::deleteUser(User *user)
 	this->userCount--;
 }
 
-
 /**
  * @brief Añade `user` al mapa `userMap` si no existe.
  */
-void Channel::addUserToMap(std::map<int, User*> &userMap, User *user)
+void Channel::addUserToMap(std::map<int, User *> &userMap, User *user)
 {
 	int fd = user->getSocket();
-	if(userMap.find(fd) != userMap.end())
+	if (userMap.find(fd) != userMap.end())
 		return;
 	userMap.insert(std::make_pair(fd, user));
 }
@@ -65,10 +63,10 @@ void Channel::addUserToMap(std::map<int, User*> &userMap, User *user)
 /**
  * @brief Elimina `user` del mapa `userMap` si existe.
  */
-void Channel::deleteUserFromMap(std::map<int, User*> &userMap, User *user)
+void Channel::deleteUserFromMap(std::map<int, User *> &userMap, User *user)
 {
 	int fd = user->getSocket();
-	if(userMap.find(fd) == userMap.end())
+	if (userMap.find(fd) == userMap.end())
 		return;
 	userMap.erase(fd);
 }
@@ -90,7 +88,6 @@ void Channel::banUser(User *user)
 {
 	addUserToMap(this->bannedUsers, user);
 }
-
 
 void Channel::unbanUser(User *user)
 {

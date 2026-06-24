@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:00:54 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/19 01:02:35 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/19 00:54:41 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,4 +28,3 @@ bool Server::handleClientError(int idx)
 
 	return false;
 }
-

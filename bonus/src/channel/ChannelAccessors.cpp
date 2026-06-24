@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ChannelAccessors.cpp                               :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/16 17:19:07 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:19:08 by adriescr         ###   ########.fr       */
-/*                                                                            */
+/*																			*/
+/*														:::	  ::::::::   */
+/*   ChannelAccessors.cpp							   :+:	  :+:	:+:   */
+/*													+:+ +:+		 +:+	 */
+/*   By: agarcia <agarcia@student.42.fr>			+#+  +:+	   +#+		*/
+/*												+#+#+#+#+#+   +#+		   */
+/*   Created: 2026/06/07 12:37:19 by agarcia		   #+#	#+#			 */
+/*   Updated: 2026/06/12 18:16:09 by agarcia		  ###   ########.fr	   */
+/*																			*/
 /* ************************************************************************** */
 
 #include "Channel.hpp"
@@ -94,7 +94,7 @@ std::string Channel::getName() const
 /**
  * @brief Devuelve el mapa de usuarios del canal.
  */
-const std::map<int, User*>& Channel::getUsers() const
+std::map<int, User*>& Channel::getUsers()
 {
 	return this->users;
 }
@@ -131,22 +131,22 @@ std::string Channel::getTopic() const
 	return this->topic;
 }
 
-const std::map<int, User*>& Channel::getOperators() const
+std::map<int, User*>& Channel::getOperators()
 {
 	return this->operators;
 }
 
-const std::map<int, User*>& Channel::getVoiceUsers() const
+std::map<int, User*>& Channel::getVoiceUsers()
 {
 	return this->voiceUsers;
 }
 
-const std::map<int, User*>& Channel::getInvitedUsers() const
+std::map<int, User*>& Channel::getInvitedUsers()
 {
 	return this->invitedUsers;
 }
 
-const std::map<int, User*>& Channel::getBannedUsers() const
+std::map<int, User*>& Channel::getBannedUsers()
 {
 	return this->bannedUsers;
 }

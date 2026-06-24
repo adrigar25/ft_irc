@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   LineUtils.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/16 17:21:19 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:21:19 by adriescr         ###   ########.fr       */
+/*   Created: 2026/06/16 17:01:18 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/16 17:01:21 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "LineUtils.hpp"
-
 #include <string>
 #include <vector>
 #include <sstream>
@@ -59,7 +58,7 @@ std::vector<std::string> split(const std::string &s, char delim)
 		else
 			token += s[i];
 	}
-
+	
 	if (!token.empty())
 		res.push_back(token);
 

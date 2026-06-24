@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CmdPing.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/16 17:10:24 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:15:57 by adriescr         ###   ########.fr       */
+/*   Created: 2026/06/16 17:05:43 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/16 17:05:44 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,10 @@
 #include <string>
 
 class CmdPing : public ICommand {
-	public:
-		CmdPing() {}
-		virtual ~CmdPing() {}
-		virtual void execute(RequestContext &ctx);
+public:
+	CmdPing() {}
+	virtual ~CmdPing() {}
+	virtual void execute(RequestContext &ctx);
 };
 
 #endif

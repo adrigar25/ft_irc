@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CmdNames.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/16 17:10:04 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:16:12 by adriescr         ###   ########.fr       */
+/*   Created: 2026/06/16 17:06:06 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/16 17:06:07 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,10 @@
 #include <string>
 
 class CmdNames : public ICommand {
-	public:
-		CmdNames() {}
-		virtual ~CmdNames() {}
-		virtual void execute(RequestContext &ctx);
+public:
+	CmdNames() {}
+	virtual ~CmdNames() {}
+	virtual void execute(RequestContext &ctx);
 };
 
 #endif

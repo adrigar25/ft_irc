@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CmdKick.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/16 17:09:51 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:16:22 by adriescr         ###   ########.fr       */
+/*   Created: 2026/06/16 17:06:53 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/16 17:06:56 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,10 @@
 #include <string>
 
 class CmdKick : public ICommand {
-	public:
-		CmdKick() {}
-		virtual ~CmdKick() {}
-		virtual void execute(RequestContext &ctx);
+public:
+	CmdKick() {}
+	virtual ~CmdKick() {}
+	virtual void execute(RequestContext &ctx);
 };
 
 #endif

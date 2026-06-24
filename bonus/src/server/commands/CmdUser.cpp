@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CmdUser.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/16 17:20:57 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:20:58 by adriescr         ###   ########.fr       */
+/*   Created: 2026/06/16 17:01:55 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/23 18:34:19 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,10 +49,6 @@ void CmdUser::execute(RequestContext &ctx)
 		return;
 	}
 
-	if (ctx.rawLine.empty()) {
-		ctx.services.sendResponse(ctx, ERR_NEEDMOREPARAMS(ctx.sender->getNickname(), "USER"));
-		return;
-	}
 	std::string username, real;
 	parseUserLine(ctx.rawLine, username, real);
 	if (username.empty() || real.empty()) {

@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:02:11 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/18 01:38:25 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 16:11:18 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,6 @@ void CmdQuit::execute(RequestContext &ctx)
 
 	ctx.services.channels().removeUserFromAllChannels(user);
 	ctx.services.users().remove(fd);
+	ctx.services.getServer()->handleDisconnectionByFd(fd);
 	close(fd);
 }
-

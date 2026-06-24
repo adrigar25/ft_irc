@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CmdPass.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/16 17:10:21 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:16:00 by adriescr         ###   ########.fr       */
+/*   Created: 2026/06/16 17:05:48 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/16 17:05:49 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,10 @@
 #include <string>
 
 class CmdPass : public ICommand {
-	public:
-		CmdPass() {}
-		virtual ~CmdPass() {}
-		virtual void execute(RequestContext &ctx);
+public:
+	CmdPass() {}
+	virtual ~CmdPass() {}
+	virtual void execute(RequestContext &ctx);
 };
 
 #endif

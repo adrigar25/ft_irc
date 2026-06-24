@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/16 17:21:24 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/19 01:02:16 by agarcia          ###   ########.fr       */
+/*   Created: 2026/06/16 17:01:09 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/19 00:45:41 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,7 @@ void Server::handleNewConnection()
 
 void Server::handleDisconnectionByIndex(int idx)
 {
-	if (idx <= 0 || idx >= (int)this->fds.size())
-	{
+	if (idx <= 0 || idx >= (int)this->fds.size()) {
 		std::cerr << "handleDisconnectionByIndex: invalid idx " << idx << std::endl;
 		return;
 	}

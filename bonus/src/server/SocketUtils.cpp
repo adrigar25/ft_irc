@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:59:46 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/19 01:04:34 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/19 01:04:44 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@
  *
  * @param fd Descriptor del socket a modificar.
  * @throws std::runtime_error Si `fcntl` falla al obtener o establecer las flags.
- */
+*/
 void setSocketNonBlocking(int fd)
 {
 	if (fcntl(fd, F_SETFL, O_NONBLOCK) == -1)
@@ -50,4 +50,3 @@ std::string formatMessage(const std::string &message)
 		msg += "\r\n";
 	return msg;
 }
-

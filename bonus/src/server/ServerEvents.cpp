@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerEvents.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/16 17:21:54 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:21:55 by adriescr         ###   ########.fr       */
+/*   Created: 2026/06/16 17:00:35 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/23 18:35:10 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,11 @@ void Server::handleClientEvents()
 {
 	for (int i = 1; i < (int)this->fds.size(); ++i)
 	{
-		if (handleClientWrite(i)) { i--; continue; }
-		if (handleClientRead(i)) { i--; continue; }
-		if (handleClientError(i)) { i--; continue; }
+		if (handleClientWrite(i) || handleClientRead(i) || handleClientError(i))
+		{
+			i--;
+			continue;
+		}
 	}
 }
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   UserManager.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/16 17:11:07 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:15:25 by adriescr         ###   ########.fr       */
+/*   Created: 2026/06/16 17:04:58 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/24 13:59:18 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,6 @@
 
 #include <string>
 #include <map>
-
-class User;
 
 class Server;
 class User;

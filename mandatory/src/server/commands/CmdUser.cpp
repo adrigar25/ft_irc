@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:01:55 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/16 17:01:56 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/23 18:34:19 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,11 +48,7 @@ void CmdUser::execute(RequestContext &ctx)
 		ctx.services.sendResponse(ctx, ERR_ALREADYREGISTERED(ctx.sender->getNickname()));
 		return;
 	}
-	
-	if (ctx.rawLine.empty()) {
-		ctx.services.sendResponse(ctx, ERR_NEEDMOREPARAMS(ctx.sender->getNickname(), "USER"));
-		return;
-	}
+
 	std::string username, real;
 	parseUserLine(ctx.rawLine, username, real);
 	if (username.empty() || real.empty()) {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CmdTopic.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/16 17:10:36 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:15:44 by adriescr         ###   ########.fr       */
+/*   Created: 2026/06/16 17:05:29 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/16 17:05:30 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,10 @@
 #include <string>
 
 class CmdTopic : public ICommand {
-	public:
-		CmdTopic() {}
-		virtual ~CmdTopic() {}
-		virtual void execute(RequestContext &ctx);
+public:
+	CmdTopic() {}
+	virtual ~CmdTopic() {}
+	virtual void execute(RequestContext &ctx);
 };
 
 #endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Services.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/16 17:12:01 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:18:42 by adriescr         ###   ########.fr       */
+/*   Created: 2026/06/16 17:04:19 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/24 13:58:06 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,16 +23,16 @@ class User;
 
 class Services {
 	private:
-		Server*			server;
-		UserManager		userManager;
-		ChannelManager	channelManager;
+		Server* server;
+		UserManager userManager;
+		ChannelManager channelManager;
 	public:
 		Services(Server* srv);
 		~Services();
 		Server* getServer() const;
 		UserManager& users();
 		ChannelManager& channels() ;
-		const UserManager& users() const;
+		const UserManager& Users();
 		const ChannelManager& channels() const;
 		std::string getServerName() const;
 		void sendToUser(User* user, const std::string &message);

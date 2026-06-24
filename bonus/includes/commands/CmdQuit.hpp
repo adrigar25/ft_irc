@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CmdQuit.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/16 17:10:32 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:15:50 by adriescr         ###   ########.fr       */
+/*   Created: 2026/06/16 17:05:33 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/16 17:05:34 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,10 @@
 #include <string>
 
 class CmdQuit : public ICommand {
-	public:
-		CmdQuit() {}
-		virtual ~CmdQuit() {}
-		virtual void execute(RequestContext &ctx);
+public:
+	CmdQuit() {}
+	virtual ~CmdQuit() {}
+	virtual void execute(RequestContext &ctx);
 };
 
 #endif

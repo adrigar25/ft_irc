@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:20:20 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/21 19:40:42 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/22 18:31:32 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,8 @@ static bool validateNickFormat(const std::string &nick)
 		return false;
 	if (std::isdigit((unsigned char)nick[0]))
 		return false;
-	for (size_t i = 0; i < nick.size(); ++i) {
+	for (size_t i = 0; i < nick.size(); ++i)
+	{
 		char c = nick[i];
 		if (!std::isalnum((unsigned char)c) && c != '-' && c != '_' && c != '[' && c != ']' && c != '\\' && c != '`' && c != '{' && c != '}')
 			return false;
@@ -47,30 +48,33 @@ static std::string extractNick(const std::string &raw)
 
 static bool nickAvailable(RequestContext &ctx, const std::string &nick)
 {
-	User* existing = ctx.services.users().findByNick(nick);
-	if (existing && existing != ctx.sender) {
+	User *existing = ctx.services.users().findByNick(nick);
+	if (existing && existing != ctx.sender)
+	{
 		ctx.services.sendResponse(ctx, ERR_NICKNAMEINUSE(ctx.sender->getNickname(), nick));
 		return false;
 	}
 	return true;
 }
 
-
 void CmdNick::execute(RequestContext &ctx)
 {
-	if (!ctx.sender) return;
+	if (!ctx.sender)
+		return;
 	std::string nick = extractNick(ctx.rawLine);
 	std::string oldPrefix = nick + "!" + (ctx.sender->getUsername().empty() ? "user" : ctx.sender->getUsername()) + "@" + ctx.services.getServerName();
 
 	if (ctx.sender->isAuthenticated() && !ctx.sender->getNickname().empty())
 		oldPrefix = ctx.services.getUserPrefix(ctx.sender);
 
-	if (nick.empty()) {
+	if (nick.empty())
+	{
 		ctx.services.sendResponse(ctx, ERR_NONICKNAMEGIVEN(ctx.sender->getNickname()));
 		return;
 	}
 
-	if (!validateNickFormat(nick)) {
+	if (!validateNickFormat(nick))
+	{
 		ctx.services.sendResponse(ctx, ERR_ERRONEUSNICKNAME(ctx.sender->getNickname(), nick));
 		return;
 	}

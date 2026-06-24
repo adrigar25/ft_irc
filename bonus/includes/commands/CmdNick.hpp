@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CmdNick.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/16 17:10:09 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:16:09 by adriescr         ###   ########.fr       */
+/*   Created: 2026/06/16 17:06:00 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/16 17:06:01 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,10 @@
 #include <string>
 
 class CmdNick : public ICommand {
-	public:
-		CmdNick() {}
-		virtual ~CmdNick() {}
-		virtual void execute(RequestContext &ctx);
+public:
+	CmdNick() {}
+	virtual ~CmdNick() {}
+	virtual void execute(RequestContext &ctx);
 };
 
 #endif

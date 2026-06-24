@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/16 17:22:17 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/18 02:04:35 by agarcia          ###   ########.fr       */
+/*   Created: 2026/06/16 17:00:10 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/18 01:55:11 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,13 @@ void Server::addUser(User* user)
 
 void Server::deleteUser(int fd)
 {
-	User* user = this->services.users().findByFd(fd);
-	if (!user) return;
-	
-	for(std::map<std::string, Channel*>::const_iterator it = user->getChannels().begin(); it != user->getChannels().end(); ++it)
+	User *user = this->services.users().findByFd(fd);
+	if (!user)
+		return;
+
+	for (std::map<std::string, Channel *>::const_iterator it = user->getChannels().begin(); it != user->getChannels().end(); ++it)
 	{
-		Channel* channel = it->second;
+		Channel *channel = it->second;
 		if (channel)
 			channel->deleteUser(user);
 		if (channel->isEmpty())

@@ -49,27 +49,34 @@ static void dispatchMsg(RequestContext &ctx, const std::string &target, const st
 {
 
 	std::string out = ":" + ctx.services.getUserPrefix(ctx.sender) + " " + (isNotice ? RPL_NOTICE(target, msg) : RPL_PRIVMSG(target, msg));
-	if(target[0] == '#') {
+	if (target[0] == '#')
+	{
 		Channel *channel = ctx.services.channels().getChannel(target);
-		if (!channel) {
-			if(!isNotice)
+		if (!channel)
+		{
+			if (!isNotice)
 				ctx.services.sendResponse(ctx, ERR_NOSUCHNICK(ctx.sender->getNickname(), target));
 			return;
 		}
-		if(!channel->hasUser(ctx.sender)) {
-			if(!isNotice)
+		if (!channel->hasUser(ctx.sender))
+		{
+			if (!isNotice)
 				ctx.services.sendResponse(ctx, ERR_CANNOTSENDTOCHAN(ctx.sender->getNickname(), target));
 			return;
 		}
-		if(channel->getIsModerated() && !channel->isUserVoice(ctx.sender) && !channel->isUserOperator(ctx.sender)) {
+		if (channel->getIsModerated() && !channel->isUserVoice(ctx.sender) && !channel->isUserOperator(ctx.sender))
+		{
 			if (!isNotice)
 				ctx.services.sendResponse(ctx, ERR_CANNOTSENDTOCHAN(ctx.sender->getNickname(), target));
 			return;
 		}
 		ctx.services.sendToChannel(channel, out, ctx.sender);
-	} else {
+	}
+	else
+	{
 		User *dest = ctx.services.users().findByNick(target);
-		if (!dest) {
+		if (!dest)
+		{
 			if (!isNotice)
 				ctx.services.sendResponse(ctx, ERR_NOSUCHNICK(ctx.sender->getNickname(), target));
 			return;
@@ -80,25 +87,29 @@ static void dispatchMsg(RequestContext &ctx, const std::string &target, const st
 
 void CmdMsg::execute(RequestContext &ctx)
 {
-	if (!ctx.sender) return;
+	if (!ctx.sender)
+		return;
 	const std::vector<std::string> parts = split(ctx.rawLine, ' ');
 	std::vector<std::string> targets;
 	std::string msg = "";
 
 	parseMsgParams(parts, targets, msg);
 
-	
-	if(targets.empty()) {
-		if(!_isNotice)
+	if (targets.empty())
+	{
+		if (!_isNotice)
 			ctx.services.sendResponse(ctx, ERR_NORECIPIENT(ctx.sender->getNickname(), "PRIVMSG"));
 		return;
-	}else if(msg.empty()) {
-		if(!_isNotice)
+	}
+	else if (msg.empty())
+	{
+		if (!_isNotice)
 			ctx.services.sendResponse(ctx, ERR_NOTEXTTOSEND(ctx.sender->getNickname(), "PRIVMSG"));
 		return;
 	}
 
-	for (size_t i = 0; i < targets.size(); ++i) {
+	for (size_t i = 0; i < targets.size(); ++i)
+	{
 		const std::string &target = targets[i];
 		dispatchMsg(ctx, target, msg, _isNotice);
 	}

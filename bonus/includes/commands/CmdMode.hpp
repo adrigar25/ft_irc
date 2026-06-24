@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CmdMode.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/16 17:10:00 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:16:17 by adriescr         ###   ########.fr       */
+/*   Created: 2026/06/16 17:06:09 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/16 17:06:11 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,10 @@
 #include <string>
 
 class CmdMode : public ICommand {
-	public:
-		CmdMode() {}
-		virtual ~CmdMode() {}
-		virtual void execute(RequestContext &ctx);
+public:
+	CmdMode() {}
+	virtual ~CmdMode() {}
+	virtual void execute(RequestContext &ctx);
 };
 
 #endif

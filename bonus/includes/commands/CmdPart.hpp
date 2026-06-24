@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CmdPart.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/16 17:10:14 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:16:05 by adriescr         ###   ########.fr       */
+/*   Created: 2026/06/16 17:05:55 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/16 17:05:56 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,10 @@
 #include <string>
 
 class CmdPart : public ICommand {
-	public:
-		CmdPart() {}
-		virtual ~CmdPart() {}
-		virtual void execute(RequestContext &ctx);
+public:
+	CmdPart() {}
+	virtual ~CmdPart() {}
+	virtual void execute(RequestContext &ctx);
 };
 
 #endif

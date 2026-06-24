@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CmdUser.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/16 17:10:45 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:15:37 by adriescr         ###   ########.fr       */
+/*   Created: 2026/06/16 17:05:21 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/16 17:05:22 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,10 @@
 #include <string>
 
 class CmdUser : public ICommand {
-	public:
-		CmdUser() {}
-		virtual ~CmdUser() {}
-		virtual void execute(RequestContext &ctx);
+public:
+	CmdUser() {}
+	virtual ~CmdUser() {}
+	virtual void execute(RequestContext &ctx);
 };
 
 #endif

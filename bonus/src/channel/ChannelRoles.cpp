@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ChannelRoles.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/16 17:19:22 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:19:22 by adriescr         ###   ########.fr       */
+/*   Created: 2026/06/16 17:03:38 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/23 17:26:46 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,20 @@
 #include <iostream>
 #include <string>
 
+static std::map<int, User*> *getRoleMap(Channel *channel, const std::string &role)
+{
+	if (role == "operator")
+		return &channel->getOperators();
+	else if (role == "voice")
+		return &channel->getVoiceUsers();
+	else if (role == "invited")
+		return &channel->getInvitedUsers();
+	else if (role == "banned")
+		return &channel->getBannedUsers();
+	else
+		return NULL;
+}
+
 /**
  * @brief Cambia el rol de un `user` añadiéndolo al conjunto correspondiente.
  *
@@ -26,16 +40,14 @@
 void Channel::changeRole(User *user, std::string role)
 {
 	int fd = user->getSocket();
-	if(this->users.find(fd) == this->users.end())
+	if (this->users.find(fd) == this->users.end())
 		throw IrcException(IRC_ERR_USER_NOT_FOUND, "User not found in channel");
-	std::map<std::string, std::map<int, User*>*> roles;
-	roles.insert(std::make_pair(std::string("operator"), &this->operators));
-	roles.insert(std::make_pair(std::string("voice"), &this->voiceUsers));
-	roles.insert(std::make_pair(std::string("invited"), &this->invitedUsers));
-	roles.insert(std::make_pair(std::string("banned"), &this->bannedUsers));
-	if(roles.find(role) == roles.end())
+	std::map<int, User*> *roleMap = getRoleMap(this, role);
+
+	if (!roleMap)
 		throw IrcException(IRC_ERR_ROLE_NOT_FOUND, "Role not found");
-	roles[role]->insert(std::make_pair(fd, user));
+
+	roleMap->insert(std::make_pair(fd, user));
 }
 
 /**
@@ -47,16 +59,10 @@ void Channel::changeRole(User *user, std::string role)
 void Channel::removeRole(User *user, std::string role)
 {
 	int fd = user->getSocket();
-	if(this->users.find(fd) == this->users.end())
+	if (this->users.find(fd) == this->users.end())
 		throw IrcException(IRC_ERR_USER_NOT_FOUND, "User not found in channel");
-
-	std::map<std::string, std::map<int, User*>*> roles;
-	roles.insert(std::make_pair(std::string("operator"), &this->operators));
-	roles.insert(std::make_pair(std::string("voice"), &this->voiceUsers));
-	roles.insert(std::make_pair(std::string("invited"), &this->invitedUsers));
-	roles.insert(std::make_pair(std::string("banned"), &this->bannedUsers));
-	if(roles.find(role) == roles.end())
+	std::map<int, User*> *roleMap = getRoleMap(this, role);
+	if (!roleMap)
 		throw IrcException(IRC_ERR_ROLE_NOT_FOUND, "Role not found");
-
-	roles[role]->erase(fd);
+	roleMap->erase(fd);
 }

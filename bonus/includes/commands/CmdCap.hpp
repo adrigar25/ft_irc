@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CmdCap.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/16 17:09:02 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:16:35 by adriescr         ###   ########.fr       */
+/*   Created: 2026/06/16 17:07:10 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/16 17:07:13 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,10 @@
 #include <string>
 
 class CmdCap : public ICommand {
-	public:
-		CmdCap() {}
-		virtual ~CmdCap() {}
-		virtual void execute(RequestContext &ctx);
+public:
+	CmdCap() {}
+	virtual ~CmdCap() {}
+	virtual void execute(RequestContext &ctx);
 };
 
 #endif

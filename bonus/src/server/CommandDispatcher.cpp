@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CommandDispatcher.cpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/16 17:21:15 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:21:15 by adriescr         ###   ########.fr       */
+/*   Created: 2026/06/16 17:01:36 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/16 17:01:37 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

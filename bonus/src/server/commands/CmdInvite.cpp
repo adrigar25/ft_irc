@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CmdInvite.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/16 17:19:42 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:19:43 by adriescr         ###   ########.fr       */
+/*   Created: 2026/06/16 17:03:21 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/16 17:03:22 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ static void parseInviteParams(const std::string &params, std::string &outTargetN
 
 static bool canInvite(RequestContext &ctx, User* targetUser, Channel* channel)
 {
-
+	
 	if (!channel) {
 		ctx.services.sendResponse(ctx, ERR_NOSUCHCHANNEL(ctx.sender->getNickname(), "channel"));
 		return false;
@@ -41,17 +41,17 @@ static bool canInvite(RequestContext &ctx, User* targetUser, Channel* channel)
 		ctx.services.sendResponse(ctx, ERR_NOSUCHNICK(ctx.sender->getNickname(), "target"));
 		return false;
 	}
-
+	
 	if(!channel->hasUser(ctx.sender)) {
 		ctx.services.sendResponse(ctx, ERR_NOTONCHANNEL(ctx.sender->getNickname(), channel->getName()));
 		return false;
 	}
-
+	
 	if (!channel->isUserOperator(ctx.sender)) {
 		ctx.services.sendResponse(ctx, ERR_CHANOPRIVSNEEDED(ctx.sender->getNickname(), channel->getName()));
 		return false;
 	}
-
+	
 	if (channel->hasUser(targetUser)) {
 		ctx.services.sendResponse(ctx, ERR_USERONCHANNEL(ctx.sender->getNickname(), targetUser->getNickname(), channel->getName()));
 		return false;
@@ -67,7 +67,7 @@ void CmdInvite::execute(RequestContext &ctx)
 	std::string targetNick;
 	std::string channelName;
 	parseInviteParams(ctx.rawLine, targetNick, channelName);
-	if (targetNick.empty() || channelName.empty())
+	if (targetNick.empty() || channelName.empty()) 
 	{
 		ctx.services.sendResponse(ctx, ERR_NEEDMOREPARAMS(ctx.sender->getNickname(), "INVITE"));
 		return;
@@ -78,7 +78,7 @@ void CmdInvite::execute(RequestContext &ctx)
 
 	if (!canInvite(ctx, targetUser, channel))
 		return;
-
+		
 	channel->inviteUser(targetUser);
 	ctx.services.sendToUser(targetUser, std::string(":") + ctx.services.getUserPrefix(ctx.sender) + " INVITE " + targetUser->getNickname() + " :" + channel->getName() + "\r\n");
 	ctx.services.sendResponse(ctx, RPL_INVITING(ctx.sender->getNickname(), targetUser->getNickname(), channel->getName()));

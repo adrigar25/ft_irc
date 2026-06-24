@@ -3,13 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   RequestContext.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/16 17:22:43 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:22:46 by adriescr         ###   ########.fr       */
+/*   Created: 2026/06/16 16:58:18 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/16 16:58:21 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "RequestContext.hpp"
+
 
 RequestContext::RequestContext(Services &svc, User *s, const std::string &line): services(svc), sender(s), rawLine(line) {};

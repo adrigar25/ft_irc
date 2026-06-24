@@ -14,6 +14,7 @@
 #define BOT_OPTIONS_HPP
 
 #include <string>
+#include <vector>
 
 
 struct BotCmd {
@@ -24,7 +25,7 @@ struct BotCmd {
 };
 
 // Lista de comandos: añade nuevas entradas aquí. La lista termina con {NULL, NULL}.
-static const BotCmd BOT_COMMANDS[] = {
+static const std::vector<BotCmd> BOT_COMMANDS = {
 	{ "unknown", "PRIVMSG", "Comando desconocido. Escribe !help para ver los comandos disponibles.", false },
 	{ "hola", "PRIVMSG", "¡Hola! Soy un bot de IRC.", false },
 	{ "tonteria", "PRIVMSG", "¡Perro Sanchez es el mejor!", false },

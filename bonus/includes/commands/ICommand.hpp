@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ICommand.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/16 17:10:49 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:15:32 by adriescr         ###   ########.fr       */
+/*   Created: 2026/06/16 17:05:12 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/16 17:05:13 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,9 @@
 #include "../RequestContext.hpp"
 
 class ICommand {
-	public:
-		virtual ~ICommand() {}
-		virtual void execute(RequestContext &ctx) = 0;
+public:
+	virtual ~ICommand() {}
+	virtual void execute(RequestContext &ctx) = 0;
 };
 
 #endif

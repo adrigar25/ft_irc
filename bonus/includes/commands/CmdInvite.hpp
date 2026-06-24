@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CmdInvite.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/16 17:09:11 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:16:31 by adriescr         ###   ########.fr       */
+/*   Created: 2026/06/16 17:07:06 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/16 17:07:07 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,10 @@
 #include <string>
 
 class CmdInvite : public ICommand {
-	public:
-		CmdInvite() {}
-		virtual ~CmdInvite() {}
-		virtual void execute(RequestContext &ctx);
+public:
+	CmdInvite() {}
+	virtual ~CmdInvite() {}
+	virtual void execute(RequestContext &ctx);
 };
 
 #endif

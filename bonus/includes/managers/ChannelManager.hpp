@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ChannelManager.hpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/16 17:11:02 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:15:20 by adriescr         ###   ########.fr       */
+/*   Created: 2026/06/16 17:05:03 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/24 13:56:24 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

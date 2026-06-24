@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CmdJoin.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/16 17:19:47 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:19:48 by adriescr         ###   ########.fr       */
+/*   Created: 2026/06/16 17:03:17 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/23 17:15:35 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,38 +41,31 @@ static void handleJoinError(RequestContext &ctx, const std::string &channelName,
 		ctx.services.sendResponse(ctx, ERR_INVITEONLYCHAN(ctx.sender->getNickname(), channelName));
 }
 
-
 static bool joinSingleChannel(RequestContext &ctx, const std::string &channelName, const std::string &key)
 {
-	if (!ctx.sender) return false;
+	if (!ctx.sender)
+		return false;
 
 	Channel *channel = ctx.services.channels().getChannel(channelName);
 
-	if (!channel) {
-		try {
+	try
+	{
+		if (!channel)
 			ctx.services.channels().createChannel(channelName, ctx.sender);
-			return true;
-		} catch (const IrcException &ie) {
-			handleJoinError(ctx, channelName, ie.getCode());
-			return false;
-		} catch (const std::exception &e) {
-			ctx.services.sendResponse(ctx, ERR_BADCHANNELKEY(ctx.sender->getNickname(), channelName));
-			return false;
-		}
-	}
-	else {
-		try {
+		else
 			ctx.sender->joinChannel(channel, key);
-			return true;
-		} catch (const IrcException &ie) {
-			handleJoinError(ctx, channelName, ie.getCode());
-			return false;
-		} catch (const std::exception &e) {
-			ctx.services.sendResponse(ctx, ERR_BADCHANNELKEY(ctx.sender->getNickname(), channelName));
-			return false;
-		}
 	}
-	return false;
+	catch (const IrcException &ie)
+	{
+		handleJoinError(ctx, channelName, ie.getCode());
+		return false;
+	}
+	catch (const std::exception &e)
+	{
+		ctx.services.sendResponse(ctx, ERR_BADCHANNELKEY(ctx.sender->getNickname(), channelName));
+		return false;
+	}
+	return true;
 }
 
 static void sendJoinMessage(RequestContext &ctx, Channel *channel)

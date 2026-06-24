@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:10:28 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/19 11:06:53 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/19 12:08:10 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,12 @@
 
 class CmdMsg : public ICommand
 {
-	private:
-		bool _isNotice;
-	public:
-		CmdMsg(bool isNotice);
-		void execute(RequestContext &ctx);
+private:
+	bool _isNotice;
+
+public:
+	CmdMsg(bool isNotice);
+	void execute(RequestContext &ctx);
 };
 
 #endif

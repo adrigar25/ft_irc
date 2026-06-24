@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/16 17:03:10 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/18 01:17:44 by agarcia          ###   ########.fr       */
+/*   Created: 2026/06/16 17:19:52 by adriescr          #+#    #+#             */
+/*   Updated: 2026/06/23 18:40:16 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,53 +55,50 @@ static bool validateKick(
 	return true;
 }
 
-static void doKick(RequestContext &ctx, Channel *channel, User *target, const std::string &reason)
+static void kickSingle(
+	RequestContext &ctx,
+	const std::string &channelName,
+	const std::string &nick,
+	const std::string &reason)
 {
-	std::string serverName = ctx.services.getServerName();
-	std::string uname = ctx.sender->getUsername();
-	if (uname.empty())
-		uname = "~";
+	Channel *channel = NULL;
+	User *target = NULL;
+
+	if (!validateKick(ctx, channelName, nick, channel, target))
+		return;
 
 	std::string msg = RPL_KICK(ctx.services.getUserPrefix(ctx.sender), channel->getName(), target->getNickname(), reason.empty() ? "No reason" : reason);
 	ctx.services.sendToChannel(channel, msg, NULL);
 	ctx.services.channels().removeUserFromChannel(channel->getName(), target);
 }
 
-static void handleKick1N(RequestContext &ctx, const std::string &channelName, const std::vector<std::string> &users, const std::string &reason)
+static void handleKick1N(
+	RequestContext &ctx,
+	const std::string &channelName,
+	const std::vector<std::string> &users,
+	const std::string &reason)
 {
-	for(size_t i = 0; i < users.size(); ++i)
+	for (size_t i = 0; i < users.size(); ++i)
 	{
 		std::string nick = trim(users[i], " \r");
 
-		if (nick.empty())
-			continue;
-
-		Channel *channel = NULL;
-		User *target = NULL;
-
-		if (!validateKick(ctx, channelName, nick, channel, target))
-			continue;
-
-		doKick(ctx, channel, target, reason);
+		if (!nick.empty())
+			kickSingle(ctx, channelName, nick, reason);
 	}
 }
 
-static void handleKickN1(RequestContext &ctx, const std::vector<std::string> &channels, const std::string &nick, const std::string &reason)
+static void handleKickN1(
+	RequestContext &ctx,
+	const std::vector<std::string> &channels,
+	const std::string &nick,
+	const std::string &reason)
 {
-	for(size_t i = 0; i < channels.size(); ++i)
+	for (size_t i = 0; i < channels.size(); ++i)
 	{
-		std::string chName = trim(channels[i], " \r");
+		std::string channel = trim(channels[i], " \r");
 
-		if (chName.empty())
-			continue;
-
-		Channel *channel = NULL;
-		User *target = NULL;
-
-		if (!validateKick(ctx, chName, nick, channel, target))
-			continue;
-
-		doKick(ctx, channel, target, reason);
+		if (!channel.empty())
+			kickSingle(ctx, channel, nick, reason);
 	}
 }
 
@@ -131,11 +128,10 @@ void CmdKick::execute(RequestContext &ctx)
 		return;
 	}
 
-	if(channels.size() == 1)
+	if (channels.size() == 1)
 		handleKick1N(ctx, channels[0], users, reason);
-	else if(users.size() == 1)
+	else if (users.size() == 1)
 		handleKickN1(ctx, channels, users[0], reason);
 	else
 		ctx.services.sendResponse(ctx, ERR_NEEDMOREPARAMS(ctx.sender->getNickname(), "KICK"));
-
 }

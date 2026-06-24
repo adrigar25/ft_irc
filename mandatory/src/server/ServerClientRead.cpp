@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:00:48 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/22 18:30:53 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/23 17:46:00 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,15 @@ static void sendQuitMessageToChannels(Server *server, User *user)
 			server->getServices().channels().deleteChannel(channel->getName());
 	}
 }
+static bool disconnectClient(Server *server, User *user)
+{
+	if (!server || !user)
+		return false;
+
+	sendQuitMessageToChannels(server, user);
+	server->handleDisconnectionByFd(user->getSocket());
+	return true;
+}
 
 bool Server::handleClientRead(int idx)
 {
@@ -51,8 +60,7 @@ bool Server::handleClientRead(int idx)
 	// 💥 PRIORIDAD: errores de socket
 	if (pfd.revents & (POLLHUP | POLLERR | POLLNVAL))
 	{
-		sendQuitMessageToChannels(this, getUserByFd(pfd.fd));
-		handleDisconnectionByIndex(idx);
+		disconnectClient(this, getUserByFd(pfd.fd));
 		return true;
 	}
 
@@ -66,8 +74,7 @@ bool Server::handleClientRead(int idx)
 	if (!client)
 	{
 		std::cout << "[QUIT] - fd: " << fd << "  : Disconnected" << std::endl;
-		sendQuitMessageToChannels(this, getUserByFd(fd));
-		handleDisconnectionByIndex(idx);
+		disconnectClient(this, getUserByFd(pfd.fd));
 		return true;
 	}
 
@@ -77,8 +84,7 @@ bool Server::handleClientRead(int idx)
 
 	if (n <= 0)
 	{
-		sendQuitMessageToChannels(this, getUserByFd(fd));
-		handleDisconnectionByIndex(idx);
+		disconnectClient(this, getUserByFd(pfd.fd));
 		return true;
 	}
 
@@ -109,7 +115,7 @@ void Server::processClientBuffer(User *user)
 		catch (const std::exception &e)
 		{
 			std::cerr << "Client error fd " << user->getSocket() << ": " << e.what() << std::endl;
-			this->handleDisconnectionByFd(user->getSocket());
+			disconnectClient(this, user);
 			break;
 		}
 	}

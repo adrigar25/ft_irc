@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ChannelChecks.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adriescr <adriescr@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/16 17:19:12 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/16 17:19:13 by adriescr         ###   ########.fr       */
+/*   Created: 2026/06/16 17:03:43 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/16 17:03:53 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
