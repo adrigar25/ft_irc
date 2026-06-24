@@ -22,9 +22,19 @@
 
 IRCConnection::IRCConnection(): sockfd(-1) {}
 
+IRCConnection::IRCConnection(const IRCConnection &other): sockfd(other.sockfd) {}
+
+IRCConnection &IRCConnection::operator=(const IRCConnection &other)
+{
+	if (this != &other) {
+		this->sockfd = other.sockfd;
+	}
+	return *this;
+}
+
 IRCConnection::~IRCConnection()
 {
-	if (this->sockfd >= 0) 
+	if (this->sockfd >= 0
 		close(this->sockfd);
 }
 
@@ -32,7 +42,6 @@ int IRCConnection::connectTo(const std::string &host, int port)
 {
 	struct addrinfo hints;
 	struct addrinfo *res = NULL;
-	struct addrinfo *p = NULL;
 	
 	memset(&hints, 0, sizeof(hints));
 
@@ -47,7 +56,7 @@ int IRCConnection::connectTo(const std::string &host, int port)
 	
 	int sock = -1;
 	
-	for (p = res; p != NULL; p = p->ai_next) {
+	for (struct addrinfo *p = res; p != NULL; p = p->ai_next) {
 		sock = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
 		if (sock < 0)
 			continue;

@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:03:17 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/23 17:15:35 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 17:28:31 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,11 +58,6 @@ static bool joinSingleChannel(RequestContext &ctx, const std::string &channelNam
 	catch (const IrcException &ie)
 	{
 		handleJoinError(ctx, channelName, ie.getCode());
-		return false;
-	}
-	catch (const std::exception &e)
-	{
-		ctx.services.sendResponse(ctx, ERR_BADCHANNELKEY(ctx.sender->getNickname(), channelName));
 		return false;
 	}
 	return true;

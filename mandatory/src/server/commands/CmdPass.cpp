@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:02:39 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/16 17:02:40 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 18:07:57 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ static bool applyPassword(RequestContext &ctx, const std::string &pass)
 		ctx.services.sendResponse(ctx, ERR_ALREADYREGISTERED(ctx.sender->getNickname()));
 		return false;
 	}
-	Server* srv = ctx.services.getServer();
+	const Server* srv = ctx.services.getServer();
 	if (srv && srv->validatePassword(pass)) {
 		ctx.sender->setPass(true);
 		return true;

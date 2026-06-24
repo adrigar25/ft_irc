@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:01:55 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/23 18:34:19 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 18:14:00 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,10 @@
 static void parseUserLine(const std::string &raw, std::string &outUsername, std::string &outReal)
 {
 	std::istringstream iss(raw);
-	std::string username, mode, unused, real;
+	std::string username;
+	std::string mode;
+	std::string unused;
+	std::string real;
 	iss >> username >> mode >> unused;
 	std::getline(iss, real);
 	if (!real.empty() && real[0] == ' ') real.erase(0,1);
@@ -49,7 +52,8 @@ void CmdUser::execute(RequestContext &ctx)
 		return;
 	}
 
-	std::string username, real;
+	std::string username;
+	std::string real;
 	parseUserLine(ctx.rawLine, username, real);
 	if (username.empty() || real.empty()) {
 		ctx.services.sendResponse(ctx, ERR_NEEDMOREPARAMS(ctx.sender->getNickname(), "USER"));

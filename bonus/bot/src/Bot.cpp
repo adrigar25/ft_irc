@@ -17,6 +17,39 @@ Bot::Bot(const std::string &host, const int port, const std::string &password, c
 	std::cout << "Bot initialized with nick: " << this->nick << ", host: " << this->host << ", port: " << this->port << "\n";
 }
 
+Bot::Bot(const Bot &other)
+	: host(other.host), port(other.port), password(other.password), nick(other.nick), irc(NULL), cm(NULL), rh(NULL)
+{
+	if (other.irc)
+		this->irc = new IRCConnection(*other.irc);
+	if (other.cm)
+		this->cm = new ChannelManager(*other.cm);
+	if (other.rh)
+		this->rh = new RequestHandler(*other.rh);
+}
+
+Bot &Bot::operator=(const Bot &other)
+{
+	if (this != &other) {
+		this->host = other.host;
+		this->port = other.port;
+		this->password = other.password;
+		this->nick = other.nick;
+
+		if (this->irc)
+			delete this->irc;
+		if (this->cm)
+			delete this->cm;
+		if (this->rh)
+			delete this->rh;
+
+		this->irc = other.irc ? new IRCConnection(*other.irc) : NULL;
+		this->cm = other.cm ? new ChannelManager(*other.cm) : NULL;
+		this->rh = other.rh ? new RequestHandler(*other.rh) : NULL;
+	}
+	return *this;
+}
+
 Bot::~Bot()
 {
 	if (this->rh)

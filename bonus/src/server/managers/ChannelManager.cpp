@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:01:49 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/18 01:15:13 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 17:45:38 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,8 @@
 #include "Exceptions.hpp"
 #include <iostream>
 
-ChannelManager::ChannelManager():
-	channels()
-{
-}
+ChannelManager::ChannelManager() {}
+
 ChannelManager::~ChannelManager() {}
 
 void ChannelManager::createChannel(const std::string &name, User* creator)
@@ -29,13 +27,13 @@ void ChannelManager::createChannel(const std::string &name, User* creator)
 
 	if(name.empty() || name[0] != '#' || name.find(' ') != std::string::npos)
 		throw IrcException(IRC_ERR_BAD_CHANNEL_NAME, std::string("Invalid channel name: ") + name);
-	Channel *ch = new Channel(name, creator);
+	Channel *ch = new Channel(name);
 	channels.insert(std::make_pair(name, ch));
 	if (creator) {
 		try {
 			creator->joinChannel(ch, "");
 			ch->changeRole(creator, "operator");
-		} catch (const std::exception &e) {
+		} catch (...) {
 			channels.erase(name);
 			delete ch;
 			throw;

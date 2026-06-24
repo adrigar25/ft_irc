@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:10:28 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/19 12:08:10 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 17:12:13 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ private:
 
 public:
 	CmdMsg(bool isNotice);
-	void execute(RequestContext &ctx);
+	virtual void execute(RequestContext &ctx);
 };
 
 #endif

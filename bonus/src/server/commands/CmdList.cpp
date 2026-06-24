@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:03:02 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/19 16:40:36 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 18:07:21 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ static void sendChannelsList(RequestContext &ctx)
 	std::string serverName = ctx.services.getServerName();
 	ctx.services.sendResponse(ctx, RPL_LISTSTART(ctx.sender->getNickname()));
 	for (std::map<std::string, Channel*>::const_iterator it = channels.begin(); it != channels.end(); ++it) {
-		Channel *channel = it->second;
+		const Channel *channel = it->second;
 		if(channel->getIsInviteOnly() || channel->getIsSecret())
 			continue;
 		std::ostringstream oss;

@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:00:48 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/23 17:46:00 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 18:15:10 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ bool Server::handleClientRead(int idx)
 	if (idx < 0 || idx >= (int)this->fds.size())
 		return false;
 
-	struct pollfd &pfd = this->fds[idx];
+	const struct pollfd &pfd = this->fds[idx];
 
 	// 💥 PRIORIDAD: errores de socket
 	if (pfd.revents & (POLLHUP | POLLERR | POLLNVAL))

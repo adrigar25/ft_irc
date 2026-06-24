@@ -18,6 +18,8 @@
 class IRCConnection {
 	public:
 		IRCConnection();
+		IRCConnection(const IRCConnection &other);
+		IRCConnection &operator=(const IRCConnection &other);
 		~IRCConnection();
 
 		int			connectTo(const std::string &host, int port);

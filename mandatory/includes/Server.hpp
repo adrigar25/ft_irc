@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:11:52 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/24 13:45:27 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 18:02:29 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ class Server
 		Server(unsigned int port, std::string password);
 		~Server();
 		void sendToUser(User *user, const std::string &message);
-		void sendToChannel(Channel *channel, const std::string &message, User *exclude);
+		void sendToChannel(Channel *channel, const std::string &message, const User *exclude);
 		void startServer();
 		void stopServer();
 		unsigned int getPort() const;

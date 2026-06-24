@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:03:38 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/23 17:26:46 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 17:53:07 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void Channel::changeRole(User *user, std::string role)
  * Soporta roles: "operator", "voice", "invited", "banned", "excepted".
  * Lanza `roleNotFoundException` si el rol es inválido.
  */
-void Channel::removeRole(User *user, std::string role)
+void Channel::removeRole(const User *user, std::string role)
 {
 	int fd = user->getSocket();
 	if (this->users.find(fd) == this->users.end())

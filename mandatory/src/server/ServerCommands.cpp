@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:21:47 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/22 18:31:15 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 18:00:29 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@
 #include "RequestContext.hpp"
 #include "replies/Replies.hpp"
 
-static CommandDispatcher &getDispatcher()
+static const CommandDispatcher &getDispatcher()
 {
 	static CommandDispatcher dispatcher;
 	static bool inited = false;
@@ -103,7 +103,7 @@ void Server::handleClientCommand(User *user, const std::string &commandLine)
 void Server::executeCommand(User *user, const std::string &command, const std::string &args)
 {
 
-	CommandDispatcher &dispatcher = getDispatcher();
+	const CommandDispatcher &dispatcher = getDispatcher();
 
 	if (!user)
 		return;

@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:04:46 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/24 15:07:54 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 17:59:01 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,14 +37,14 @@ class Channel
 		bool isModerated;
 		int userLimit;
 	public:
-		Channel(std::string name, User *creator);
+		Channel(std::string name);
 		~Channel();
 
 		/* Gestión de usuarios */
 		void addUser(User *user);
-		void deleteUser(User *user);
+		void deleteUser(const User *user);
 		void addUserToMap(std::map<int, User*> &userMap, User *user);
-		void deleteUserFromMap(std::map<int, User*> &userMap, User *user);
+		void deleteUserFromMap(std::map<int, User *> &userMap, const User *user);
 		void inviteUser(User *user);
 		void removeInvitedUser(User *user);
 		void banUser(User *user);
@@ -52,7 +52,7 @@ class Channel
 
 		/* Roles */
 		void changeRole(User *user, std::string role);
-		void removeRole(User *user, std::string role);
+		void removeRole(const User *user, std::string role);
 
 		/* Setters */
 		void setIsInviteOnly(bool val);
@@ -66,12 +66,11 @@ class Channel
 
 		/* Consultas */
 		void canUserJoin(User *user, const std::string &key) const;
-		bool hasUser(User *user) const;
+		bool hasUser(const User *user) const;
 		bool isUserOperator(User *user) const;
-		bool isUserVoice(User *user) const;
-		bool isUserInvited(User *user) const;
-		bool isUserBanned(User *user) const;
-		bool isUserExcepted(User *user) const;
+		bool isUserVoice(const User *user) const;
+		bool isUserInvited(const User *user) const;
+		bool isUserBanned(const User *user) const;
 		bool isEmpty() const;
 
 		/* Getters */

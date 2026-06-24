@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:00:28 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/19 01:11:19 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 18:01:53 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,32 +20,29 @@
 #include <cstring>
 #include <cstdio>
 
-static std::string prepareOutMessage(User *user, const std::string &message)
+static std::string prepareOutMessage(const User *user, const std::string &message)
 {
-	std::string msg = message;
 
-	bool needsWrap = true;
-	if (!msg.empty()) {
-		if (msg[0] == ':')
-			needsWrap = false;
-		else if (msg.size() >= 3 && std::isdigit((unsigned char)msg[0]) && std::isdigit((unsigned char)msg[1]) && std::isdigit((unsigned char)msg[2]) && (msg.size() == 3 || msg[3] == ' '))
-			needsWrap = false;
-		else {
-			const char *cmds[] = {"PRIVMSG","NOTICE","JOIN","PART","MODE","KICK","INVITE","QUIT","NICK","USER","PASS","PING","PONG","ERROR","CAP"};
-			for (size_t i = 0; i < sizeof(cmds)/sizeof(cmds[0]); ++i) {
-				size_t len = std::strlen(cmds[i]);
-				if (msg.size() >= len && msg.compare(0, len, cmds[i]) == 0 && (msg.size() == len || msg[len] == ' ')) {
-					needsWrap = false;
-					break;
-				}
-			}
+	if (!message.empty())
+	{
+		if (message[0] == ':')
+			return message;
+
+		if (message.size() >= 3 && std::isdigit((unsigned char)message[0]) && std::isdigit((unsigned char)message[1]) && std::isdigit((unsigned char)message[2]) && (message.size() == 3 || message[3] == ' '))
+			return message;
+
+		const char *cmds[] = { "PRIVMSG", "NOTICE", "JOIN", "PART", "MODE", "KICK", "INVITE", "QUIT", "NICK", "USER", "PASS", "PING", "PONG", "ERROR", "CAP"};
+
+		for (size_t i = 0; i < sizeof(cmds) / sizeof(cmds[0]); ++i)
+		{
+			size_t len = std::strlen(cmds[i]);
+			if (message.compare(0, len, cmds[i]) == 0 &&
+				(message.size() == len || message[len] == ' '))
+				return message;
 		}
 	}
-	if (needsWrap) {
-		std::string notice = std::string("NOTICE ") + user->getNickname() + " :" + msg;
-		msg.swap(notice);
-	}
-	return msg;
+
+	return std::string("NOTICE ") + user->getNickname() + " :" + message;
 }
 
 void Server::enqueuePending(User *user, const char *buf, size_t len)
@@ -89,7 +86,7 @@ void Server::sendToUser(User *user, const std::string &message)
 }
 
 
-void Server::sendToChannel(Channel *channel, const std::string &message, User *exclude)
+void Server::sendToChannel(Channel *channel, const std::string &message, const User *exclude)
 {
 	const std::map<int, User*>& usersMap = channel->getUsers();
 	for (std::map<int, User*>::const_iterator it = usersMap.begin(); it != usersMap.end(); ++it)

@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:22:25 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/23 17:28:59 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 18:05:51 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ std::string Services::getServerName() const
 	return std::string("localhost");
 }
 
-std::string Services::getUserPrefix(User *user) const
+std::string Services::getUserPrefix(const User *user) const
 {
 	return user->getNickname() + "!" + user->getUsername() + "@" + getServerName();
 }
@@ -78,7 +78,7 @@ void Services::sendResponse(RequestContext &ctx, const std::string &reply)
 	ctx.services.sendToUser(ctx.sender, response);
 }
 
-void Services::sendNamesList(RequestContext &ctx, User *target, Channel *channel)
+void Services::sendNamesList(RequestContext &ctx, const User *target, Channel *channel)
 {
 	std::string serverName = ctx.services.getServerName();
 	const std::map<int, User *> &usersMap = channel->getUsers();

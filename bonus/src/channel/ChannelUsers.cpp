@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:19:25 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/18 23:10:43 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 17:57:01 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void Channel::addUser(User *user)
  * @brief Elimina un usuario del canal y actualiza el contador.
  * @param user Puntero al `User` a eliminar.
  */
-void Channel::deleteUser(User *user)
+void Channel::deleteUser(const User *user)
 {
 	int fd = user->getSocket();
 	if (this->users.find(fd) == this->users.end())
@@ -63,7 +63,7 @@ void Channel::addUserToMap(std::map<int, User *> &userMap, User *user)
 /**
  * @brief Elimina `user` del mapa `userMap` si existe.
  */
-void Channel::deleteUserFromMap(std::map<int, User *> &userMap, User *user)
+void Channel::deleteUserFromMap(std::map<int, User *> &userMap, const User *user)
 {
 	int fd = user->getSocket();
 	if (userMap.find(fd) == userMap.end())

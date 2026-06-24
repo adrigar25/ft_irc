@@ -41,6 +41,8 @@ class Bot
 				const std::string &password = BOT_DEFAULT_PASSWORD,
 				const std::string &nick = BOT_DEFAULT_NICK
 			);
+		Borot(const Bot &other);
+		Bot &operator=(const Bot &other);
 		~Bot();
 		std::string getNick() const;
 		std::string getHost() const;

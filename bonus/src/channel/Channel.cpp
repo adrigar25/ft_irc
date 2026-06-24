@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:03:58 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/16 17:03:59 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 17:43:18 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,21 @@
  * @param name Nombre del canal.
  * @param creator Usuario que crea el canal.
  */
-Channel::Channel(std::string name, User *creator)
-: name(name), topic(), key(), users(), voiceUsers(), operators(), invitedUsers(), bannedUsers(), userCount(0), topicProtected(false), keyRequired(false), isInviteOnly(false), isSecret(false), userLimit(-1)
-{
-	(void)creator;
-}
-
+Channel::Channel(std::string name):
+	name(name), 
+	topic(),
+	key(),
+	users(),
+	voiceUsers(),
+	operators(),
+	invitedUsers(),
+	bannedUsers(),
+	userCount(0),
+	topicProtected(false),
+	keyRequired(false),
+	isInviteOnly(false),
+	isSecret(false), 
+	userLimit(-1){}
 
 /**
  * @brief Destructor de `Channel`.

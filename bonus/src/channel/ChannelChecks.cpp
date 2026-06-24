@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:03:43 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/16 17:03:53 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 17:52:08 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 /**
  * @brief Comprueba si `user` pertenece al canal.
  */
-bool Channel::hasUser(User *user) const
+bool Channel::hasUser(const User *user) const
 {
 	int fd = user->getSocket();
 	return this->users.find(fd) != this->users.end();
@@ -39,7 +39,7 @@ bool Channel::isUserOperator(User *user) const
 /**
  * @brief Comprueba si `user` tiene voz en el canal.
  */
-bool Channel::isUserVoice(User *user) const
+bool Channel::isUserVoice(const User *user) const
 {
 	int fd = user->getSocket();
 	return this->voiceUsers.find(fd) != this->voiceUsers.end();
@@ -49,7 +49,7 @@ bool Channel::isUserVoice(User *user) const
 /**
  * @brief Comprueba si `user` fue invitado al canal.
  */
-bool Channel::isUserInvited(User *user) const
+bool Channel::isUserInvited(const User *user) const
 {
 	int fd = user->getSocket();
 	return this->invitedUsers.find(fd) != this->invitedUsers.end();
@@ -59,7 +59,7 @@ bool Channel::isUserInvited(User *user) const
 /**
  * @brief Comprueba si `user` está baneado del canal.
  */
-bool Channel::isUserBanned(User *user) const
+bool Channel::isUserBanned(const User *user) const
 {
 	int fd = user->getSocket();
 	return this->bannedUsers.find(fd) != this->bannedUsers.end();
