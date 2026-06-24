@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:03:58 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/24 18:32:09 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 19:19:25 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
  * @param name Nombre del canal.
  * @param creator Usuario que crea el canal.
  */
-Channel::Channel(const std::string name):
+Channel::Channel(const std::string &name):
 	name(name), 
 	userCount(0),
 	topicProtected(false),

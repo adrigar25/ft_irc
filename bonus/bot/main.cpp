@@ -20,7 +20,7 @@ int main(int argc, char **argv)
 	{
 		std::cerr << "Usage: " << argv[0]
 				  << " <server_ip> <server_port> <password> <bot_nick>\n";
-		return (1);
+		return 1;
 	}
 
 	std::string host = argv[1];
@@ -33,9 +33,9 @@ int main(int argc, char **argv)
 	if (bot.connectToServer() == -1)
 	{
 		std::cerr << "Failed to connect to " << host << ":" << port << std::endl;
-		return (1);
+		return 1;
 	}
 
 	bot.run();
-	return (0);
+	return 0;
 }

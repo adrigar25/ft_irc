@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:04:46 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/24 18:39:42 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 19:19:25 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ class Channel
 		bool isModerated;
 		int userLimit;
 	public:
-		Channel(const std::string name);
+		Channel(const std::string &name);
 		~Channel();
 
 		/* Gestión de usuarios */

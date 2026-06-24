@@ -62,17 +62,17 @@ Bot::~Bot()
 
 std::string Bot::getNick() const
 {
-	return (nick);
+	return nick;
 }
 
 std::string Bot::getHost() const
 {
-	return (host);
+	return host;
 }
 
 std::string Bot::getPassword() const
 {
-	return (password);
+	return password;
 }
 
 void Bot::setPort(int p)
@@ -84,8 +84,8 @@ void Bot::setPort(int p)
 int Bot::connectToServer()
 {
 	if (!this->irc)
-		return (-1);
-	return (this->irc->connectTo(this->host, this->port));
+		return -1;
+	return this->irc->connectTo(this->host, this->port);
 }
 
 void Bot::run()

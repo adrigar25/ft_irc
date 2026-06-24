@@ -77,7 +77,7 @@ bool ChannelManager::isOnlyUserInChannel(const std::string &channel)
 
 bool ChannelManager::isInChannel(const std::string &channel) const
 {
-	return (std::find(this->joined.begin(), this->joined.end(), channel) != this->joined.end());
+	return std::find(this->joined.begin(), this->joined.end(), channel) != this->joined.end();
 }
 
 void ChannelManager::deleteChannel(const std::string &channel)

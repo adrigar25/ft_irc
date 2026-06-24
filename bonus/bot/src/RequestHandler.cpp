@@ -28,14 +28,14 @@ const BotCmd &RequestHandler::chooseReply(const std::string &text) const
 {
 	std::string cmd = text.substr(1);
 	if (cmd.empty())
-		return (BOT_COMMANDS[0]);
+		return BOT_COMMANDS[0];
 	std::transform(cmd.begin(), cmd.end(), cmd.begin(), ::tolower);
 	for (size_t i = 0; BOT_COMMANDS[i].trigger != ""; ++i)
 	{
 		if (cmd == BOT_COMMANDS[i].trigger)
-			return (BOT_COMMANDS[i]);
+			return BOT_COMMANDS[i];
 	}
-	return (BOT_COMMANDS[0]);
+	return BOT_COMMANDS[0];
 }
 
 static Message parseMessage(const std::string &line)

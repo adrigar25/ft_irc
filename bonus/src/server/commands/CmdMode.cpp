@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:20:10 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/24 19:11:44 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 19:34:38 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,7 @@ static void sendChannelModes(RequestContext &ctx, Channel *ch)
 	ctx.services.sendResponse(ctx, RPL_CHANNELMODEIS(ctx.sender->getNickname(), ch->getName(), modes + (paramStr.empty() ? "" : " " + paramStr)));
 }
 
-static void executeMode(char m, bool add, Channel *ch, User *u, const std::string &param)
+static void executeMode(RequestContext &ctx, char m, bool add, Channel *ch, const std::string &param, const std::string &channelName)
 {
 	switch (m)
 	{
@@ -148,13 +148,13 @@ static void executeMode(char m, bool add, Channel *ch, User *u, const std::strin
 	case 'v':
 	case 'b':
 	{
-		User *u = ctx.services.users().findByNick(param);
-		if (!u)
+		User *target = ctx.services.users().findByNick(param);
+		if (!target)
 		{
-			ctx.services.sendResponse(ctx, ERR_NOSUCHNICK(ctx.sender->getNickname(), params[p - 1]));
+			ctx.services.sendResponse(ctx, ERR_NOSUCHNICK(ctx.sender->getNickname(), param));
 			return;
 		}
-		appleUserMode(ch, add, u, m);
+		appleUserMode(ch, add, target, m);
 		break;
 	}
 	default:
@@ -232,7 +232,7 @@ void CmdMode::execute(RequestContext &ctx)
 			param = params[p++];
 		}
 
-		executeMode(m, add, ch, ctx.sender, param);
+		executeMode(ctx, m, add, ch, param, channelName);
 		sendMode(ctx, channelName, add, m, param);
 		param.clear();
 	}
