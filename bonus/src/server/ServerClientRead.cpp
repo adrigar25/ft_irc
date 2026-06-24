@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:00:48 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/24 18:15:10 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 18:42:14 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,9 +78,9 @@ bool Server::handleClientRead(int idx)
 		return true;
 	}
 
-	char buffer[1024];
+	std::string buffer(1024, '\0');
 
-	ssize_t n = recv(fd, buffer, sizeof(buffer) - 1, 0);
+	ssize_t n = recv(fd, &buffer[0], buffer.size() - 1, 0);
 
 	if (n <= 0)
 	{

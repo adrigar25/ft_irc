@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:22:25 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/24 18:05:51 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 19:04:05 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include "RequestContext.hpp"
 #include "replies/Replies.hpp"
 
-Services::Services(Server *srv) : server(srv), userManager(), channelManager() {}
+Services::Services(Server *srv) : server(srv) {}
 
 Services::~Services() {}
 
@@ -45,7 +45,7 @@ void Services::sendToUser(User *user, const std::string &message)
  * @param message Mensaje a enviar.
  * @param exclude Usuario a excluir (opcional).
  */
-void Services::sendToChannel(Channel *channel, const std::string &message, User *exclude)
+void Services::sendToChannel(Channel *channel, const std::string &message, const User *exclude)
 {
 	if (server)
 		server->sendToChannel(channel, message, exclude);

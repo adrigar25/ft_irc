@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:00:28 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/24 18:01:53 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 18:19:19 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ static std::string prepareOutMessage(const User *user, const std::string &messag
 		if (message.size() >= 3 && std::isdigit((unsigned char)message[0]) && std::isdigit((unsigned char)message[1]) && std::isdigit((unsigned char)message[2]) && (message.size() == 3 || message[3] == ' '))
 			return message;
 
-		const char *cmds[] = { "PRIVMSG", "NOTICE", "JOIN", "PART", "MODE", "KICK", "INVITE", "QUIT", "NICK", "USER", "PASS", "PING", "PONG", "ERROR", "CAP"};
+		const char *cmds[] = {"PRIVMSG", "NOTICE", "JOIN", "PART", "MODE", "KICK", "INVITE", "QUIT", "NICK", "USER", "PASS", "PING", "PONG", "ERROR", "CAP"};
 
 		for (size_t i = 0; i < sizeof(cmds) / sizeof(cmds[0]); ++i)
 		{

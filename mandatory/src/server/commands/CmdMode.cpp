@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:20:10 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/23 18:29:41 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 19:11:31 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,6 +120,48 @@ static void sendChannelModes(RequestContext &ctx, Channel *ch)
 	ctx.services.sendResponse(ctx, RPL_CHANNELMODEIS(ctx.sender->getNickname(), ch->getName(), modes + (paramStr.empty() ? "" : " " + paramStr)));
 }
 
+static void executeMode(char m, bool add, Channel *ch, User *u, const std::string &param)
+{
+	switch (m)
+	{
+		case 'i':
+			modeI(ch, add);
+			break;
+		case 't':
+			modeT(ch, add);
+			break;
+		case 'm':
+			modeM(ch, add);
+			break;
+		case 'k':
+			modeK(ch, add, param);
+			break;
+		case 'l':
+			if (!param.empty() && !isNumber(param))
+			{
+				ctx.services.sendResponse(ctx, ERR_INVALIDMODEPARAM(ctx.sender->getNickname(), channelName));
+				return;
+			}
+			modeL(ch, add, param.empty() ? -1 : std::atoi(param.c_str()));
+			break;
+		case 'o':
+		case 'v':
+		case 'b':
+		{
+			User *u = ctx.services.users().findByNick(param);
+			if (!u)
+			{
+				ctx.services.sendResponse(ctx, ERR_NOSUCHNICK(ctx.sender->getNickname(), params[p - 1]));
+				return;
+			}
+			appleUserMode(ch, add, u, m);
+			break;
+		}
+		default:
+			ctx.services.sendResponse(ctx, ERR_UNKNOWNMODE(ctx.sender->getNickname(), std::string(1, m)));
+			break;
+	}
+}
 /* ===================== EXEC ===================== */
 
 void CmdMode::execute(RequestContext &ctx)
@@ -190,45 +232,7 @@ void CmdMode::execute(RequestContext &ctx)
 			param = params[p++];
 		}
 
-		switch (m)
-		{
-		case 'i':
-			modeI(ch, add);
-			break;
-		case 't':
-			modeT(ch, add);
-			break;
-		case 'm':
-			modeM(ch, add);
-			break;
-		case 'k':
-			modeK(ch, add, param);
-			break;
-		case 'l':
-			if (!param.empty() && !isNumber(param))
-			{
-				ctx.services.sendResponse(ctx, ERR_INVALIDMODEPARAM(ctx.sender->getNickname(), channelName));
-				return;
-			}
-			modeL(ch, add, param.empty() ? -1 : std::atoi(param.c_str()));
-			break;
-		case 'o':
-		case 'v':
-		case 'b':
-		{
-			User *u = ctx.services.users().findByNick(param);
-			if (!u)
-			{
-				ctx.services.sendResponse(ctx, ERR_NOSUCHNICK(ctx.sender->getNickname(), params[p - 1]));
-				return;
-			}
-			appleUserMode(ch, add, u, m);
-			break;
-		}
-		default:
-			ctx.services.sendResponse(ctx, ERR_UNKNOWNMODE(ctx.sender->getNickname(), std::string(1, m)));
-			break;
-		}
+		executeMode(m, add, ch, ctx.sender, param);
 		sendMode(ctx, channelName, add, m, param);
 		param.clear();
 	}

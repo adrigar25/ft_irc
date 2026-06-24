@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:02:00 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/16 17:02:01 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 19:12:36 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,9 @@
 #include "Services.hpp"
 #include <string>
 #include "replies/Replies.hpp"
+#include "Server.hpp"
+#include "User.hpp"
+#include <string>
 
 void CmdUnknown::execute(RequestContext &ctx)
 {
@@ -23,9 +26,6 @@ void CmdUnknown::execute(RequestContext &ctx)
 		return;
 	ctx.services.sendResponse(ctx, ERR_UNKNOWNCOMMAND(ctx.sender->getNickname(), ctx.rawLine));
 }
-#include "Server.hpp"
-#include "User.hpp"
-#include <string>
 
 bool Server::handleUnknownCommand(User *user, const std::string &command)
 {

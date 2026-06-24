@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:01:36 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/16 17:01:37 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 18:40:35 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,20 @@
 #include <iostream>
 
 CommandDispatcher::CommandDispatcher()
+{}
+
+CommandDispatcher::CommandDispatcher(const CommandDispatcher &other)
 {
+	this->handlers = other.handlers;
+}
+
+CommandDispatcher &CommandDispatcher::operator=(const CommandDispatcher &other)
+{
+	if (this != &other)
+	{
+		this->handlers = other.handlers;
+	}
+	return *this;
 }
 
 CommandDispatcher::~CommandDispatcher()

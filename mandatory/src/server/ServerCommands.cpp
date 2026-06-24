@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:21:47 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/24 18:00:29 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 18:54:39 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,13 +116,10 @@ void Server::executeCommand(User *user, const std::string &command, const std::s
 		return;
 	}
 
-	if (!user->isAuthenticated())
+	if (!user->isAuthenticated() && command != "PASS" && command != "NICK" && command != "USER" && command != "CAP" && command != "PING" && command != "PONG")
 	{
-		if (command != "PASS" && command != "NICK" && command != "USER" && command != "CAP" && command != "PING" && command != "PONG")
-		{
-			sendToUser(user, ERR_NOTREGISTERED(user->getNickname()));
-			return;
-		}
+		sendToUser(user, ERR_NOTREGISTERED(user->getNickname()));
+		return;
 	}
 
 	RequestContext ctx(this->services, user, args);

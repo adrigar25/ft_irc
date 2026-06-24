@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:03:43 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/24 17:50:47 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 18:36:09 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ bool Channel::hasUser(const User *user) const
 /**
  * @brief Comprueba si `user` es operador del canal.
  */
-bool Channel::isUserOperator(User *user) const
+bool Channel::isUserOperator(const User *user) const
 {
 	int fd = user->getSocket();
 	return this->operators.find(fd) != this->operators.end();
@@ -77,7 +77,7 @@ bool Channel::isEmpty() const
 /**
  * @brief Comprueba si `user` puede unirse al canal según límites, privacy y baneos.
  */
-void Channel::canUserJoin(User *user, const std::string &key) const
+void Channel::canUserJoin(const User *user, const std::string &userKey) const
 {
 	if (this->getUserLimit() != -1 && this->getUserCount() >= this->getUserLimit())
 		throw IrcException(IRC_ERR_CHANNEL_FULL, "Channel is full");
@@ -85,6 +85,6 @@ void Channel::canUserJoin(User *user, const std::string &key) const
 		throw IrcException(IRC_ERR_ISINVITEONLYCHAN, "Channel is invite only");
 	if(this->isUserBanned(user))
 		throw IrcException(IRC_ERR_BANNEDFROMCHAN, "You are banned from this channel");
-	if(this->getKeyRequired() && this->getKey() != key)
+	if(this->getKeyRequired() && this->getKey() != userKey)
 		throw IrcException(IRC_ERR_INCORRECT_CHANNEL_KEY, "Incorrect channel key");
 }

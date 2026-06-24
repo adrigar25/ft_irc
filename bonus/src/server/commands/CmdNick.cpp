@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:20:20 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/22 18:31:32 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 19:12:16 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ static std::string extractNick(const std::string &raw)
 
 static bool nickAvailable(RequestContext &ctx, const std::string &nick)
 {
-	User *existing = ctx.services.users().findByNick(nick);
+	const User *existing = ctx.services.users().findByNick(nick);
 	if (existing && existing != ctx.sender)
 	{
 		ctx.services.sendResponse(ctx, ERR_NICKNAMEINUSE(ctx.sender->getNickname(), nick));

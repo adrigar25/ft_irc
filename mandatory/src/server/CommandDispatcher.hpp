@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:01:27 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/16 17:01:31 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 18:40:09 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@ struct RequestContext;
 class CommandDispatcher {
 public:
 	CommandDispatcher();
+	CommandDispatcher(const CommandDispatcher &other);
+	CommandDispatcher &operator=(const CommandDispatcher &other);
 	~CommandDispatcher();
 	void registerHandler(const std::string& cmd, ICommand* handler);
 	bool hasHandler(const std::string& cmd) const;

@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:00:10 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/18 01:55:11 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 19:13:49 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void Server::addUser(User* user)
 
 void Server::deleteUser(int fd)
 {
-	User *user = this->services.users().findByFd(fd);
+	const User *user = this->services.users().findByFd(fd);
 	if (!user)
 		return;
 

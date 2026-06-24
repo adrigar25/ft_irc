@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:22:37 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/22 18:31:51 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 19:13:02 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,6 @@
 User::User(int socket, const std::string &name) : socket(socket),
 												  nickname(name),
 												  username(""),
-												  inBuffer(),
-												  outBuffer(),
 												  outOffset(0),
 												  nickSet(false),
 												  userSet(false),

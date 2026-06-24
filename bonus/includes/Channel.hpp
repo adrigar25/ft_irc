@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:04:46 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/24 17:59:01 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 18:39:42 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,22 +37,22 @@ class Channel
 		bool isModerated;
 		int userLimit;
 	public:
-		Channel(std::string name);
+		Channel(const std::string name);
 		~Channel();
 
 		/* Gestión de usuarios */
 		void addUser(User *user);
 		void deleteUser(const User *user);
 		void addUserToMap(std::map<int, User*> &userMap, User *user);
-		void deleteUserFromMap(std::map<int, User *> &userMap, const User *user);
+		void deleteUserFromMap(std::map<int, User*> &userMap, const User *user);
 		void inviteUser(User *user);
-		void removeInvitedUser(User *user);
+		void removeInvitedUser(const User *user);
 		void banUser(User *user);
-		void unbanUser(User *user);
+		void unbanUser(const User *user);
 
 		/* Roles */
-		void changeRole(User *user, std::string role);
-		void removeRole(const User *user, std::string role);
+		void changeRole(User *user, const std::string &role);
+		void removeRole(const User *user, const std::string &role);
 
 		/* Setters */
 		void setIsInviteOnly(bool val);
@@ -65,9 +65,9 @@ class Channel
 		void setModerated(bool val);
 
 		/* Consultas */
-		void canUserJoin(User *user, const std::string &key) const;
+		void canUserJoin(const User *user, const std::string &key) const;
 		bool hasUser(const User *user) const;
-		bool isUserOperator(User *user) const;
+		bool isUserOperator(const User *user) const;
 		bool isUserVoice(const User *user) const;
 		bool isUserInvited(const User *user) const;
 		bool isUserBanned(const User *user) const;
@@ -90,7 +90,6 @@ class Channel
 		std::map<int, User*>& getVoiceUsers();
 		std::map<int, User*>& getInvitedUsers();
 		std::map<int, User*>& getBannedUsers();
-		std::map<int, User*>& getExceptedUsers();
 		std::string	getName() const;
 };
 

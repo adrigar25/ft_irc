@@ -89,7 +89,7 @@ static std::string getCommandList()
 	{
 		list += "!" + BOT_COMMANDS[i].trigger + " ";
 	}
-	return (list);
+	return list;
 }
 
 static void handleKick(ChannelManager *cm, const std::string &channel, const std::string &kickedUser, const std::string &botNick)

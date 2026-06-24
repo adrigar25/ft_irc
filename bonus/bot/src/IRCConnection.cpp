@@ -83,8 +83,7 @@ std::string IRCConnection::recvLine()
 {
 	std::string out;
 	char c;
-	ssize_t n;
-	while ((n = recv(this->sockfd, &c, 1, 0)) > 0) {
+	while (recv(this->sockfd, &c, 1, 0) > 0) {
 		out.push_back(c);
 		if (c == '\n') break;
 	}

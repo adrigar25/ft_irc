@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:19:25 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/24 17:57:06 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 18:39:42 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ void Channel::inviteUser(User *user)
 	addUserToMap(this->invitedUsers, user);
 }
 
-void Channel::removeInvitedUser(User *user)
+void Channel::removeInvitedUser(const User *user)
 {
 	deleteUserFromMap(this->invitedUsers, user);
 }
@@ -89,7 +89,7 @@ void Channel::banUser(User *user)
 	addUserToMap(this->bannedUsers, user);
 }
 
-void Channel::unbanUser(User *user)
+void Channel::unbanUser(const User *user)
 {
 	deleteUserFromMap(this->bannedUsers, user);
 }

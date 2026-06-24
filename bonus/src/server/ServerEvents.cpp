@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:00:35 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/23 18:35:10 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 18:45:45 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ void Server::handleEvents()
 	{
 		if (this->fds.empty())
 		{
-			usleep(100);
+			usleep(100000);
 			continue;
 		}
 		ready = performPoll();

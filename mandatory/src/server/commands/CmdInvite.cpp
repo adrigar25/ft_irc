@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:03:21 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/24 18:06:30 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 19:07:15 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ static void parseInviteParams(const std::string &params, std::string &outTargetN
 	}
 }
 
-static bool canInvite(RequestContext &ctx, User* targetUser, const Channel* channel)
+static bool canInvite(RequestContext &ctx, const User* targetUser, const Channel* channel)
 {
 	
 	if (!channel) {
@@ -58,8 +58,6 @@ static bool canInvite(RequestContext &ctx, User* targetUser, const Channel* chan
 	}
 	return true;
 }
-
-#include <iostream>
 
 void CmdInvite::execute(RequestContext &ctx)
 {

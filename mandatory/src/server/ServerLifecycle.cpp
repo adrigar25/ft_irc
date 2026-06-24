@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:00:22 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/19 00:45:44 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 18:58:34 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,26 @@ Server* Server::instance = NULL;
  * @param port Puerto en el que el servidor escuchará conexiones.
  * @param password Contraseña requerida para autenticación (puede estar vacía).
  */
-Server::Server(unsigned int port, std::string password): port(port), password(password), services(this)
+Server::Server(unsigned int port, std::string password): serverSocket(-1), port(port), password(password), services(this)
+{
+	char buf[256];
+	if (gethostname(buf, sizeof(buf)) != 0)
+		this->hostname = std::string("localhost");
+	else
+		this->hostname = std::string(buf);
+}
+
+/**
+ * @brief Constructor de copia del servidor.
+ *
+ * Copia el puerto, la contraseña y el hostname del servidor `other`.
+ * Inicializa `serverSocket` con -1 (no creado aún) y crea un nuevo
+ * objeto `Services` asociado a este servidor.
+ *
+ * @param other Servidor a copiar.
+ * @return Copia del servidor `other`.
+ */
+Server::Server(const Server &other) : port(other.port), password(other.password), services(this)
 {
 	this->serverSocket = -1;
 	char buf[256];
@@ -43,6 +62,33 @@ Server::Server(unsigned int port, std::string password): port(port), password(pa
 		this->hostname = std::string("localhost");
 	else
 		this->hostname = std::string(buf);
+}
+
+/**
+ * @brief Operador de asignación del servidor.
+ *
+ * Asigna el puerto, la contraseña y el hostname del servidor `other` al actual.
+ * Inicializa `serverSocket` con -1 (no creado aún) y crea un nuevo
+ * objeto `Services` asociado a este servidor.
+ *
+ * @param other Servidor a asignar.
+ * @return Referencia al servidor actual.
+ */
+Server &Server::operator=(const Server &other)
+{
+	if (this != &other)
+	{
+		this->port = other.port;
+		this->password = other.password;
+		this->services = Services(this);
+		this->serverSocket = -1;
+		char buf[256];
+		if (gethostname(buf, sizeof(buf)) != 0)
+			this->hostname = std::string("localhost");
+		else
+			this->hostname = std::string(buf);
+	}
+	return *this;
 }
 
 /**
