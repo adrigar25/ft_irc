@@ -28,7 +28,11 @@
 */
 void setSocketNonBlocking(int fd)
 {
-	if (fcntl(fd, F_SETFL, O_NONBLOCK) == -1)
+	int flags = fcntl(fd, F_GETFL, 0);
+	if (flags == -1)
+		throw std::runtime_error(
+			std::string("fcntl F_GETFL: ") + strerror(errno));
+	if (fcntl(fd, F_SETFL, flags | O_NONBLOCK) == -1)
 		throw std::runtime_error(
 			std::string("fcntl F_SETFL: ") + strerror(errno));
 }

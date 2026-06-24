@@ -22,18 +22,25 @@
 
 void Server::handleNewConnection()
 {
-	struct sockaddr_in clientAddress;
-	socklen_t clientAddressLen = sizeof(clientAddress);
-	int newSocket = accept(this->serverSocket, (struct sockaddr*)&clientAddress, &clientAddressLen);
-	if (newSocket < 0)
-		throw IrcException(IRC_ERR_ACCEPTING_CONNECTION, std::string("accept failed: ") + strerror(errno));
+	while (true)
+	{
+		struct sockaddr_in clientAddress;
+		socklen_t clientAddressLen = sizeof(clientAddress);
+		int newSocket = accept(this->serverSocket, (struct sockaddr*)&clientAddress, &clientAddressLen);
+		if (newSocket < 0)
+		{
+			if (errno == EAGAIN || errno == EWOULDBLOCK)
+				return;
+			throw IrcException(IRC_ERR_ACCEPTING_CONNECTION, std::string("accept failed: ") + strerror(errno));
+		}
 
-	setSocketNonBlocking(newSocket);
-	pushPollFd(newSocket, POLLIN);
+		setSocketNonBlocking(newSocket);
+		pushPollFd(newSocket, POLLIN);
 
-	User* newUser = new User(newSocket, "*");
-	addUser(newUser);
-
+		User* newUser = new User(newSocket, "*");
+		addUser(newUser);
+		std::cout << "Accepted client fd " << newSocket << std::endl;
+	}
 }
 
 void Server::handleDisconnectionByIndex(int idx)

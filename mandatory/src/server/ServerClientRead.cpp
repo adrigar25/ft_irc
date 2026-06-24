@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:00:48 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/24 18:41:53 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 20:06:41 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ bool Server::handleClientRead(int idx)
 
 	buffer[n] = '\0';
 
-	client->getInBuffer().append(buffer, n);
+	client->getInBuffer().append(buffer, 0, static_cast<size_t>(n));
 
 	processClientBuffer(client);
 

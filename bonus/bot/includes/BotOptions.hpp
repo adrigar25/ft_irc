@@ -14,7 +14,6 @@
 #define BOT_OPTIONS_HPP
 
 #include <string>
-#include <vector>
 
 
 struct BotCmd {
@@ -24,16 +23,16 @@ struct BotCmd {
 	const bool isOp;
 };
 
-// Lista de comandos: añade nuevas entradas aquí. La lista termina con {NULL, NULL}.
-static const std::vector<BotCmd> BOT_COMMANDS = {
-	{ "unknown", "PRIVMSG", "Comando desconocido. Escribe !help para ver los comandos disponibles.", false },
-	{ "hola", "PRIVMSG", "¡Hola! Soy un bot de IRC.", false },
-	{ "tonteria", "PRIVMSG", "¡Perro Sanchez es el mejor!", false },
-	{ "adios", "PRIVMSG", "¡Adiós! ¡Hasta la próxima!", false },
-	{ "kick", "KICK", "¡Fuera de aquí!", true },
-	{ "help", "PRIVMSG", "Comandos disponibles: ", false },
-	{ "dice", "PRIVMSG", "¡Tira un dado! El resultado es: ", false },
-	{ "coin", "PRIVMSG", "¡Lanza una moneda! El resultado es: ", false },
-};
+// Lista de comandos: añade nuevas entradas aquí. La lista termina con un centinela vacío.
+static const BotCmd BOT_COMMANDS[] = {
+	{"unknown", "PRIVMSG", "Comando desconocido. Escribe !help para ver los comandos disponibles.", false},
+	{"hola", "PRIVMSG", "¡Hola! Soy un bot de IRC.", false},
+	{"tonteria", "PRIVMSG", "¡Perro Sanchez es el mejor!", false},
+	{"adios", "PRIVMSG", "¡Adiós! ¡Hasta la próxima!", false},
+	{"kick", "KICK", "¡Fuera de aquí!", true},
+	{"help", "PRIVMSG", "Comandos disponibles: ", false},
+	{"dice", "PRIVMSG", "¡Tira un dado! El resultado es: ", false},
+	{"coin", "PRIVMSG", "¡Lanza una moneda! El resultado es: ", false},
+	{"", "", "", false}};
 
 #endif

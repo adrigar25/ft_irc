@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:59:46 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/19 01:04:44 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 19:59:55 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,11 @@
 */
 void setSocketNonBlocking(int fd)
 {
-	if (fcntl(fd, F_SETFL, O_NONBLOCK) == -1)
-		throw std::runtime_error(
-			std::string("fcntl F_SETFL: ") + strerror(errno));
+	int flags = fcntl(fd, F_GETFL, 0);
+	if (flags == -1)
+		throw std::runtime_error(std::string("fcntl F_GETFL: ") + strerror(errno));
+	if (fcntl(fd, F_SETFL, flags | O_NONBLOCK) == -1)
+		throw std::runtime_error(std::string("fcntl F_SETFL: ") + strerror(errno));
 }
 
 /**

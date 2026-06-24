@@ -6,7 +6,7 @@
 #    By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/06/17 18:24:30 by adriescr          #+#    #+#              #
-#    Updated: 2026/06/22 20:07:38 by agarcia          ###   ########.fr        #
+#    Updated: 2026/06/24 20:18:48 by agarcia          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,17 +27,13 @@ BOT_DIR := bonus/bot
 # ---------------- SOURCES ----------------
 
 MANDATORY_SRC := $(shell find $(MANDATORY_DIR)/src -type f -name "*.cpp")
-MANDATORY_MAIN := $(MANDATORY_DIR)/main.cpp
-MANDATORY_ALL := $(MANDATORY_SRC) $(MANDATORY_MAIN)
 
 BONUS_SRC := $(shell find $(BONUS_DIR)/src -type f -name "*.cpp")
-BONUS_MAIN := $(BONUS_DIR)/main.cpp
-BONUS_ALL := $(BONUS_SRC) $(BONUS_MAIN)
 
 # ---------------- OBJECTS ----------------
 
-MANDATORY_OBJS := $(patsubst $(MANDATORY_DIR)/%.cpp,$(OBJS_DIR)/mandatory/%.o,$(MANDATORY_ALL))
-BONUS_OBJS := $(patsubst $(BONUS_DIR)/%.cpp,$(OBJS_DIR)/bonus/%.o,$(BONUS_ALL))
+MANDATORY_OBJS := $(patsubst $(MANDATORY_DIR)/%.cpp,$(OBJS_DIR)/mandatory/%.o,$(MANDATORY_SRC))
+BONUS_OBJS := $(patsubst $(BONUS_DIR)/%.cpp,$(OBJS_DIR)/bonus/%.o,$(BONUS_SRC))
 
 # ---------------- RULES ----------------
 
