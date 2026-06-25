@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:03:43 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/24 18:36:09 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/25 18:21:26 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,12 @@
 #include "Exceptions.hpp"
 #include "replies/Replies.hpp"
 #include <map>
+#include <fnmatch.h>
+
+static std::string buildUserMask(const User *user)
+{
+	return user->getNickname() + "!" + user->getUsername() + "@" + user->getHost();
+}
 
 /**
  * @brief Comprueba si `user` pertenece al canal.
@@ -61,8 +67,13 @@ bool Channel::isUserInvited(const User *user) const
  */
 bool Channel::isUserBanned(const User *user) const
 {
-	int fd = user->getSocket();
-	return this->bannedUsers.find(fd) != this->bannedUsers.end();
+	std::string mask = buildUserMask(user);
+	for (std::vector<std::string>::const_iterator it = this->bannedMasks.begin(); it != this->bannedMasks.end(); ++it)
+	{
+		if (fnmatch(it->c_str(), mask.c_str(), 0) == 0)
+				return true;
+	}
+	return false;
 }
 
 /**
@@ -79,7 +90,7 @@ bool Channel::isEmpty() const
  */
 void Channel::canUserJoin(const User *user, const std::string &userKey) const
 {
-	if (this->getUserLimit() != -1 && this->getUserCount() >= this->getUserLimit())
+	if (this->getUserLimit() > 0 && this->getUserCount() >= this->getUserLimit())
 		throw IrcException(IRC_ERR_CHANNEL_FULL, "Channel is full");
 	if(this->getIsInviteOnly() && !this->isUserInvited(user))
 		throw IrcException(IRC_ERR_ISINVITEONLYCHAN, "Channel is invite only");

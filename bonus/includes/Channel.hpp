@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:04:46 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/24 19:19:25 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/25 18:07:35 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 #include <string>
 #include <map>
+#include <vector>
 
 class User;
 
@@ -29,6 +30,7 @@ class Channel
 		std::map<int, User*> operators;
 		std::map<int, User*> invitedUsers;
 		std::map<int, User*> bannedUsers;
+		std::vector<std::string> bannedMasks;
 		int userCount;
 		bool topicProtected;
 		bool keyRequired;
@@ -47,8 +49,9 @@ class Channel
 		void deleteUserFromMap(std::map<int, User*> &userMap, const User *user);
 		void inviteUser(User *user);
 		void removeInvitedUser(const User *user);
-		void banUser(User *user);
-		void unbanUser(const User *user);
+		void banMask(const std::string &mask);
+		void unbanMask(const std::string &mask);
+		void unbanMatchingMask(const std::string &userMask);
 
 		/* Roles */
 		void changeRole(User *user, const std::string &role);
@@ -90,6 +93,7 @@ class Channel
 		std::map<int, User*>& getVoiceUsers();
 		std::map<int, User*>& getInvitedUsers();
 		std::map<int, User*>& getBannedUsers();
+		const std::vector<std::string>& getBannedMasks() const;
 		std::string	getName() const;
 };
 

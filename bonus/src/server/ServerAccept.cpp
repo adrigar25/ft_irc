@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:01:09 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/24 16:36:45 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/19 00:45:41 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "SocketUtils.hpp"
 #include <iostream>
 #include <arpa/inet.h>
+#include <netinet/in.h>
 #include <sstream>
 #include <cerrno>
 #include <unistd.h>
@@ -22,18 +23,26 @@
 
 void Server::handleNewConnection()
 {
-	struct sockaddr_in clientAddress;
-	socklen_t clientAddressLen = sizeof(clientAddress);
-	int newSocket = accept(this->serverSocket, (struct sockaddr*)&clientAddress, &clientAddressLen);
-	if (newSocket < 0)
-		throw IrcException(IRC_ERR_ACCEPTING_CONNECTION, std::string("accept failed: ") + strerror(errno));
+	while (true)
+	{
+		struct sockaddr_in clientAddress;
+		socklen_t clientAddressLen = sizeof(clientAddress);
+		int newSocket = accept(this->serverSocket, (struct sockaddr*)&clientAddress, &clientAddressLen);
+		if (newSocket < 0)
+		{
+			if (errno == EAGAIN || errno == EWOULDBLOCK)
+				return;
+			throw IrcException(IRC_ERR_ACCEPTING_CONNECTION, std::string("accept failed: ") + strerror(errno));
+		}
 
-	setSocketNonBlocking(newSocket);
-	pushPollFd(newSocket, POLLIN);
+		setSocketNonBlocking(newSocket);
+		pushPollFd(newSocket, POLLIN);
 
-	User* newUser = new User(newSocket, "*");
-	addUser(newUser);
-
+		User* newUser = new User(newSocket, "*");
+		newUser->setHost(inet_ntoa(clientAddress.sin_addr));
+		addUser(newUser);
+		std::cout << "Accepted client fd " << newSocket << std::endl;
+	}
 }
 
 void Server::handleDisconnectionByIndex(int idx)

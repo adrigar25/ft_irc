@@ -14,6 +14,7 @@
 #include "SocketUtils.hpp"
 #include <iostream>
 #include <arpa/inet.h>
+#include <netinet/in.h>
 #include <sstream>
 #include <cerrno>
 #include <unistd.h>
@@ -38,6 +39,7 @@ void Server::handleNewConnection()
 		pushPollFd(newSocket, POLLIN);
 
 		User* newUser = new User(newSocket, "*");
+		newUser->setHost(inet_ntoa(clientAddress.sin_addr));
 		addUser(newUser);
 		std::cout << "Accepted client fd " << newSocket << std::endl;
 	}

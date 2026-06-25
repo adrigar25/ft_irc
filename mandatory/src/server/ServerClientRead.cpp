@@ -29,7 +29,6 @@ static void sendQuitMessageToChannels(Server *server, User *user)
 
 		std::string quitMessage =
 			":" + server->getServices().getUserPrefix(user) +
-			"@" + server->getHostname() +
 			" QUIT :Client disconnected\r\n";
 
 		server->getServices().sendToChannel(channel, quitMessage, user);

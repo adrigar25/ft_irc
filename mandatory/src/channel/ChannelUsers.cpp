@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:19:25 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/24 18:39:42 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/25 18:21:26 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "User.hpp"
 #include "Exceptions.hpp"
 #include <map>
+#include <algorithm>
 
 /**
  * @brief Añade un usuario al canal, validando restricciones (invite-only, límite, baneos).
@@ -24,14 +25,6 @@
 void Channel::addUser(User *user)
 {
 	int fd = user->getSocket();
-	if (this->isInviteOnly && this->invitedUsers.find(fd) == this->invitedUsers.end())
-		throw IrcException(IRC_ERR_CHANNEL_INVITE_ONLY, "Channel is invite-only, user must be invited to join");
-	if (this->users.find(fd) != this->users.end())
-		throw IrcException(IRC_ERR_USER_ALREADY_EXISTS, "User already exists in channel");
-	if (this->userCount >= this->userLimit && this->userLimit != -1)
-		throw IrcException(IRC_ERR_CHANNEL_FULL, "Channel is full");
-	if (this->bannedUsers.find(fd) != this->bannedUsers.end())
-		throw IrcException(IRC_ERR_USER_BANNED, "User is banned from this channel");
 	this->users.insert(std::make_pair(fd, user));
 	this->userCount++;
 }
@@ -84,12 +77,26 @@ void Channel::removeInvitedUser(const User *user)
 	deleteUserFromMap(this->invitedUsers, user);
 }
 
-void Channel::banUser(User *user)
+void Channel::banMask(const std::string &mask)
 {
-	addUserToMap(this->bannedUsers, user);
+	if (std::find(this->bannedMasks.begin(), this->bannedMasks.end(), mask) == this->bannedMasks.end())
+		this->bannedMasks.push_back(mask);
 }
 
-void Channel::unbanUser(const User *user)
+void Channel::unbanMask(const std::string &mask)
 {
-	deleteUserFromMap(this->bannedUsers, user);
+	std::vector<std::string>::iterator it = std::find(this->bannedMasks.begin(), this->bannedMasks.end(), mask);
+	if (it != this->bannedMasks.end())
+		this->bannedMasks.erase(it);
+}
+
+void Channel::unbanMatchingMask(const std::string &userMask)
+{
+	for (std::vector<std::string>::iterator it = this->bannedMasks.begin(); it != this->bannedMasks.end(); )
+	{
+		if (fnmatch(it->c_str(), userMask.c_str(), 0) == 0)
+			it = this->bannedMasks.erase(it);
+		else
+			++it;
+	}
 }

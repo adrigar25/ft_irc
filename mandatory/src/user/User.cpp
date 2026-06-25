@@ -28,6 +28,7 @@
 User::User(int socket, const std::string &name) : socket(socket),
 												  nickname(name),
 												  username(""),
+												  host(""),
 												  outOffset(0),
 												  nickSet(false),
 												  userSet(false),
@@ -86,6 +87,11 @@ void User::setUsername(const std::string &name)
 	this->userSet = true;
 }
 
+void User::setHost(const std::string &name)
+{
+	this->host = name;
+}
+
 /**
  * @brief Establece el nombre real (realname) del usuario.
  * @param name Nombre real.
@@ -102,6 +108,11 @@ void User::setRealName(const std::string &name)
 std::string User::getUsername() const
 {
 	return this->username;
+}
+
+std::string User::getHost() const
+{
+	return this->host;
 }
 
 /**
@@ -184,8 +195,8 @@ bool User::joinChannel(Channel *channel, const std::string &key)
 	if (channel->getIsInviteOnly() && !channel->isUserInvited(this))
 		throw IrcException(IRC_ERR_ISINVITEONLYCHAN, "Channel is invite only");
 
-	this->channels.insert(std::make_pair(channel->getName(), channel));
 	channel->addUser(this);
+	this->channels.insert(std::make_pair(channel->getName(), channel));
 	channel->removeInvitedUser(this);
 	return true;
 }

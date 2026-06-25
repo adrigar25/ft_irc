@@ -151,6 +151,11 @@ std::map<int, User*>& Channel::getBannedUsers()
 	return this->bannedUsers;
 }
 
+const std::vector<std::string>& Channel::getBannedMasks() const
+{
+	return this->bannedMasks;
+}
+
 bool Channel::getIsModerated() const
 {
 	return this->isModerated;

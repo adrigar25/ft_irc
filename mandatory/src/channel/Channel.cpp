@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:03:58 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/24 19:19:25 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/25 18:27:53 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ Channel::Channel(const std::string &name) :
 	keyRequired(false),
 	isInviteOnly(false),
 	isSecret(false),
+	isModerated(false),
 	userLimit(-1) {}
 
 /**

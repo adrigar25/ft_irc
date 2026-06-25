@@ -22,7 +22,8 @@ CommandDispatcher::CommandDispatcher(const CommandDispatcher &other): handlers(o
 
 CommandDispatcher &CommandDispatcher::operator=(const CommandDispatcher &other)
 {
-	if (this != &other) {
+	if (this != &other)
+	{
 		this->handlers = other.handlers;
 	}
 	return *this;

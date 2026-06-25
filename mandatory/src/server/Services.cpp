@@ -59,7 +59,7 @@ std::string Services::getServerName() const
 
 std::string Services::getUserPrefix(const User *user) const
 {
-	return user->getNickname() + "!" + user->getUsername() + "@" + getServerName();
+	return user->getNickname() + "!" + user->getUsername() + "@" + user->getHost();
 }
 
 std::string Services::getServerPrefix() const
@@ -97,4 +97,3 @@ void Services::sendNamesList(RequestContext &ctx, const User *target, Channel *c
 	sendResponse(ctx, RPL_NAMREPLY(target->getNickname(), "=", channel->getName(), namesList));
 	sendResponse(ctx, RPL_ENDOFNAMES(target->getNickname(), channel->getName()));
 }
-

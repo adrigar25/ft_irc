@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:20:10 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/25 16:50:28 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/25 18:07:43 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 #include <string>
 #include <cctype>
 #include <cstdlib>
+#include <fnmatch.h>
 
 static bool isNumber(const std::string &s)
 {
@@ -78,7 +79,7 @@ static void modeL(Channel *ch, bool add, int limit)
 		ch->setUserLimit(-1);
 }
 
-static void appleUserMode(Channel *ch, bool add, User *u, char mode)
+static void applyUserMode(Channel *ch, bool add, User *u, char mode)
 {
 	if (mode == 'o')
 	{
@@ -94,13 +95,21 @@ static void appleUserMode(Channel *ch, bool add, User *u, char mode)
 		else
 			ch->removeRole(u, "voice");
 	}
-	else if (mode == 'b')
-	{
-		if (add)
-			ch->banUser(u);
-		else
-			ch->unbanUser(u);
-	}
+}
+
+static bool hasWildcard(const std::string &mask)
+{
+	return mask.find_first_of("*?") != std::string::npos;
+}
+
+static std::string normalizeMask(RequestContext &ctx, const std::string &param)
+{
+	if (hasWildcard(param))
+		return param;
+	User *target = ctx.services.users().findByNick(param);
+	if (!target)
+		return param;
+	return ctx.services.getUserPrefix(target);
 }
 
 static void sendChannelModes(RequestContext &ctx, Channel *ch)
@@ -120,46 +129,58 @@ static void sendChannelModes(RequestContext &ctx, Channel *ch)
 	ctx.services.sendResponse(ctx, RPL_CHANNELMODEIS(ctx.sender->getNickname(), ch->getName(), modes + (paramStr.empty() ? "" : " " + paramStr)));
 }
 
-static void executeMode(RequestContext &ctx, char m, bool add, Channel *ch, const std::string &param, const std::string &channelName)
+static std::string executeMode(RequestContext &ctx, char m, bool add, Channel *ch, const std::string &param, const std::string &channelName)
 {
 	switch (m)
 	{
-	case 'i':
-		modeI(ch, add);
-		break;
-	case 't':
-		modeT(ch, add);
-		break;
-	case 'm':
-		modeM(ch, add);
-		break;
-	case 'k':
-		modeK(ch, add, param);
-		break;
-	case 'l':
-		if (!param.empty() && !isNumber(param))
-		{
-			ctx.services.sendResponse(ctx, ERR_INVALIDMODEPARAM(ctx.sender->getNickname(), channelName));
-			return;
-		}
-		modeL(ch, add, param.empty() ? -1 : std::atoi(param.c_str()));
-		break;
+		case 'i':
+			modeI(ch, add);
+			return "";
+		case 't':
+			modeT(ch, add);
+			return "";
+		case 'm':
+			modeM(ch, add);
+			return "";
+		case 'k':
+			modeK(ch, add, param);
+			return param;
+		case 'l':
+			if (!param.empty() && !isNumber(param))
+			{
+				ctx.services.sendResponse(ctx, ERR_INVALIDMODEPARAM(ctx.sender->getNickname(), channelName));
+				return "";
+			}
+			modeL(ch, add, param.empty() ? -1 : std::atoi(param.c_str()));
+			return param;
 	case 'o':
 	case 'v':
 	case 'b':
 	{
 		User *target = ctx.services.users().findByNick(param);
-		if (!target)
+		if (!target && m != 'b')
 		{
 			ctx.services.sendResponse(ctx, ERR_NOSUCHNICK(ctx.sender->getNickname(), param));
-			return;
+			return "";
 		}
-		appleUserMode(ch, add, target, m);
-		break;
+		if (m == 'b')
+		{
+			std::string mask = normalizeMask(ctx, param);
+			if (add)
+				ch->banMask(mask);
+			else if (target)
+				ch->unbanMatchingMask(ctx.services.getUserPrefix(target));
+			else
+				ch->unbanMask(mask);
+			return mask;
+		}
+		else
+			applyUserMode(ch, add, target, m);
+		return param;
 	}
-	default:
-		ctx.services.sendResponse(ctx, ERR_UNKNOWNMODE(ctx.sender->getNickname(), std::string(1, m)));
-		break;
+		default:
+			ctx.services.sendResponse(ctx, ERR_UNKNOWNMODE(ctx.sender->getNickname(), std::string(1, m)));
+			return "";
 	}
 }
 /* ===================== EXEC ===================== */
@@ -222,7 +243,7 @@ void CmdMode::execute(RequestContext &ctx)
 			continue;
 		}
 
-		if (((m == 'k' || m == 'l') && add) || m == 'o' || m == 'v' || m == 'b')
+		if (((m == 'k' || m == 'l' ) && add) || m == 'o' || m == 'v' || m == 'b')
 		{
 			if (p >= params.size())
 			{
@@ -231,8 +252,8 @@ void CmdMode::execute(RequestContext &ctx)
 			}
 			param = params[p++];
 		}
-		executeMode(ctx, m, add, ch, param, channelName);
-		sendMode(ctx, channelName, add, m, param);
+		std::string sentParam = executeMode(ctx, m, add, ch, param, channelName);
+		sendMode(ctx, channelName, add, m, sentParam);
 		param.clear();
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:04:10 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/24 17:44:46 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/24 14:52:11 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ class User
 		int socket;
 		std::string nickname;
 		std::string	username;
+		std::string	host;
 		std::string	realname;
 		std::string	inBuffer;
 		std::string	outBuffer;
@@ -40,12 +41,14 @@ class User
 		void leaveChannel(Channel *channel);
 		std::string getNickname() const;
 		std::string getRealName() const;
+		std::string getHost() const;
 		int getSocket() const;
 		const std::map<std::string, Channel*>& getChannels() const;
 
 		// Authentication / identity helpers
 		void setNickname(const std::string &name);
 		void setUsername(const std::string &name);
+		void setHost(const std::string &name);
 		void setRealName(const std::string &name);
 		void setPass(bool val);
 		void setAuthenticated(bool val);
