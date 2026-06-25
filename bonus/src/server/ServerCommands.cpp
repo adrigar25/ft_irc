@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:21:47 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/24 18:53:56 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/25 16:31:43 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,6 +121,9 @@ void Server::executeCommand(User *user, const std::string &command, const std::s
 		sendToUser(user, ERR_NOTREGISTERED(user->getNickname()));
 		return;
 	}
+
+	if (command != "PASS" && !user->isPassSet())
+		return;
 
 	RequestContext ctx(this->services, user, args);
 	dispatcher.dispatch(command, ctx);
