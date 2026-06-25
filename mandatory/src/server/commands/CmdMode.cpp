@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:20:10 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/24 19:33:35 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/25 16:50:31 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,7 +163,7 @@ static void executeMode(RequestContext &ctx, char m, bool add, Channel *ch, cons
 	}
 }
 /* ===================== EXEC ===================== */
-
+#include <iostream>
 void CmdMode::execute(RequestContext &ctx)
 {
 	if (!ctx.sender || ctx.rawLine.empty())
@@ -222,7 +222,7 @@ void CmdMode::execute(RequestContext &ctx)
 			continue;
 		}
 
-		if (add && (m == 'k' || m == 'l' || m == 'o' || m == 'v' || m == 'b'))
+		if (((m == 'k' || m == 'l' ) && add) || m == 'o' || m == 'v' || m == 'b')
 		{
 			if (p >= params.size())
 			{
@@ -231,7 +231,6 @@ void CmdMode::execute(RequestContext &ctx)
 			}
 			param = params[p++];
 		}
-
 		executeMode(ctx, m, add, ch, param, channelName);
 		sendMode(ctx, channelName, add, m, param);
 		param.clear();
