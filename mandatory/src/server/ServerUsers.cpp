@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:00:10 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/24 19:01:38 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/28 18:22:39 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,22 @@
 #include <sstream>
 #include <unistd.h>
 
+/**
+ * @brief Adds a new user to the server.
+ *
+ * - Adds the user to the server's user list.
+ *
+ * @param user Pointer to the User object to be added.
+ */
 void Server::addUser(User* user)
 {
 	this->services.users().add(user);
 }
 
+/**
+ * @brief Deletes a user from the server
+ * @param fd The file descriptor of the user to delete
+ */
 void Server::deleteUser(int fd)
 {
 	const User *user = this->services.users().findByFd(fd);
@@ -40,6 +51,11 @@ void Server::deleteUser(int fd)
 	close(fd);
 }
 
+/**
+ * @brief Gets a user by their file descriptor
+ * @param fd The file descriptor of the user to find
+ * @return Pointer to the User object, or nullptr if not found
+ */
 User* Server::getUserByFd(int fd)
 {
 	return this->services.users().findByFd(fd);

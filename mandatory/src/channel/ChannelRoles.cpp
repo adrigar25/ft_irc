@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:03:38 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/24 18:39:11 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/28 18:40:34 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,12 @@
 #include <iostream>
 #include <string>
 
+/**
+ * @brief Gets the map for a specific role.
+ * @param channel The channel for which to get the role map.
+ * @param role The role for which to get the map.
+ * @return A pointer to the map for the specified role, or NULL if the role is invalid.
+ */
 static std::map<int, User*> *getRoleMap(Channel *channel, const std::string &role)
 {
 	if (role == "operator")

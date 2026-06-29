@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:22:37 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/24 19:13:02 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/28 17:14:32 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,15 +209,12 @@ void User::leaveChannel(Channel *channel)
 {
 	if (!channel)
 		return;
-	// remove channel from user's map first
 	std::map<std::string, Channel *>::iterator it = this->channels.find(channel->getName());
 	if (it != this->channels.end())
 		this->channels.erase(it);
-	// then remove user from channel
 	channel->deleteUser(this);
 }
 
-/* Buffer accessors */
 std::string &User::getInBuffer()
 {
 	return this->inBuffer;

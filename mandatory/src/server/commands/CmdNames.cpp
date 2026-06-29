@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:02:52 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/16 17:02:53 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/28 18:34:10 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,13 @@
 #include <sstream>
 #include <vector>
 
+/**
+ * @brief Executes the NAMES command.
+ * - Handles the NAMES command for listing users in channels.
+ * - If no channels are specified, lists users in all channels.
+ * - If channels are specified, lists users in those channels.
+ * @param ctx The request context.
+ */
 void CmdNames::execute(RequestContext &ctx)
 {
 	if (ctx.rawLine.empty())

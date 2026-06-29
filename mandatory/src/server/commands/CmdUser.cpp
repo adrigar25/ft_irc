@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:01:55 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/24 18:13:51 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/28 18:39:13 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,12 @@
 #include <cstring>
 #include "replies/Replies.hpp"
 
+/**
+ * @brief Parses the USER command parameters.
+ * @param raw The raw command line.
+ * @param outUsername The parsed username.
+ * @param outReal The parsed real name.
+ */
 static void parseUserLine(const std::string &raw, std::string &outUsername, std::string &outReal)
 {
 	std::istringstream iss(raw);
@@ -35,6 +41,12 @@ static void parseUserLine(const std::string &raw, std::string &outUsername, std:
 	outReal = real;
 }
 
+/**
+ * @brief Sets the user information for the sender.
+ * @param ctx The request context.
+ * @param username The username to set.
+ * @param real The real name to set.
+ */
 static void setUser(RequestContext &ctx, const std::string &username, const std::string &real)
 {
 	ctx.sender->setUsername(username);
@@ -42,6 +54,12 @@ static void setUser(RequestContext &ctx, const std::string &username, const std:
 
 }
 
+/**
+ * @brief Executes the USER command.
+ * - Handles the USER command for setting the user's username and real name.
+ * - Validates the parameters and sends appropriate responses for errors.
+ * @param ctx The request context.
+ */
 void CmdUser::execute(RequestContext &ctx)
 {
 	if (!ctx.sender) return;

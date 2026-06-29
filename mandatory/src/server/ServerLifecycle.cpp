@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:00:22 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/24 19:41:35 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/28 17:01:12 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,8 @@ Server::~Server()
 	this->services.users().clear();
 	this->services.channels().clear();
 }
-/** @brief Crea el socket de escucha del servidor.
+/** 
+ * @brief Crea el socket de escucha del servidor.
  * - Usa `socket(AF_INET, SOCK_STREAM, 0)` para crear un socket TCP.
  * - Si falla, lanza una excepción con el mensaje de error.
  * - Configura el socket como no bloqueante y con la bandera CLOEXEC.
@@ -115,6 +116,12 @@ void Server::createServerSocket()
 	setSocketNonBlocking(this->serverSocket);
 }
 
+/** 
+ * @brief Configura las opciones del socket de escucha.
+ *
+ * - Establece la opción `SO_REUSEADDR` para permitir reutilización de la dirección.
+ * - Si falla, lanza una excepción con el mensaje de error.
+ */
 void Server::setSocketOptions()
 {
 	int opt = 1;
@@ -122,6 +129,12 @@ void Server::setSocketOptions()
 		throw IrcException(IRC_ERR_STARTING_SERVER, std::string("setsockopt failed: ") + strerror(errno));
 }
 
+/** 
+ * @brief Vincula el socket de escucha del servidor a la dirección y puerto especificados.
+ *
+ * - Inicializa la estructura `sockaddr_in` con los valores adecuados.
+ * - Si falla, lanza una excepción con el mensaje de error.
+ */
 void Server::bindServerSocket()
 {
 	struct sockaddr_in address;
@@ -135,18 +148,36 @@ void Server::bindServerSocket()
 		throw IrcException(IRC_ERR_STARTING_SERVER, std::string("bind failed: ") + strerror(errno));
 }
 
+/** 
+ * @brief Pone el socket de escucha del servidor en modo de escucha.
+ *
+ * - Usa `listen()` para poner el socket en modo de escucha.
+ * - Si falla, lanza una excepción con el mensaje de error.
+ */
 void Server::listenServerSocket()
 {
 	if (listen(this->serverSocket, 64) < 0)
 		throw IrcException(IRC_ERR_STARTING_SERVER, std::string("listen failed: ") + strerror(errno));
 }
 
+/** 
+ * @brief Configura los descriptores de archivo para el polling.
+ *
+ * - Limpia la lista de descriptores de archivo.
+ * - Añade el socket del servidor a la lista.
+ */
 void Server::setupPollFds()
 {
 	this->fds.clear();
 	pushPollFd(this->serverSocket, POLLIN);
 }
 
+/** 
+ * @brief Añade un descriptor de archivo a la lista para el polling.
+ *
+ * - Crea una estructura `pollfd` con los valores dados.
+ * - Añade la estructura a la lista `fds`.
+ */
 void Server::pushPollFd(int fd, short events)
 {
 	struct pollfd pfd;
@@ -156,30 +187,32 @@ void Server::pushPollFd(int fd, short events)
 	this->fds.push_back(pfd);
 }
 
+/** 
+ * @brief Inicia el servidor.
+ *
+ * - Establece la bandera `running` a true.
+ * - Establece la instancia del servidor.
+ * - Crea el socket del servidor.
+ */
 void Server::startServer()
 {
-	try {
-		running = true;
-		instance = this;
-		createServerSocket();
-		setSocketOptions();
-		bindServerSocket();
-		listenServerSocket();
-		setupPollFds();
-		initSignals();
-	}
-	catch (const std::exception &e)
-	{
-		if(this->serverSocket >= 0) {
-			close(this->serverSocket);
-			this->serverSocket = -1;
-		}
-		std::cerr << "ERROR: " << e.what() << std::endl;
-		return;
-	}
+	running = true;
+	instance = this;
+	createServerSocket();
+	setSocketOptions();
+	bindServerSocket();
+	listenServerSocket();
+	setupPollFds();
+	initSignals();
 	handleEvents();
 }
 
+/** 
+ * @brief Detiene el servidor.
+ *
+ * - Establece la bandera `running` a false.
+ * - Cierra el socket del servidor si está abierto.
+ */
 void Server::stopServer()
 {
 	running = false;
@@ -189,6 +222,13 @@ void Server::stopServer()
 	}
 }
 
+/** 
+ * @brief Limpia los recursos del servidor.
+ *
+ * - Cierra todos los descriptores de archivo.
+ * - Limpia las listas de usuarios y canales.
+ * - Establece el socket del servidor a -1.
+ */
 void Server::cleanup()
 {
 	for (size_t i = 0; i < this->fds.size(); ++i)
@@ -204,7 +244,12 @@ void Server::cleanup()
 }
 
 
-
+/** 
+ * @brief Obtiene la instancia actual del servidor.
+ *
+ * - Devuelve un puntero al objeto `Server` actualmente en ejecución.
+ * - Si no hay instancia, devuelve NULL.
+ */
 Server* Server::getInstance()
 {
 	return Server::instance;

@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:21:47 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/25 16:30:58 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/28 18:38:04 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,10 @@
 #include "RequestContext.hpp"
 #include "replies/Replies.hpp"
 
+/**
+ * @brief Obtiene el despachador de comandos.
+ * @return Referencia constante al despachador de comandos.
+ */
 static const CommandDispatcher &getDispatcher()
 {
 	static CommandDispatcher dispatcher;
@@ -63,6 +67,10 @@ static const CommandDispatcher &getDispatcher()
 	return dispatcher;
 }
 
+/**
+ * @brief Verifica si el usuario está autenticado.
+ * @param ctx Contexto de la solicitud.
+ */
 static void checkAuthentication(RequestContext &ctx)
 {
 	if (ctx.sender->isPassSet() && ctx.sender->isNickSet() && ctx.sender->isUserSet())
@@ -75,6 +83,50 @@ static void checkAuthentication(RequestContext &ctx)
 		ctx.services.sendResponse(ctx, RPL_MYINFO(ctx.sender->getNickname(), serverName));
 	}
 }
+
+/**
+ * @brief Maneja comandos desconocidos.
+ *
+ * - Envía un mensaje de error al usuario indicando que el comando no es reconocido.
+ * @param user Usuario que envió el comando desconocido.
+ * @param command Comando desconocido.
+ */
+void Server::executeCommand(User *user, const std::string &command, const std::string &args)
+{
+
+	const CommandDispatcher &dispatcher = getDispatcher();
+	RequestContext ctx(this->services, user, args);
+
+	if (!dispatcher.hasHandler(command))
+	{
+		if (command.empty())
+			return;
+		handleUnknownCommand(user, command);
+		return;
+	}
+
+	if (!user->isAuthenticated() && command != "PASS" && command != "NICK" && command != "USER" && command != "CAP" && command != "PING" && command != "PONG")
+	{
+		sendToUser(user, ERR_NOTREGISTERED(user->getNickname()));
+		return;
+	}
+
+	if (command != "PASS" && !user->isPassSet())
+		return;
+
+	dispatcher.dispatch(command, ctx);
+	if (!user->isAuthenticated())
+		checkAuthentication(ctx);
+}
+
+/**
+ * @brief Maneja comandos enviados por el cliente.
+ *
+ * - Verifica si el usuario está autenticado.
+ * - Ejecuta el comando correspondiente.
+ * @param user Usuario que envió el comando.
+ * @param commandLine Línea del comando recibido.
+ */
 void Server::handleClientCommand(User *user, const std::string &commandLine)
 {
 	if (!user)
@@ -98,35 +150,4 @@ void Server::handleClientCommand(User *user, const std::string &commandLine)
 		std::cout << " - args: " << args;
 	std::cout << std::endl;
 	executeCommand(user, cmd, args);
-}
-
-void Server::executeCommand(User *user, const std::string &command, const std::string &args)
-{
-
-	const CommandDispatcher &dispatcher = getDispatcher();
-
-	if (!user)
-		return;
-
-	if (!dispatcher.hasHandler(command))
-	{
-		if (command.empty())
-			return;
-		handleUnknownCommand(user, command);
-		return;
-	}
-
-	if (!user->isAuthenticated() && command != "PASS" && command != "NICK" && command != "USER" && command != "CAP" && command != "PING" && command != "PONG")
-	{
-		sendToUser(user, ERR_NOTREGISTERED(user->getNickname()));
-		return;
-	}
-
-	if (command != "PASS" && !user->isPassSet())
-		return;
-
-	RequestContext ctx(this->services, user, args);
-	dispatcher.dispatch(command, ctx);
-	if (!user->isAuthenticated())
-		checkAuthentication(ctx);
 }

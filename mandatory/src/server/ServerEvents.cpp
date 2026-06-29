@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:00:35 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/24 18:45:32 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/28 17:05:43 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,15 @@
 #include <unistd.h>
 
 
+/** 
+ * @brief Realiza una llamada a `poll` para verificar los eventos en los sockets.
+ *
+ * - Obtiene el número de descriptores de archivo.
+ * - Llama a `poll` con un tiempo de espera infinito.
+ * - Maneja los errores de `poll`.
+ *
+ * @return El número de descriptores listos o -1 en caso de error.
+ */
 int Server::performPoll()
 {
 	int nfds = this->fds.size();
@@ -30,6 +39,12 @@ int Server::performPoll()
 	return ready;
 }
 
+/** 
+ * @brief Maneja los eventos de los clientes.
+ *
+ * - Itera sobre los sockets de los clientes.
+ * - Llama a las funciones correspondientes para manejar escritura, lectura y errores.
+ */
 void Server::handleClientEvents()
 {
 	for (int i = 1; i < (int)this->fds.size(); ++i)
@@ -42,6 +57,13 @@ void Server::handleClientEvents()
 	}
 }
 
+/** 
+ * @brief Maneja los eventos del servidor.
+ *
+ * - Realiza una llamada a `performPoll` para verificar los eventos en los sockets.
+ * - Si hay eventos disponibles, llama a `handleNewConnection` o `handleClientEvents` según el tipo de evento.
+ * - Continúa hasta que el servidor deje de correr.
+ */
 void Server::handleEvents()
 {
 	int ready = 0;
@@ -61,19 +83,9 @@ void Server::handleEvents()
 			continue;
 
 		if (!this->fds.empty() && (this->fds[0].revents & POLLIN))
-		{
-			try {
-				handleNewConnection();
-			} catch (const std::exception &e) {
-				std::cerr << "Accept error: " << e.what() << std::endl;
-			}
-		}
+			handleNewConnection();
 
-		try {
-			handleClientEvents();
-		} catch (const std::exception &e) {
-			std::cerr << "Client error: " << e.what() << std::endl;
-		}
+		handleClientEvents();
 	}
 	cleanup();
 }

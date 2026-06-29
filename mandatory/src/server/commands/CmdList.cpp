@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:03:02 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/24 18:07:21 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/28 18:26:42 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,10 @@
 #include <sstream>
 #include "replies/Replies.hpp"
 
+/**
+ * @brief Sends a list of all channels to the user
+ * @param ctx The request context
+ */
 static void sendChannelsList(RequestContext &ctx)
 {
 	const std::map<std::string, Channel*>& channels = ctx.services.channels().getAll();
@@ -34,6 +38,13 @@ static void sendChannelsList(RequestContext &ctx)
 	ctx.services.sendResponse(ctx, RPL_ENDOFLIST(ctx.sender->getNickname()));
 }
 
+/**
+ * @brief Executes the LIST command
+ * 	- Handles the LIST command for listing channels.
+ * 	- Sends a list of all channels to the user, excluding invite-only and secret channels.
+ * 	- Sends appropriate responses for the start and end of the list.
+ * @param ctx The request context
+ */
 void CmdList::execute(RequestContext &ctx)
 {
 	if (!ctx.sender) return;

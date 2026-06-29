@@ -161,6 +161,11 @@ bool Channel::getIsModerated() const
 	return this->isModerated;
 }
 
+/**
+ * @brief Gets the modes for the channel.
+ * @param outModes The string to store the modes.
+ * @param outParams The vector to store the mode parameters.
+ */
 void Channel::getChannelModes(std::string &outModes, std::vector<std::string> &outParams) const
 {
 	if (this->getIsInviteOnly())

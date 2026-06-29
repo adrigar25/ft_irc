@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:03:21 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/24 19:07:15 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/28 18:24:59 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,13 @@ static void parseInviteParams(const std::string &params, std::string &outTargetN
 	}
 }
 
+/**
+ * @brief Checks if a user can invite another user to a channel
+ * @param ctx The request context
+ * @param targetUser The user to invite
+ * @param channel The channel to invite to
+ * @return true if the user can invite, false otherwise
+ */
 static bool canInvite(RequestContext &ctx, const User* targetUser, const Channel* channel)
 {
 	
@@ -59,6 +66,13 @@ static bool canInvite(RequestContext &ctx, const User* targetUser, const Channel
 	return true;
 }
 
+/**
+ * @brief Executes the INVITE command
+ *  - Checks if the sender can invite the target user to the specified channel.
+ *  - If valid, sends an invitation message to the target user and a confirmation to the sender.
+ *  - If invalid, sends the appropriate error response to the sender.
+ * @param ctx The request context
+ */
 void CmdInvite::execute(RequestContext &ctx)
 {
 	if (!ctx.sender) return;

@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:19:25 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/25 18:21:26 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/28 18:42:27 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include "Exceptions.hpp"
 #include <map>
 #include <algorithm>
+#include <fnmatch.h>
 
 /**
  * @brief Añade un usuario al canal, validando restricciones (invite-only, límite, baneos).
@@ -72,17 +73,28 @@ void Channel::inviteUser(User *user)
 	addUserToMap(this->invitedUsers, user);
 }
 
+/**
+ * @brief Elimina a `user` de la lista de invitados del canal.
+ */
 void Channel::removeInvitedUser(const User *user)
 {
 	deleteUserFromMap(this->invitedUsers, user);
 }
 
+/**
+ * @brief Bans a user mask from the channel.
+ * @param mask The mask to ban.
+ */
 void Channel::banMask(const std::string &mask)
 {
 	if (std::find(this->bannedMasks.begin(), this->bannedMasks.end(), mask) == this->bannedMasks.end())
 		this->bannedMasks.push_back(mask);
 }
 
+/**
+ * @brief Removes a banned mask from the list.
+ * @param mask The mask to remove.
+ */
 void Channel::unbanMask(const std::string &mask)
 {
 	std::vector<std::string>::iterator it = std::find(this->bannedMasks.begin(), this->bannedMasks.end(), mask);
