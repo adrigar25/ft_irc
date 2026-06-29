@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:00:28 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/24 18:19:19 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/28 18:21:28 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,12 @@
 #include <cstring>
 #include <cstdio>
 
+/**
+ * @brief Prepares the output message for a user
+ * @param user The user to send the message to
+ * @param message The message to send
+ * @return The prepared message
+ */
 static std::string prepareOutMessage(const User *user, const std::string &message)
 {
 
@@ -45,6 +51,12 @@ static std::string prepareOutMessage(const User *user, const std::string &messag
 	return std::string("NOTICE ") + user->getNickname() + " :" + message;
 }
 
+/**
+ * @brief Enqueues a pending message for a user
+ * @param user The user to send the message to
+ * @param buf The buffer containing the message
+ * @param len The length of the message
+ */
 void Server::enqueuePending(User *user, const char *buf, size_t len)
 {
 	std::string &pending = user->getOutBuffer();
@@ -52,6 +64,11 @@ void Server::enqueuePending(User *user, const char *buf, size_t len)
 	enablePollOutForFd(user->getSocket());
 }
 
+/**
+ * @brief Sends a message to a user
+ * @param user The user to send the message to
+ * @param message The message to send
+ */
 void Server::sendToUser(User *user, const std::string &message)
 {
 	std::string msg = prepareOutMessage(user, message);
@@ -85,7 +102,12 @@ void Server::sendToUser(User *user, const std::string &message)
 	}
 }
 
-
+/**
+ * @brief Sends a message to all users in a channel, excluding a specific user
+ * @param channel The channel to send the message to
+ * @param message The message to send
+ * @param exclude The user to exclude from receiving the message
+ */
 void Server::sendToChannel(Channel *channel, const std::string &message, const User *exclude)
 {
 	const std::map<int, User*>& usersMap = channel->getUsers();
@@ -96,6 +118,10 @@ void Server::sendToChannel(Channel *channel, const std::string &message, const U
 	}
 }
 
+/**
+ * @brief Enables polling for output on a file descriptor
+ * @param fd The file descriptor to enable polling for
+ */
 void Server::enablePollOutForFd(int fd)
 {
 	for (size_t i = 0; i < this->fds.size(); ++i) {

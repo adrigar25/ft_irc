@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:03:26 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/16 17:03:27 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/28 18:24:31 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,15 @@
 
 #include "LineUtils.hpp"
 
+/**
+ * @brief Executes the CAP command
+ *  - Handles the CAP command for capability negotiation.
+ *  - Supports the following subcommands:
+ *    - LS: Lists the server's capabilities.
+ *    - REQ: Requests specific capabilities.
+ *    - END: Ends the capability negotiation.
+ * @param ctx The request context
+ */
 void CmdCap::execute(RequestContext &ctx)
 {
 	if (!ctx.sender) return;

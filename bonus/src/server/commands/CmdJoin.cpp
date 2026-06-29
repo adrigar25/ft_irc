@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:03:17 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/24 17:28:19 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/28 18:25:38 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,12 @@
 #include <cstring>
 #include "replies/Replies.hpp"
 
+/**
+ * @brief Handles join errors
+ * @param ctx The request context
+ * @param channelName The name of the channel
+ * @param code The error code
+ */
 static void handleJoinError(RequestContext &ctx, const std::string &channelName, int code)
 {
 	if (code == IRC_ERR_CHANNEL_FULL)
@@ -41,6 +47,13 @@ static void handleJoinError(RequestContext &ctx, const std::string &channelName,
 		ctx.services.sendResponse(ctx, ERR_INVITEONLYCHAN(ctx.sender->getNickname(), channelName));
 }
 
+/**
+ * @brief Joins a single channel
+ * @param ctx The request context
+ * @param channelName The name of the channel
+ * @param key The key for the channel
+ * @return true if the user joined the channel, false otherwise
+ */
 static bool joinSingleChannel(RequestContext &ctx, const std::string &channelName, const std::string &key)
 {
 	if (!ctx.sender)
@@ -63,12 +76,25 @@ static bool joinSingleChannel(RequestContext &ctx, const std::string &channelNam
 	return true;
 }
 
+/**
+ * @brief Sends a join message to the channel
+ * @param ctx The request context
+ * @param channel The channel to send the message to
+ */
 static void sendJoinMessage(RequestContext &ctx, Channel *channel)
 {
 	std::string joinMsg = RPL_JOIN(ctx.services.getUserPrefix(ctx.sender), channel->getName());
 	ctx.services.sendToChannel(channel, joinMsg, NULL);
 }
 
+/**
+ * @brief Executes the JOIN command
+ *  - Handles the JOIN command for joining channels.
+ *  - Supports joining multiple channels with optional keys.
+ *  - Sends appropriate error messages for join failures.
+ *  - Sends join messages to the channel and lists names of users in the channel.
+ * @param ctx The request context
+ */
 void CmdJoin::execute(RequestContext &ctx)
 {
 	if (!ctx.sender) return;

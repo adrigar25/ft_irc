@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:02:43 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/22 18:31:38 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/28 18:35:14 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,12 @@
 #include <sstream>
 #include "replies/Replies.hpp"
 
+/**
+ * @brief Parses a list of channels from a raw line.
+ * @param ctx The request context.
+ * @param channelsPart The part of the line containing channel names.
+ * @param out The vector to store the parsed channel names.
+ */
 static void parseChannelList(RequestContext &ctx, const std::string &channelsPart, std::vector<std::string> &out)
 {
 	out = split(channelsPart, ',');
@@ -36,6 +42,12 @@ static void parseChannelList(RequestContext &ctx, const std::string &channelsPar
 	}
 }
 
+/**
+ * @brief Removes a user from a channel.
+ * @param ctx The request context.
+ * @param channelName The name of the channel.
+ * @param msg The parting message.
+ */
 static void partFromChannel(RequestContext &ctx, const std::string &channelName, const std::string &msg)
 {
 	Channel *channel = ctx.services.channels().getChannel(channelName);
@@ -60,6 +72,12 @@ static void partFromChannel(RequestContext &ctx, const std::string &channelName,
 		ctx.services.channels().deleteChannel(channelName);
 }
 
+/**
+ * @brief Splits the raw line into channels and message parts.
+ * @param raw The raw line.
+ * @param outChannels The string to store the channel names.
+ * @param outMsg The string to store the parting message.
+ */
 static void splitChannelsAndMsg(const std::string &raw, std::string &outChannels, std::string &outMsg)
 {
 	std::vector<std::string> parts = split(raw, ' ');
@@ -72,6 +90,13 @@ static void splitChannelsAndMsg(const std::string &raw, std::string &outChannels
 	}
 }
 
+/**
+ * @brief Executes the PART command.
+ * - Handles the PART command for leaving channels.
+ * - Validates the channel names and sends appropriate responses for errors.
+ * - Removes the user from the specified channels and sends parting messages.
+ * @param ctx The request context.
+ */
 void CmdPart::execute(RequestContext &ctx)
 {
 	if (!ctx.sender)

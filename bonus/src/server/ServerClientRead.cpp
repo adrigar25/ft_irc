@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:00:48 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/24 20:07:26 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/28 18:54:12 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,17 @@
 #include <vector>
 #include <map>
 
+/** 
+ * @brief Envía un mensaje de QUIT a todos los canales del usuario y lo desconecta.
+ *
+ * - Envía un mensaje de QUIT a todos los canales en los que el usuario está presente.
+ * - Elimina al usuario de cada canal.
+ * - Si un canal queda vacío, lo elimina del servidor.
+ * - Finalmente, desconecta al usuario del servidor.
+ *
+ * @param server Puntero al servidor.
+ * @param user Puntero al usuario a desconectar.
+ */
 static void sendQuitMessageToChannels(Server *server, User *user)
 {
 	if (!server || !user)
@@ -29,7 +40,6 @@ static void sendQuitMessageToChannels(Server *server, User *user)
 
 		std::string quitMessage =
 			":" + server->getServices().getUserPrefix(user) +
-			"@" + server->getHostname() +
 			" QUIT :Client disconnected\r\n";
 
 		server->getServices().sendToChannel(channel, quitMessage, user);
@@ -40,63 +50,38 @@ static void sendQuitMessageToChannels(Server *server, User *user)
 			server->getServices().channels().deleteChannel(channel->getName());
 	}
 }
+
+/** 
+ * @brief Desconecta un cliente del servidor.
+ *
+ * - Envía un mensaje de QUIT a todos los canales del usuario.
+ * - Elimina al usuario del servidor.
+ * - Elimina el descriptor de archivo del vector de descriptores.
+ *
+ * @param server Puntero al servidor.
+ * @param user Puntero al usuario a desconectar.
+ * @return true si el cliente fue desconectado, false en caso contrario.
+ */
 static bool disconnectClient(Server *server, User *user)
 {
 	if (!server || !user)
 		return false;
 
 	sendQuitMessageToChannels(server, user);
+	std::cout << "[QUIT] - fd: " << user->getSocket() << "  : Disconnected" << std::endl;
 	server->handleDisconnectionByFd(user->getSocket());
 	return true;
 }
 
-bool Server::handleClientRead(int idx)
-{
-	if (idx < 0 || idx >= (int)this->fds.size())
-		return false;
-
-	const struct pollfd &pfd = this->fds[idx];
-
-	// 💥 PRIORIDAD: errores de socket
-	if (pfd.revents & (POLLHUP | POLLERR | POLLNVAL))
-	{
-		disconnectClient(this, getUserByFd(pfd.fd));
-		return true;
-	}
-
-	// nada que leer
-	if (!(pfd.revents & POLLIN))
-		return false;
-
-	int fd = pfd.fd;
-	User *client = getUserByFd(fd);
-
-	if (!client)
-	{
-		std::cout << "[QUIT] - fd: " << fd << "  : Disconnected" << std::endl;
-		disconnectClient(this, getUserByFd(pfd.fd));
-		return true;
-	}
-
-	std::string buffer(1024, '\0');
-
-	ssize_t n = recv(fd, &buffer[0], buffer.size() - 1, 0);
-
-	if (n <= 0)
-	{
-		disconnectClient(this, getUserByFd(pfd.fd));
-		return true;
-	}
-
-	buffer[n] = '\0';
-
-	client->getInBuffer().append(buffer, 0, static_cast<size_t>(n));
-
-	processClientBuffer(client);
-
-	return false;
-}
-
+/** 
+ * @brief Procesa el buffer de entrada de un cliente.
+ *
+ * - Verifica si el usuario es válido.
+ * - Extrae las líneas del buffer de entrada.
+ * - Procesa cada línea como un comando del cliente.
+ *
+ * @param user Puntero al usuario cuyo buffer se va a procesar.
+ */
 void Server::processClientBuffer(User *user)
 {
 	if (!user)
@@ -114,9 +99,63 @@ void Server::processClientBuffer(User *user)
 		}
 		catch (const std::exception &e)
 		{
-			std::cerr << "Client error fd " << user->getSocket() << ": " << e.what() << std::endl;
 			disconnectClient(this, user);
 			break;
 		}
 	}
+}
+
+/** 
+ * @brief Maneja los eventos de lectura para un cliente específico.
+ *
+ * - Verifica si el índice del cliente es válido.
+ * - Comprueba si hay datos disponibles para leer.
+ * - Lee los datos del cliente.
+ * - Procesa el buffer de entrada del cliente.
+ *
+ * @param idx Índice del cliente en el vector de descriptores.
+ * @return true si se manejó un evento de lectura, false en caso contrario.
+ */
+bool Server::handleClientRead(int idx)
+{
+	if (idx < 0 || idx >= (int)this->fds.size())
+		return false;
+
+	const struct pollfd &pfd = this->fds[idx];
+
+	if (pfd.revents & (POLLHUP | POLLERR | POLLNVAL))
+	{
+		disconnectClient(this, getUserByFd(pfd.fd));
+		return true;
+	}
+
+	if (!(pfd.revents & POLLIN))
+		return false;
+
+	int fd = pfd.fd;
+	User *client = getUserByFd(fd);
+
+	if (!client)
+	{
+		disconnectClient(this, getUserByFd(pfd.fd));
+		return true;
+	}
+	
+	std::string buffer(1024, '\0');
+
+	ssize_t n = recv(fd, &buffer[0], buffer.size() - 1, 0);
+
+	if (n <= 0)
+	{
+		disconnectClient(this, getUserByFd(pfd.fd));
+		return true;
+	}
+
+	buffer[n] = '\0';
+
+	client->getInBuffer().append(buffer, 0, static_cast<size_t>(n));
+
+	processClientBuffer(client);
+
+	return false;
 }

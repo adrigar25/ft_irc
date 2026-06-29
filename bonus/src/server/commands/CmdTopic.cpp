@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:20:49 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/22 18:32:04 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/28 18:36:24 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,12 @@
 #include "LineUtils.hpp"
 #include "replies/Replies.hpp"
 
+/**
+ * @brief Parses the topic parameters.
+ * @param params The raw parameter string.
+ * @param outChannelName The parsed channel name.
+ * @param outTopic The parsed topic.
+ */
 static void parseTopicParams(const std::string &params, std::string &outChannelName, std::string &outTopic)
 {
 	size_t sp = params.find(' ');
@@ -32,6 +38,13 @@ static void parseTopicParams(const std::string &params, std::string &outChannelN
 	outTopic = (sp == std::string::npos) ? "" : params.substr(sp + 1);
 }
 
+/**
+ * @brief Executes the TOPIC command.
+ * - Handles the TOPIC command for setting or retrieving the topic of a channel.
+ * - Validates the channel and user permissions.
+ * - Sends appropriate responses for errors and successful topic changes.
+ * @param ctx The request context.
+ */
 void CmdTopic::execute(RequestContext &ctx)
 {
 

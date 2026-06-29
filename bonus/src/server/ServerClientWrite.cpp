@@ -15,6 +15,17 @@
 #include <cerrno>
 #include <sys/socket.h>
 
+/** 
+ * @brief Maneja los eventos de escritura para un cliente específico.
+ *
+ * - Verifica si el índice del cliente es válido.
+ * - Comprueba si hay datos disponibles para enviar.
+ * - Envía los datos al cliente.
+ * - Actualiza el estado del descriptor de archivo.
+ *
+ * @param idx Índice del cliente en el vector de descriptores.
+ * @return true si se manejó un evento de escritura, false en caso contrario.
+ */
 bool Server::handleClientWrite(int idx)
 {
 	if (idx < 0 || idx >= (int)this->fds.size())

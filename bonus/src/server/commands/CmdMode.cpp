@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:20:10 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/25 18:07:43 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/28 18:27:51 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,14 @@ static bool isNumber(const std::string &s)
 	return !s.empty();
 }
 
+/**
+ * @brief Sends the mode information for a channel to the user
+ * @param ctx The request context
+ * @param channelName The name of the channel
+ * @param add Whether to add or remove the mode
+ * @param mode The mode character
+ * @param param The parameter for the mode
+ */
 static void sendMode(RequestContext &ctx, const std::string &channelName, bool add, char mode, const std::string &param)
 {
 	std::string modes(1, add ? '+' : '-');
@@ -40,23 +48,43 @@ static void sendMode(RequestContext &ctx, const std::string &channelName, bool a
 	ctx.services.sendToChannel(ch, ctx.services.getServerPrefix() + " " + RPL_CHANNELMODEIS(ctx.sender->getNickname(), channelName, modes), nullptr);
 }
 
-/* ===================== HANDLERS ===================== */
 
+/**
+ * @brief Sets the invite-only mode for a channel
+ * @param ch The channel
+ * @param add Whether to add or remove the mode
+ */
 static void modeI(Channel *ch, bool add)
 {
 	ch->setIsInviteOnly(add);
 }
 
+/**
+ * @brief Sets the topic protection mode for a channel
+ * @param ch The channel
+ * @param add Whether to add or remove the mode
+ */
 static void modeT(Channel *ch, bool add)
 {
 	ch->setTopicProtected(add);
 }
 
+/**
+ * @brief Sets the moderated mode for a channel
+ * @param ch The channel
+ * @param add Whether to add or remove the mode
+ */
 static void modeM(Channel *ch, bool add)
 {
 	ch->setModerated(add);
 }
 
+/**
+ * @brief Sets the key mode for a channel
+ * @param ch The channel
+ * @param add Whether to add or remove the mode
+ * @param key The key for the channel
+ */
 static void modeK(Channel *ch, bool add, const std::string &key)
 {
 	if (add)
@@ -71,6 +99,12 @@ static void modeK(Channel *ch, bool add, const std::string &key)
 	}
 }
 
+/**
+ * @brief Sets the user limit mode for a channel
+ * @param ch The channel
+ * @param add Whether to add or remove the mode
+ * @param limit The user limit for the channel
+ */
 static void modeL(Channel *ch, bool add, int limit)
 {
 	if (add)
@@ -79,6 +113,13 @@ static void modeL(Channel *ch, bool add, int limit)
 		ch->setUserLimit(-1);
 }
 
+/**
+ * @brief Applies a user mode (operator or voice) to a user in a channel
+ * @param ch The channel
+ * @param add Whether to add or remove the mode
+ * @param u The user
+ * @param mode The mode character ('o' for operator, 'v' for voice)
+ */
 static void applyUserMode(Channel *ch, bool add, User *u, char mode)
 {
 	if (mode == 'o')
@@ -97,11 +138,22 @@ static void applyUserMode(Channel *ch, bool add, User *u, char mode)
 	}
 }
 
+/**
+ * @brief Checks if a string contains wildcard characters
+ * @param mask The string to check
+ * @return true if the string contains '*' or '?', false otherwise
+ */
 static bool hasWildcard(const std::string &mask)
 {
 	return mask.find_first_of("*?") != std::string::npos;
 }
 
+/**
+ * @brief Normalizes a mask for banning users
+ * @param ctx The request context
+ * @param param The mask or nickname to normalize
+ * @return The normalized mask or the original parameter if no user is found
+ */
 static std::string normalizeMask(RequestContext &ctx, const std::string &param)
 {
 	if (hasWildcard(param))
@@ -112,6 +164,11 @@ static std::string normalizeMask(RequestContext &ctx, const std::string &param)
 	return ctx.services.getUserPrefix(target);
 }
 
+/**
+ * @brief Sends the current modes of a channel to the user
+ * @param ctx The request context
+ * @param ch The channel
+ */
 static void sendChannelModes(RequestContext &ctx, Channel *ch)
 {
 	std::string modes = "+";
@@ -129,6 +186,16 @@ static void sendChannelModes(RequestContext &ctx, Channel *ch)
 	ctx.services.sendResponse(ctx, RPL_CHANNELMODEIS(ctx.sender->getNickname(), ch->getName(), modes + (paramStr.empty() ? "" : " " + paramStr)));
 }
 
+/**
+ * @brief Executes a mode change for a channel
+ * @param ctx The request context
+ * @param m The mode character
+ * @param add Whether to add or remove the mode
+ * @param ch The channel
+ * @param param The parameter for the mode
+ * @param channelName The name of the channel
+ * @return The parameter used for the mode change, or an empty string if none
+ */
 static std::string executeMode(RequestContext &ctx, char m, bool add, Channel *ch, const std::string &param, const std::string &channelName)
 {
 	switch (m)
@@ -184,7 +251,6 @@ static std::string executeMode(RequestContext &ctx, char m, bool add, Channel *c
 	}
 }
 /* ===================== EXEC ===================== */
-#include <iostream>
 void CmdMode::execute(RequestContext &ctx)
 {
 	if (!ctx.sender || ctx.rawLine.empty())

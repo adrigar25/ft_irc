@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:02:11 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/24 16:09:57 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/28 18:35:55 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,13 @@
 #include <string>
 #include <unistd.h>
 
+/**
+ * @brief Executes the QUIT command.
+ * - Handles the QUIT command for disconnecting a user from the server.
+ * - Sends a quit message to all channels the user is part of.
+ * - Removes the user from all channels and the user manager.
+ * @param ctx The request context.
+ */
 void CmdQuit::execute(RequestContext &ctx)
 {
 	if (!ctx.sender)
@@ -41,4 +48,3 @@ void CmdQuit::execute(RequestContext &ctx)
 	ctx.services.getServer()->handleDisconnectionByFd(fd);
 	close(fd);
 }
-

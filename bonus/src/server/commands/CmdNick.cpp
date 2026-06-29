@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:20:20 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/24 19:12:16 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/28 18:34:34 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,11 @@
 #include <string>
 #include <cstring>
 
+/**
+ * @brief Validates the format of a nickname.
+ * @param nick The nickname to validate.
+ * @return True if the nickname is valid, false otherwise.
+ */
 static bool validateNickFormat(const std::string &nick)
 {
 	if (nick.empty())
@@ -35,6 +40,11 @@ static bool validateNickFormat(const std::string &nick)
 	return true;
 }
 
+/**
+ * @brief Extracts the nickname from a raw line.
+ * @param raw The raw line.
+ * @return The extracted nickname.
+ */
 static std::string extractNick(const std::string &raw)
 {
 	std::string nick = trim(raw, " \r");
@@ -46,6 +56,12 @@ static std::string extractNick(const std::string &raw)
 	return trim(nick, " \r");
 }
 
+/**
+ * @brief Checks if a nickname is available.
+ * @param ctx The request context.
+ * @param nick The nickname to check.
+ * @return True if the nickname is available, false otherwise.
+ */
 static bool nickAvailable(RequestContext &ctx, const std::string &nick)
 {
 	const User *existing = ctx.services.users().findByNick(nick);
@@ -57,6 +73,13 @@ static bool nickAvailable(RequestContext &ctx, const std::string &nick)
 	return true;
 }
 
+/**
+ * @brief Executes the NICK command.
+ *  - Handles the NICK command for changing a user's nickname.
+ *  - Validates the nickname format and availability.
+ *  - Sends appropriate responses for errors and successful nickname changes.
+ * @param ctx The request context.
+ */
 void CmdNick::execute(RequestContext &ctx)
 {
 	if (!ctx.sender)

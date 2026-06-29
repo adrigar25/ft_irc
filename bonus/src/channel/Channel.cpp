@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:03:58 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/25 18:28:46 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/28 18:39:47 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,4 @@ Channel::Channel(const std::string &name) :
 /**
  * @brief Destructor de `Channel`.
  */
-Channel::~Channel()
-{
-};
+Channel::~Channel() {};

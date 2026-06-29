@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:02:39 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/24 18:07:57 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/28 18:35:34 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,12 @@
 #include "LineUtils.hpp"
 #include "replies/Replies.hpp"
 
+/**
+ * @brief Applies the provided password to the user.
+ * @param ctx The request context.
+ * @param pass The password to apply.
+ * @return True if the password is valid, false otherwise.
+ */
 static bool applyPassword(RequestContext &ctx, const std::string &pass)
 {
 	if(ctx.sender->isPassSet()) {
@@ -35,6 +41,12 @@ static bool applyPassword(RequestContext &ctx, const std::string &pass)
 	return false;
 }
 
+/**
+ * @brief Executes the PASS command.
+ * - Handles the PASS command for setting the user's password.
+ * - Validates the provided password and sends appropriate responses for errors.
+ * @param ctx The request context.
+ */
 void CmdPass::execute(RequestContext &ctx)
 {
 	if (!ctx.sender) return;

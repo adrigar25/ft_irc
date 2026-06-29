@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:22:25 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/24 19:04:05 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/28 18:43:24 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,11 @@ void Services::sendToChannel(Channel *channel, const std::string &message, const
 	if (server)
 		server->sendToChannel(channel, message, exclude);
 }
+
+/**
+ * @brief Obtiene el nombre del servidor.
+ * @return El nombre del servidor.
+ */
 std::string Services::getServerName() const
 {
 	if (server)
@@ -57,11 +62,20 @@ std::string Services::getServerName() const
 	return std::string("localhost");
 }
 
+/**
+ * @brief Obtiene el prefijo para un usuario.
+ * @param user Puntero al usuario.
+ * @return El prefijo del usuario.
+ */
 std::string Services::getUserPrefix(const User *user) const
 {
 	return user->getNickname() + "!" + user->getUsername() + "@" + user->getHost();
 }
 
+/**
+ * @brief Obtiene el prefijo para el servidor.
+ * @return El prefijo del servidor.
+ */
 std::string Services::getServerPrefix() const
 {
 	std::string prefix = ":";
@@ -72,12 +86,23 @@ std::string Services::getServerPrefix() const
 	return prefix;
 }
 
+/**
+ * @brief Envía una respuesta al usuario.
+ * @param ctx Contexto de la solicitud.
+ * @param reply Respuesta a enviar.
+ */
 void Services::sendResponse(RequestContext &ctx, const std::string &reply)
 {
 	std::string response = getServerPrefix() + " " + reply;
 	ctx.services.sendToUser(ctx.sender, response);
 }
 
+/**
+ * @brief Envía la lista de nombres de usuarios en un canal.
+ * @param ctx Contexto de la solicitud.
+ * @param target Usuario destinatario.
+ * @param channel Canal.
+ */
 void Services::sendNamesList(RequestContext &ctx, const User *target, Channel *channel)
 {
 	std::string serverName = ctx.services.getServerName();

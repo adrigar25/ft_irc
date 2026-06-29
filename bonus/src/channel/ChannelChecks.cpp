@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:03:43 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/25 18:18:30 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/28 18:40:24 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,11 @@
 #include <map>
 #include <fnmatch.h>
 
+/**
+ * @brief Builds a user mask for pattern matching.
+ * @param user The user for whom to build the mask.
+ * @return The constructed user mask.
+ */
 static std::string buildUserMask(const User *user)
 {
 	return user->getNickname() + "!" + user->getUsername() + "@" + user->getHost();

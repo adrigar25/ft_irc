@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:19:52 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/23 18:40:16 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/28 18:26:21 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,15 @@
 #include <algorithm>
 #include "replies/Replies.hpp"
 
+/**
+ * @brief Validates the KICK command
+ * @param ctx The request context
+ * @param channelName The name of the channel
+ * @param targetNick The nickname of the user to kick
+ * @param outChannel The channel to kick from
+ * @param outTarget The user to kick
+ * @return true if the command is valid, false otherwise
+ */
 static bool validateKick(
 	RequestContext &ctx,
 	const std::string &channelName,
@@ -55,6 +64,13 @@ static bool validateKick(
 	return true;
 }
 
+/**
+ * @brief Kicks a single user from a channel
+ * @param ctx The request context
+ * @param channelName The name of the channel
+ * @param nick The nickname of the user to kick
+ * @param reason The reason for the kick
+ */
 static void kickSingle(
 	RequestContext &ctx,
 	const std::string &channelName,
@@ -72,6 +88,13 @@ static void kickSingle(
 	ctx.services.channels().removeUserFromChannel(channel->getName(), target);
 }
 
+/**
+ * @brief Handles kicking multiple users from a single channel
+ * @param ctx The request context
+ * @param channelName The name of the channel
+ * @param users The list of users to kick
+ * @param reason The reason for the kick
+ */
 static void handleKick1N(
 	RequestContext &ctx,
 	const std::string &channelName,
@@ -87,6 +110,13 @@ static void handleKick1N(
 	}
 }
 
+/**
+ * @brief Handles kicking a single user from multiple channels
+ * @param ctx The request context
+ * @param channels The list of channels to kick from
+ * @param nick The nickname of the user to kick
+ * @param reason The reason for the kick
+ */
 static void handleKickN1(
 	RequestContext &ctx,
 	const std::vector<std::string> &channels,
@@ -102,6 +132,13 @@ static void handleKickN1(
 	}
 }
 
+/**
+ * @brief Executes the KICK command
+ *  - Handles the KICK command for kicking users from channels.
+ *  - Supports kicking multiple users from a single channel or a single user from multiple channels.
+ *  - Sends appropriate error messages for kick failures.
+ * @param ctx The request context
+ */
 void CmdKick::execute(RequestContext &ctx)
 {
 	if (!ctx.sender)
