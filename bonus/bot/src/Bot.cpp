@@ -10,7 +10,7 @@
 Bot::Bot(const std::string &host, const int port, const std::string &password, const std::string &nick)
 	: host(host), port(port), password(password), nick(nick), irc(NULL), cm(NULL), rh(NULL)
 {
-	std::srand(static_cast<unsigned int>(std::time(nullptr)));
+	std::srand(static_cast<unsigned int>(std::time(NULL)));
 	this->irc = new IRCConnection();
 	this->cm = new ChannelManager(this->irc);
 	this->rh = new RequestHandler(this->irc, this->cm, this->nick);

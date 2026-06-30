@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:20:10 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/28 18:27:51 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/30 17:54:20 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ static void sendMode(RequestContext &ctx, const std::string &channelName, bool a
 	modes += mode;
 	if (!param.empty())
 		modes += " " + param;
-	ctx.services.sendToChannel(ch, ctx.services.getServerPrefix() + " " + RPL_CHANNELMODEIS(ctx.sender->getNickname(), channelName, modes), nullptr);
+	ctx.services.sendToChannel(ch, ctx.services.getServerPrefix() + " " + RPL_CHANNELMODEIS(ctx.sender->getNickname(), channelName, modes), NULL);
 }
 
 
