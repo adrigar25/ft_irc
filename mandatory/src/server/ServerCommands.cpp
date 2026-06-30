@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:21:47 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/28 18:38:04 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/30 19:15:38 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,6 +115,10 @@ void Server::executeCommand(User *user, const std::string &command, const std::s
 		return;
 
 	dispatcher.dispatch(command, ctx);
+
+	if(command == "QUIT")
+		return;
+
 	if (!user->isAuthenticated())
 		checkAuthentication(ctx);
 }

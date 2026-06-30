@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:20:10 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/30 17:54:20 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/30 18:29:29 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,7 +185,7 @@ static void sendChannelModes(RequestContext &ctx, Channel *ch)
 	}
 	ctx.services.sendResponse(ctx, RPL_CHANNELMODEIS(ctx.sender->getNickname(), ch->getName(), modes + (paramStr.empty() ? "" : " " + paramStr)));
 }
-
+#include <iostream>
 /**
  * @brief Executes a mode change for a channel
  * @param ctx The request context
@@ -215,6 +215,7 @@ static std::string executeMode(RequestContext &ctx, char m, bool add, Channel *c
 		case 'l':
 			if (!param.empty() && !isNumber(param))
 			{
+				std::cout << "Invalid parameter for mode 'l': " << param << std::endl;
 				ctx.services.sendResponse(ctx, ERR_INVALIDMODEPARAM(ctx.sender->getNickname(), channelName));
 				return "";
 			}
@@ -265,7 +266,7 @@ void CmdMode::execute(RequestContext &ctx)
 	}
 
 	std::string channelName = parts[0];
-	std::string modes = parts[1];
+	std::string modes = parts.size() > 1 ? parts[1] : "";
 
 	Channel *ch = ctx.services.channels().getChannel(channelName);
 	if (!ch)
