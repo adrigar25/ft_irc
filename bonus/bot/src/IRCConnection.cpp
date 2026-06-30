@@ -72,7 +72,7 @@ int IRCConnection::connectTo(const std::string &host, int port)
 	return sock;
 }
 
-ssize_t IRCConnection::sendRaw(const std::string &s)
+size_t IRCConnection::sendRaw(const std::string &s)
 {
 	if (this->sockfd < 0) return -1;
 	std::string m = s + "\r\n";

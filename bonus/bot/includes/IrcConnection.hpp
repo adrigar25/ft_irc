@@ -23,7 +23,7 @@ class IRCConnection {
 		~IRCConnection();
 
 		int			connectTo(const std::string &host, int port);
-		ssize_t		sendRaw(const std::string &s);
+		size_t		sendRaw(const std::string &s);
 		std::string	recvLine();
 		void		closeConn();
 		bool		isConnected() const;
