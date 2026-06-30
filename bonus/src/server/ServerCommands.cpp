@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:21:47 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/30 19:15:07 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/30 19:45:51 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ void Server::executeCommand(User *user, const std::string &command, const std::s
 		return;
 	}
 
-	if (command != "PASS" && !user->isPassSet())
+	if (command != "PASS" && command != "CAP" && command != "PING" && command != "QUIT" && !user->isPassSet())
 		return;
 
 	dispatcher.dispatch(command, ctx);
