@@ -102,10 +102,7 @@ static void handleKick(ChannelManager *cm, const std::string &channel, const std
 		cm->deleteChannel(channel);
 }
 
-void RequestHandler::handlePRIVMSG(
-	const std::string &user,
-	const std::string &channel,
-	const std::string &msg)
+void RequestHandler::handlePRIVMSG(const std::string &user,const std::string &channel,const std::string &msg)
 {
 	if (msg.empty() || msg[0] != '!')
 		return;
@@ -134,10 +131,12 @@ void RequestHandler::handlePRIVMSG(
 
 		if (reply.trigger == "help")
 			response += getCommandList();
-
 		else if (reply.trigger == "dice")
-			response += std::to_string(rand() % 6 + 1);
-
+		{
+			std::stringstream ss;
+			ss << (rand() % 6 + 1);
+			response += ss.str();
+		}
 		else if (reply.trigger == "coin")
 			response += (rand() % 2 ? "Heads" : "Tails");
 
@@ -204,6 +203,7 @@ void RequestHandler::handleLine(const std::string &line)
 		break;
 	case CMD_KICK:
 		handleKick(this->cm, m.params[0], m.params[1], this->nick);
+		/* fall through */
 	case CMD_PART:
 	case CMD_QUIT:
 		handleUserPartOrQuit(this->irc, this->cm, m.params[0]);

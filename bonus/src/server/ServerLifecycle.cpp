@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:22:04 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/29 18:17:45 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/06/30 17:53:44 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 #include <exception>
 #include <string>
 #include <fcntl.h>
+#include <sstream>
 
 
 Server* Server::instance = NULL;
@@ -164,32 +165,34 @@ int	Server::startBot()
 {
 	std::string botCommand = "./bonus/bot/ircbot";
 
-	if (access(botCommand.c_str(), X_OK) != 0) {
+	if (access(botCommand.c_str(), X_OK) != 0)
+	{
 		std::cerr << "Bot executable not found or not executable: " << botCommand << std::endl;
 		return -1;
 	}
 
 	int pid = fork();
-	if (pid < 0) {
+	
+	if (pid < 0) 
+	{
 		std::cerr << "Failed to fork bot process: " << strerror(errno) << std::endl;
 		return -1;
-	} else if (pid == 0)
+	}
+	else if (pid == 0) 
 	{
 
 		int fd = open("/dev/null", O_RDWR);
+		std::stringstream ss;
+		ss << this->getPort();
+		std::string portStr = ss.str();
+
 		if (fd != -1)
 		{
 			dup2(fd, STDOUT_FILENO);
 			dup2(fd, STDERR_FILENO);
 			close(fd);
 		}
-		execl(botCommand.c_str(),
-			"ircbot",
-			"127.0.0.1",
-			std::to_string(this->getPort()).c_str(),
-			this->getPassword().c_str(),
-			"MiBot",
-			(char *)NULL);
+		execl(botCommand.c_str(), "ircbot", "127.0.0.1", portStr.c_str(), this->getPassword().c_str(), "MiBot", (char *)NULL);
 		perror("execl failed");
 		exit(EXIT_FAILURE);
 

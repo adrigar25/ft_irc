@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include <iostream>
+#include <sstream>
 #include <string>
 #include "Bot.hpp"
 
@@ -18,15 +19,16 @@ int main(int argc, char **argv)
 {
 	if (argc != 5)
 	{
-		std::cerr << "Usage: " << argv[0]
-				  << " <server_ip> <server_port> <password> <bot_nick>\n";
+		std::cerr << "Usage: " << argv[0] << " <server_ip> <server_port> <password> <bot_nick>\n";
 		return 1;
 	}
 
+	int port;
 	std::string host = argv[1];
-	int port = std::atoi(argv[2]);
 	std::string password = argv[3];
 	std::string nick = argv[4];
+	std::stringstream ss(argv[2]);
+	ss >> port;
 
 	Bot bot(host, port, password, nick);
 
