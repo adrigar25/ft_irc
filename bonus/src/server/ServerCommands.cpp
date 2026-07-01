@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:21:47 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/30 19:45:51 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/07/01 14:03:19 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@
 #include "commands/CmdNames.hpp"
 #include "RequestContext.hpp"
 #include "replies/Replies.hpp"
+#include "LineUtils.hpp"
 
 /**
  * @brief Obtiene el despachador de comandos.
@@ -105,14 +106,21 @@ void Server::executeCommand(User *user, const std::string &command, const std::s
 		return;
 	}
 
-	if (!user->isAuthenticated() && command != "PASS" && command != "NICK" && command != "USER" && command != "CAP" && command != "PING" && command != "PONG")
+	if(!user->isAuthenticated())
 	{
-		sendToUser(user, ERR_NOTREGISTERED(user->getNickname()));
-		return;
-	}
+	
+		if(!user->isPassSet() && command != "PASS" && command != "CAP" && command != "PING")
+		{
+			sendToUser(user, ERR_NOTREGISTERED(user->getNickname()));
+			return;
+		}
 
-	if (command != "PASS" && command != "CAP" && command != "PING" && command != "QUIT" && !user->isPassSet())
-		return;
+		if (command != "PASS" && command != "NICK" && command != "USER" && command != "CAP" && command != "PING")
+		{
+			sendToUser(user, ERR_NOTREGISTERED(user->getNickname()));
+			return;
+		}
+	}
 
 	dispatcher.dispatch(command, ctx);
 
@@ -140,18 +148,14 @@ void Server::handleClientCommand(User *user, const std::string &commandLine)
 	}
 	if (commandLine.empty())
 		return;
-	size_t sp = commandLine.find(' ');
-	std::string cmd = commandLine;
-	std::string args = "";
-	if (sp != std::string::npos)
-	{
-		cmd = commandLine.substr(0, sp);
-		if (sp + 1 < commandLine.size())
-			args = commandLine.substr(sp + 1);
-	}
+	std::vector<std::string> tokens = split(commandLine, ' ');
+	std::string cmd = tokens[0];
+	std::string args = tokens.size() > 1 ? commandLine.substr(cmd.size() + 1) : "";
+	
 	std::cout << "[" << cmd << "] - fd: " << user->getSocket();
 	if (!args.empty())
 		std::cout << " - args: " << args;
 	std::cout << std::endl;
+
 	executeCommand(user, cmd, args);
 }
