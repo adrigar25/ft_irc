@@ -1,0 +1,48 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   CmdQuit.cpp                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/06/16 17:02:11 by agarcia           #+#    #+#             */
+/*   Updated: 2026/06/30 18:49:53 by agarcia          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "commands/CmdQuit_bonus.hpp"
+#include "RequestContext_bonus.hpp"
+#include "replies/Replies_bonus.hpp"
+#include "Services_bonus.hpp"
+#include "Server_bonus.hpp"
+#include "LineUtils_bonus.hpp"
+#include <string>
+#include <unistd.h>
+
+/**
+ * @brief Executes the QUIT command.
+ * - Handles the QUIT command for disconnecting a user from the server.
+ * - Sends a quit message to all channels the user is part of.
+ * - Removes the user from all channels and the user manager.
+ * @param ctx The request context.
+ */
+void CmdQuit::execute(RequestContext &ctx)
+{
+	if (!ctx.sender)
+		return;
+
+	User *user = ctx.sender;
+	int fd = user->getSocket();
+	std::string quitMsg = "Client Quit";
+
+	if (!ctx.rawLine.empty() && ctx.rawLine[0] == ':')
+		quitMsg = trim(ctx.rawLine.substr(1), " \r");
+
+	std::string prefix = ctx.services.getUserPrefix(user);
+
+	for (std::map<std::string, Channel *>::const_iterator it = user->getChannels().begin(); it != user->getChannels().end(); ++it)
+		ctx.services.sendToChannel(it->second, RPL_QUIT(prefix, quitMsg), user);
+
+	ctx.services.channels().removeUserFromAllChannels(user);
+	ctx.services.getServer()->handleDisconnectionByFd(fd);
+}
