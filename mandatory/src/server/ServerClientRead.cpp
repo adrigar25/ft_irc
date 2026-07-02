@@ -87,12 +87,15 @@ void Server::processClientBuffer(User *user)
 	if (!user)
 		return;
 
+	int fd = user->getSocket();
 	std::string &buffer = user->getInBuffer();
 	std::vector<std::string> lines;
 	popLines(buffer, lines);
 
 	for (std::vector<std::string>::iterator it = lines.begin(); it != lines.end(); ++it)
 	{
+		if (!this->getUserByFd(fd))
+			break;
 		try
 		{
 			this->handleClientCommand(user, *it);
