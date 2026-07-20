@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   CmdJoin.cpp                                        :+:      :+:    :+:   */
+/*   CmdJoin_bonus.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:03:17 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/28 18:25:38 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/07/21 01:23:34 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,23 @@ static void sendJoinMessage(RequestContext &ctx, Channel *channel)
 }
 
 /**
+ * @brief Splits a string of keys by commas
+ * @param keysStr The string of keys
+ * @param keys The vector to store the split keys
+ */
+static std::vector<std::string> splitKeys(const std::string &keysStr)
+{
+	std::vector<std::string> keys;
+	std::istringstream ss(keysStr);
+	std::string key;
+	while (std::getline(ss, key, ','))
+	{
+		keys.push_back(key);
+	}
+	return keys;
+}
+
+/**
  * @brief Executes the JOIN command
  *  - Handles the JOIN command for joining channels.
  *  - Supports joining multiple channels with optional keys.
@@ -97,18 +114,20 @@ static void sendJoinMessage(RequestContext &ctx, Channel *channel)
  */
 void CmdJoin::execute(RequestContext &ctx)
 {
-	if (!ctx.sender) return;
+	if (!ctx.sender)
+		return;
 	std::vector<std::string> channelNames;
 	std::vector<std::string> keys;
 
 	std::vector<std::string> parts = split(ctx.rawLine, ' ');
-	if (parts.size() < 1) {
+	if (parts.size() < 1)
+	{
 		ctx.services.sendResponse(ctx, ERR_NEEDMOREPARAMS(ctx.sender->getNickname(), "JOIN"));
 		return;
 	}
 	channelNames = split(trim(parts[0], " "), ',');
-	if(parts.size() > 1)
-		keys = split(trim(parts[1], " "), ',');
+	if (parts.size() > 1)
+		keys = splitKeys(parts[1]);
 
 	for (size_t i = 0; i < channelNames.size(); ++i)
 	{
@@ -116,7 +135,8 @@ void CmdJoin::execute(RequestContext &ctx)
 		const std::string key = (i < keys.size() ? keys[i] : "");
 		bool joined = joinSingleChannel(ctx, channelName, key);
 		Channel *channel = ctx.services.channels().getChannel(channelName);
-		if (joined && channel && channel->hasUser(ctx.sender)) {
+		if (joined && channel && channel->hasUser(ctx.sender))
+		{
 			sendJoinMessage(ctx, channel);
 			ctx.services.sendNamesList(ctx, ctx.sender, channel);
 		}

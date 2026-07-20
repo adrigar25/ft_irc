@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:03:17 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/28 18:25:38 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/07/21 01:20:34 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,23 @@ static void sendJoinMessage(RequestContext &ctx, Channel *channel)
 }
 
 /**
+ * @brief Splits a string of keys by commas
+ * @param keysStr The string of keys
+ * @param keys The vector to store the split keys
+ */
+static std::vector<std::string> splitKeys(const std::string &keysStr)
+{
+	std::vector<std::string> keys;
+	std::istringstream ss(keysStr);
+	std::string key;
+	while (std::getline(ss, key, ','))
+	{
+		keys.push_back(key);
+	}
+	return keys;
+}
+
+/**
  * @brief Executes the JOIN command
  *  - Handles the JOIN command for joining channels.
  *  - Supports joining multiple channels with optional keys.
@@ -108,7 +125,7 @@ void CmdJoin::execute(RequestContext &ctx)
 	}
 	channelNames = split(trim(parts[0], " "), ',');
 	if(parts.size() > 1)
-		keys = split(trim(parts[1], " "), ',');
+		keys = splitKeys(parts[1]);
 
 	for (size_t i = 0; i < channelNames.size(); ++i)
 	{
