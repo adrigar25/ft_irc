@@ -6,7 +6,7 @@
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:00:48 by agarcia           #+#    #+#             */
-/*   Updated: 2026/07/13 16:47:35 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/07/21 01:24:46 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,13 +37,8 @@ static void sendQuitMessageToChannels(Server *server, User *user)
 	while (!channels.empty())
 	{
 		Channel *channel = user->getChannels().begin()->second;
-
-		std::string quitMessage =
-			":" + server->getServices().getUserPrefix(user) +
-			" QUIT :Client disconnected\r\n";
-
+		std::string quitMessage = ":" + server->getServices().getUserPrefix(user) +" QUIT :Client disconnected\r\n";
 		server->getServices().sendToChannel(channel, quitMessage, user);
-
 		user->leaveChannel(channel);
 
 		if (channel->isEmpty())
@@ -94,8 +89,6 @@ void Server::processClientBuffer(User *user)
 
 	for (std::vector<std::string>::iterator it = lines.begin(); it != lines.end(); ++it)
 	{
-		if (!this->getUserByFd(fd))
-			break;
 		try
 		{
 			this->handleClientCommand(user, *it);
