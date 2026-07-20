@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ChannelUsers.cpp                                   :+:      :+:    :+:   */
+/*   ChannelUsers_bonus.cpp                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:19:25 by adriescr          #+#    #+#             */
-/*   Updated: 2026/06/28 18:42:27 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/07/21 00:47:19 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,14 @@ void Channel::deleteUser(const User *user)
 	int fd = user->getSocket();
 	if (this->users.find(fd) == this->users.end())
 		throw IrcException(IRC_ERR_USER_NOT_FOUND, "User not found in channel");
+	if (this->invitedUsers.find(fd) != this->invitedUsers.end())
+		this->invitedUsers.erase(fd);
+	if (this->operators.find(fd) != this->operators.end())
+		this->operators.erase(fd);
+	if (this->voiceUsers.find(fd) != this->voiceUsers.end())
+		this->voiceUsers.erase(fd);
+	if (this->bannedUsers.find(fd) != this->bannedUsers.end())
+		this->bannedUsers.erase(fd);
 	this->users.erase(fd);
 	this->userCount--;
 }
