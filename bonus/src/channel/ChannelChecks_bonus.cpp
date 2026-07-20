@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ChannelChecks.cpp                                  :+:      :+:    :+:   */
+/*   ChannelChecks_bonus.cpp                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: agarcia <agarcia@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 17:03:43 by agarcia           #+#    #+#             */
-/*   Updated: 2026/06/28 18:40:24 by agarcia          ###   ########.fr       */
+/*   Updated: 2026/07/21 01:09:37 by agarcia          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,8 @@ void Channel::canUserJoin(const User *user, const std::string &userKey) const
 		throw IrcException(IRC_ERR_ISINVITEONLYCHAN, "Channel is invite only");
 	if(this->isUserBanned(user))
 		throw IrcException(IRC_ERR_BANNEDFROMCHAN, "You are banned from this channel");
-	if(this->getKeyRequired() && this->getKey() != userKey)
-		throw IrcException(IRC_ERR_INCORRECT_CHANNEL_KEY, "Incorrect channel key");
-}
+	if(this->getKeyRequired())
+	{
+		if(this->getKey() != userKey)
+			throw IrcException(IRC_ERR_INCORRECT_CHANNEL_KEY, "Incorrect channel key");}
+	}
